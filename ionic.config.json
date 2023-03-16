@@ -1,0 +1,7 @@
+{
+  "name": "ifms-sodexo",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
