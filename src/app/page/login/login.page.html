@@ -1,0 +1,47 @@
+<ion-content>
+  <div class="mainDiv">
+    <div class="splash-bg">
+      <img src="assets/menu_icon.svg">
+    </div>
+    <img src="assets/bottom_icon.png" style="position:absolute;bottom:5px;right:5px;height:100px;width:100px;">
+    <div class="formDiv">
+      <form [formGroup]="loginForms" (ngSubmit)="onLogin()">
+        <ion-list class="bg-transparent">
+          <ion-item color="none" lines="none">
+            <ion-label position="floating" color="primary">USER ID</ion-label>
+            <ion-input [(ngModel)]="login.userid" type="text"  formControlName="userid" required>
+            </ion-input>
+          </ion-item>
+
+          <ion-item color="none" lines="none">
+            <ion-label position="floating" color="primary">PASSWORD</ion-label>
+            <ion-input [(ngModel)]="login.password" type="password" formControlName="password" required>
+          </ion-input>
+          </ion-item>
+        </ion-list>
+        <ion-row>
+          <ion-col class="ion-text-center">
+            <ion-button type="submit" color="primary" expand="block" [disabled]="!loginForms.valid" [hidden]='!isHidden'>Login</ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col *ngIf="!isAndroid">
+            <ion-text color="danger" (click)="openPage('/register')"><u>Register</u></ion-text>
+          </ion-col>
+          <ion-col class="ion-text-right">
+            <ion-text color="danger" (click)="openPage('/forgot-password')"><u>Forgot Password</u></ion-text>
+          </ion-col>
+        </ion-row>
+      </form>
+    </div>
+
+    <div class="mobilise_logo">
+      <img src="assets/mobilise_loader.gif" [ngClass]="{'loader-img': !isHidden}">
+    </div>
+    <div class="company_title">
+      Powered by Mobilise
+    </div>
+  </div>
+
+</ion-content>
+

@@ -1,0 +1,17 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-searchbar (ionChange)="search($event)"></ion-searchbar>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModal(null, false)">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let dat of myDeviceName" (click)="closeModal(dat, true)">
+      {{dat.label}}
+    </ion-item>
+  </ion-list>
+</ion-content>

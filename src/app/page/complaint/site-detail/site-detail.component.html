@@ -1,0 +1,46 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Site Details</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModal()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-card>
+    <ion-row>
+      <ion-col size="4">
+        <ion-text color="dark">Plant Name</ion-text>
+      </ion-col>
+      <ion-col >
+        <ion-text color="warning">{{ticketData.pc_desc}}</ion-text>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="4">
+        <ion-text color="dark">Customer Name</ion-text>
+      </ion-col>
+      <ion-col >
+        <ion-text color="warning">{{ticketData.cust_name}}</ion-text>
+      </ion-col>
+    </ion-row>
+    <ion-row (click)="calling()">
+      <ion-col size="4">
+        <ion-text color="dark">Contact No</ion-text>
+      </ion-col>
+      <ion-col >
+        <ion-text color="warning">{{ticketData.mobile}}</ion-text>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="4">
+        <ion-text color="dark">Address</ion-text>
+      </ion-col>
+      <ion-col >
+        <ion-text color="warning">{{ticketData.address}}</ion-text>
+      </ion-col>
+    </ion-row>
+  </ion-card>
+</ion-content>

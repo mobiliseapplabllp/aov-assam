@@ -1,0 +1,37 @@
+[
+  {
+    "table":"create table IF NOT EXISTS update_track(srno,activity_id,activity,version_code,mobile_refresh,updatedatetime)"
+  },
+  {
+    "table":"create table IF NOT EXISTS assetOwnerShip(id, label, ownership, value)"
+  },
+  {
+    "table":"create table IF NOT EXISTS assetStatusDrop(id, label, status_name, value)"
+  },
+  {
+    "table":"create table IF NOT EXISTS building(building_id, building_name, status)"
+  },
+  {
+    "table":"create table IF NOT EXISTS department(dept_desc, dept_ext_id, dept_id)"
+  },
+  {
+    "table":"create table IF NOT EXISTS floor(floor_id, floor_name, status)"
+  },
+  {
+    "table":"create table IF NOT EXISTS group1(label, value)"
+  },
+  {
+    "table":"create table IF NOT EXISTS manufacturerMaster(mnfctrer_desc, mnfctrer_ext_id, mnfctrer_id)"
+  },
+  {
+    "table":"create table IF NOT EXISTS pcCate(id, pc_cat, pc_cat_ext_id)"
+  },
+  {
+    "table":"create table IF NOT EXISTS tech(label, value)"
+  },
+  {
+    "table":"create table IF NOT EXISTS warranty(label, value)"
+  }
+]
+
+

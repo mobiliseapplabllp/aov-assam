@@ -1,0 +1,240 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title> {{userName}} </ion-title>
+    <!-- <ion-buttons slot="end" >
+      <ion-button (click)="openPageTest('/menu-roaster')">Roaster</ion-button>
+      <ion-button (click)="openPageTest('/digital-checklist')">Digital</ion-button>
+      <ion-button (click)="openPageTest('/manuals')">Manuals</ion-button>
+      <ion-button (click)="openPageTest('/meal-checking')">Manuals</ion-button>
+    </ion-buttons> -->
+  </ion-toolbar>
+
+</ion-header>
+<ion-content>
+  <ion-row>
+    <ion-col class="ion-text-center">
+      <ion-text color="primary"><b>Working Summary</b></ion-text>
+    </ion-col>
+  </ion-row>
+
+  <ion-slides [options]="slideOptsOne" pager="true" class="custom_slide">
+    <ion-slide >
+      <ion-row >
+        <ion-col size="5" class="left">
+          <div >
+            <section><b>BreakDown</b></section>
+            <img src="assets/home_banner/img1.png">
+          </div>
+        </ion-col>
+        <ion-col size="7" class="right">
+          <ion-row >
+            <ion-col size="6">
+              <div>
+                <section>
+                  <ion-text color="dark">{{breakdown.assign}}</ion-text>
+                </section>
+                <section class="val">
+                  <span>
+                    <ion-text color="light">Assigned</ion-text>
+                  </span>
+                </section>
+              </div>
+            </ion-col>
+            <ion-col size="6">
+              <div>
+                <section>
+                  <ion-text color="dark">{{breakdown.wip}}</ion-text>
+                </section>
+                <section class="val">
+                  <span>
+                    <ion-text color="light">WIP</ion-text>
+                  </span>
+                </section>
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row >
+            <ion-col size="6">
+              <div>
+                <section >
+                  <ion-text color="dark">{{breakdown.reopen}}</ion-text>
+                </section>
+                <section class="val">
+                  <span>
+                    <ion-text color="light">Re-open</ion-text>
+                  </span>
+                </section>
+              </div>
+            </ion-col>
+            <ion-col size="6">
+              <div>
+                <section>
+                  <ion-text color="dark">{{breakdown.closed}}</ion-text>
+                </section>
+                <section class="val">
+                  <span>
+                    <ion-text color="light">Close</ion-text>
+                  </span>
+                </section>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+    </ion-slide>
+    <ion-slide >
+      <ion-row >
+        <ion-col size="5" class="left">
+          <div >
+            <section><b>PM</b></section>
+            <img src="assets/home_banner/img2.png">
+          </div>
+        </ion-col>
+        <ion-col size="7" class="right" style="height:260px">
+          <ion-row class="top">
+            <ion-col size="6">
+              <div>
+                <section >
+                  <ion-text color="dark">{{pr.assign}}</ion-text>
+                </section>
+                <section class="val">
+                  <span>
+                    <ion-text color="light">Assigned</ion-text>
+                  </span>
+                </section>
+              </div>
+            </ion-col>
+            <ion-col size="6">
+              <div>
+                <section>
+                  <ion-text color="dark">{{pr.visited}}</ion-text>
+                </section>
+                <section class="val">
+                  <span>
+                    <ion-text color="light">Visited</ion-text>
+                  </span>
+
+                </section>
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row >
+            <ion-col size="6">
+              <div>
+                <section >
+                  <ion-text color="dark">{{pr.attended}}</ion-text>
+                </section>
+                <section class="val">
+                  <span>
+                    <ion-text color="light">Attended</ion-text>
+                  </span>
+
+                </section>
+              </div>
+            </ion-col>
+            <ion-col size="6">
+              <div>
+                <section>
+                  <ion-text color="dark">{{pr.closed}}</ion-text>
+                </section>
+                <section class="val">
+                  <span>
+                    <ion-text color="light">Closed</ion-text>
+                  </span>
+                </section>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+    </ion-slide>
+    <ion-slide >
+      <ion-row >
+        <ion-col size="5" class="left">
+          <div >
+            <section><b>Spare Part</b></section>
+            <img src="assets/home_banner/img3.png">
+          </div>
+        </ion-col>
+        <ion-col size="7" class="right" style="height:260px">
+          <ion-row class="top">
+            <ion-col size="6">
+              <div>
+                <section >
+                  <ion-text color="dark">{{indent.inapproval}}</ion-text>
+                </section>
+                <section class="val">
+                  <span>
+                    <ion-text color="light">Pending</ion-text>
+                  </span>
+                </section>
+              </div>
+            </ion-col>
+            <ion-col size="6">
+              <div>
+                <section>
+                  <ion-text color="dark">{{indent.approved}}</ion-text>
+                </section>
+                <section class="val">
+                  <span>
+                    <ion-text color="light">Approved</ion-text>
+                  </span>
+                </section>
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row >
+            <ion-col size="6">
+              <div>
+                <section >
+                  <ion-text color="dark">{{indent.rejected}}</ion-text>
+                </section>
+                <section class="val">
+                  <span>
+                    <ion-text color="light">Reject</ion-text>
+                  </span>
+                </section>
+              </div>
+            </ion-col>
+            <ion-col size="6">
+              <div>
+                <section>
+                  <ion-text color="dark">{{indent.closed}}</ion-text>
+                </section>
+                <section class="val">
+                  <span>
+                    <ion-text color="light">Closed</ion-text>
+                  </span>
+                </section>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+    </ion-slide>
+  </ion-slides>
+
+  <ion-grid class="myGrid">
+    <ion-row class="ion-no-padding">
+      <ion-col style=" padding-left: 3px;padding-top:0px !important">
+        <b>Menu</b>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col *ngFor="let dat of myMenu" size="4" size-sm="4" size-md="3" size-xl="2" (click)="openPage(dat)">
+        <ion-card  style="margin: 0;background-color:white;border:1px solid black" mode="ios">
+          <ion-img [src]="dat.icon_path" ></ion-img>
+          <!-- <ion-chip color="dark">{{dat.smnu_desc}}</ion-chip> -->
+          <ion-row>
+            <ion-col class="ion-text-center">
+              <span style="color:white; background-color:black;border-radius:6px;padding:2px"><b>{{dat.smnu_desc}}</b></span>
+            </ion-col>
+          </ion-row>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

@@ -1,0 +1,120 @@
+
+.mainDiv {
+  background-image: linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,1)),  url(../../../assets/2.png);
+  height:100% ;
+  width:100%;
+  // border:1px solid rgba(255,255,255);
+  background-size: cover;
+}
+.login-logo {
+  padding: 20px 0;
+  min-height: 200px;
+  text-align: center;
+}
+
+.login-logo img {
+  max-width: 150px;
+}
+
+.list {
+  margin-bottom: 0;
+}
+
+div.splash-bg {
+  width:100%;
+  height: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  img {
+    width: 60%;
+  }
+}
+
+.formDiv {
+  min-height: 30%;
+}
+
+.divBottom {
+  height:30%;
+  width:100%;
+  position: relative;
+}
+
+div.mobilise_logo{
+  height:18%;
+  width:100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  img{
+    height:50px;
+    width:50px;
+  }
+}
+
+div.company_title{
+  height:8%;
+  padding: 2px;
+  text-align:center;
+  color: var(--ion-color-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size:16px;
+  font-weight: 550;
+}
+
+.bg-transparent {
+  background: transparent;
+
+  ion-input, ion-label {
+    color: black;
+  }
+}
+
+.loader{
+  display: block;
+  position: fixed;
+  display: flex;
+  height: 100%;
+  left: 0;
+  top: 0px;
+  width: 100%;
+  // z-index: 100000;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding-top: 25%;
+  padding-left: 43%;
+  justify-content:center;
+  align-items:center
+}
+
+
+.loader-img{
+  -webkit-animation: rotation 1s infinite linear;
+  -moz-animation: rotation 1s infinite linear;
+  -o-animation: rotation 1s infinite linear;
+  animation: rotation 1s infinite linear;
+  // position: absolute;
+  // left: 47%;
+  // top: 50%;
+}
+
+@keyframes rotation {
+      100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+      -o-transform: rotate(360deg);
+      transform: rotate(360deg);
+  }
+}
+
+ion-label, ion-input {
+  font-weight: 520;
+}
+
+ion-item {
+  border-bottom:2px solid black;
+}
+
+

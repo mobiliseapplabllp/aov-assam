@@ -1,0 +1,62 @@
+.head {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.head1 {
+  color: var(--ion-color-medium);
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.wip {
+  border-right:2px solid yellow;
+}
+
+.assign{
+  border-right:2px solid red;
+}
+
+.resolve{
+  border-right:2px solid green;
+}
+.myCards{
+  ion-card{
+    margin:0px;
+    background-color: rgb(129, 172, 236);
+    ion-row{
+      ion-col{
+        h4{
+          color: black;
+          margin: 0;
+          font-size: 13px;
+          font-weight: 600;
+        }
+        p{
+          font-size:13px;
+          font-weight: 600;
+          margin: 0;
+          color: black;
+          margin-top: 10px
+        }
+      }
+    }
+  }
+  // .grid1{
+    ion-row{
+      ion-col{
+        ion-label{
+          p{
+            color:black ;
+          }
+        }
+      }
+    }
+  // }
+}
+
+ion-text {
+  font-weight: 530;
+}

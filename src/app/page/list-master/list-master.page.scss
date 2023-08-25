@@ -1,0 +1,83 @@
+
+ion-slides {
+  padding-bottom: 50px !important;
+  ion-row {
+    width:100%;
+    ion-col.left {
+      height:260px;
+      div {
+        width:100%;border-radius: 16px;
+        border: 2px solid  black;
+        background:white;
+        section {
+          padding:5px;
+          margin:5px;
+          background:black;
+          color:white;
+          border-radius: 10px;
+          font-size:14px;
+        }
+        img {
+          height:200px;
+          width:100%;
+          margin-top:5px;
+        }
+      }
+    }
+    ion-col.right {
+      height:260px;
+      ion-row {
+        height:130px;
+        ion-col {
+          padding-top:0px !important;
+          div {
+            height:100%;
+            border-radius: 16px;
+            background:white;
+            color:white;
+            border:2px solid black;
+            font-weight: 550;
+
+            section {
+              height:50%;
+              display:flex;
+              align-items: center;
+              justify-content: center;
+              font-size:22px;
+            }
+            section.val {
+              font-size: 16px !important;
+              font-weight: 550;
+              span {
+                background-color:black;
+                color:white;
+                border-radius: 5px;
+                padding:2px 4px;
+              }
+
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.myGrid {
+  margin-top:0px;
+  ion-card {
+    margin: 0;
+    ion-img {
+      height:55px;
+      width:45px;
+      margin: auto;
+      margin-top: 10px;
+    }
+    p {
+      font-size: 11px;
+      color: black;
+      font-weight: 600;
+      text-align:center;
+    }
+  }
+}

@@ -1,0 +1,81 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Ticket Type</ion-title>
+     <ion-buttons slot="end" (click)="dismiss(null, false)">
+      <ion-button>
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="ticketForm">
+    <div style="margin-top:16px;margin-left:16px"><b>Ticket Creation Remark :</b> {{allData.remark}}</div>
+    <ion-item>
+      <ion-label position="floating">Complaint Type</ion-label>
+      <ion-select interface="action-sheet" formControlName="issue_type" (ionChange)="changeType()">
+        <ion-select-option *ngFor="let dat of issueType" [value]="dat.issue_id">{{dat.issue_desc}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <div *ngIf="ticketForm.value.issue_type === '1'">
+      <ion-item>
+        <ion-label position="floating">Is Barcode</ion-label>
+        <ion-select interface="action-sheet" formControlName="is_barcode">
+          <ion-select-option value="1">Yes</ion-select-option>
+          <ion-select-option value="0">No</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item *ngIf="ticketForm.value.is_barcode === '1'">
+        <ion-label position="floating">Barcode</ion-label>
+        <ion-input type="text" formControlName="barcode"> </ion-input>
+        <ion-button size="small" slot="end" fill="outline" color="red" [disabled]="!ticketForm.value.barcode" (click)="searchClientId()">Search <ion-icon name="search-outline" slot="end"></ion-icon> </ion-button>
+      </ion-item>
+      <section>
+        <ion-radio-group formControlName="barcode_id">
+          <ion-item *ngFor="let dat of barcodeList">
+            <ion-radio slot="start" [value]="dat.asset_id" ></ion-radio>
+            <ion-label>
+              <h2>{{dat.ext_asset_id}}</h2>
+              <p>{{dat.serial_no}}</p>
+              <p>{{dat.subgrp_desc}}</p>
+              <p>{{dat.client_asset_id}}</p>
+            </ion-label>
+          </ion-item>
+        </ion-radio-group>
+      </section>
+    </div>
+    <div *ngIf="ticketForm.value.issue_type === '2'">
+      <ion-item>
+        <ion-label position="floating">Query Category</ion-label>
+        <ion-select interface="action-sheet" formControlName="category" (ionChange)="changeQuery($event)">
+          <ion-select-option *ngFor="let dat of query" [value]="dat.value">{{dat.label}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Query Sub Category</ion-label>
+        <ion-select interface="action-sheet" formControlName="subcat1_id" (ionChange)="changeSubCat($event)">
+          <ion-select-option *ngFor="let dat of subCategory" [value]="dat.value">{{dat.label}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Query Sub Category 2</ion-label>
+        <ion-select interface="action-sheet" formControlName="subcat2_id">
+          <ion-select-option *ngFor="let dat of subCategory2" [value]="dat.value">{{dat.label}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </div>
+    <ion-item>
+      <ion-label position="floating">Ticket Priority</ion-label>
+      <ion-select interface="action-sheet" formControlName="tkt_priority">
+        <ion-select-option *ngFor="let dat of ticketPriority" [value]="dat.id">{{dat.name}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-row>
+      <ion-col class="ion-text-center">
+        <ion-button *ngIf="ticketForm.value.issue_type" (click)="saveData()">Submit <ion-icon name="save-outline" slot="end"></ion-icon> </ion-button>
+      </ion-col>
+    </ion-row>
+
+  </form>
+</ion-content>

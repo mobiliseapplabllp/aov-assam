@@ -1,0 +1,488 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Add Asset</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="contents">
+  <form [formGroup]="addAsset">
+    <ion-card>
+      <ion-card-header color="primary"><b>Location Information</b></ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label color="primary" position="floating">Facility type <ion-text color="danger">*</ion-text></ion-label>
+          <ion-select interface="action-sheet" formControlName="faciity_type" > <!-- (ionChange)="changeFacility($event)"-->
+            <ion-select-option *ngFor="let dat of facilityTypeArr" [value]="dat.id">{{dat.pc_cat_ext_id}}-{{dat.pc_cat}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-row>
+          <ion-col size="12">
+            <ion-item (click)="openSiteModal()">
+              <ion-label color="primary" position="floating">Select Site <ion-text color="danger">*</ion-text></ion-label>
+              <ion-input type="text" formControlName="site_id_description" readonly></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col size="12">
+            <ion-item >
+              <ion-label color="primary" position="floating">Blocks</ion-label>
+              <ion-select interface="action-sheet" formControlName="block_id" (ionChange)="changeBlock($event)">
+                <ion-select-option *ngFor="let dat of myBlocks" [value]="dat.value">{{dat.label}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary" position="floating">Building </ion-label>
+              <ion-select interface="action-sheet" formControlName="bldg_id" (ionChange)="changeBuilding($event)">
+                <ion-select-option *ngFor="let dat of myBuildingArr" [value]="dat.value">{{dat.label}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary" position="floating">Floor</ion-label>
+              <ion-select interface="action-sheet" formControlName="floor_id" (ionChange)="chnageFloor($event)">
+                <ion-select-option *ngFor="let dat of myFloor" [value]="dat.value"> {{dat.label}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <!-- <ion-item>
+              <ion-label color="primary" position="floating">Department </ion-label>
+              <ion-select interface="action-sheet" formControlName="dept_id" (ionChange)="changeDepartment($event)">
+                <ion-select-option *ngFor="let dat of myDepartment" [value]="dat.dept_id">{{dat.dept_desc}}</ion-select-option>
+              </ion-select>
+            </ion-item> -->
+            <ion-item (click)="openDepartment()">
+              <ion-label color="primary" position="floating">Department <ion-text color="danger">*</ion-text></ion-label>
+              <ion-input type="text" formControlName="dept_id_desc" readonly></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-item>
+          <ion-label color="primary" position="floating">Sub Department</ion-label>
+          <ion-select interface="action-sheet" formControlName="sub_dept_id">
+            <ion-select-option *ngFor="let dat of mySubDepartment" [value]="dat.sub_dept_id">{{dat.sub_dept_desc}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+    <ion-card>
+      <ion-card-header color="primary"><b>Asset Information</b></ion-card-header>
+      <ion-card-content>
+        <ion-row>
+          <ion-col size="6">
+            <ion-item>
+              <ion-label position="floating">Prefix Barcode</ion-label>
+              <ion-input type="text" formControlName="ext_asset_id_pre" readonly></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary" position="floating">Asset ID <ion-text color="danger">*</ion-text></ion-label>
+              <ion-input inputmode="tel" formControlName="input_asset_id" maxlength="6"></ion-input>
+              <ion-button slot="end" fill="outline" color="danger" (click)="openScanner()">
+                <!-- <ion-icon name="search-outline"></ion-icon> -->
+                <ion-icon name="qr-code-outline"></ion-icon>
+              </ion-button>
+            </ion-item>
+            <!-- <div *ngFor="let error of errorMessages.input_asset_id">
+              <ng-container *ngIf="input_asset_id.hasError(error.type) && (input_asset_id.dirty || input_asset_id.touched)" style="padding:3px">
+                <small style="color: red">{{error.message}}</small>
+              </ng-container>
+            </div> -->
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary" position="floating">Client Asset Id <ion-text color="danger">*</ion-text></ion-label>
+              <ion-input type="text" formControlName="client_asset_id" ></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary" position="floating">has Parent Id</ion-label>
+              <ion-select interface="action-sheet" formControlName="is_child_asset" (click)="changeAssetChild()">
+                <ion-select-option value="1">YES</ion-select-option>
+                <ion-select-option value="0">NO</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col *ngIf="addAsset.value.is_child_asset === '1'">
+            <ion-item>
+              <ion-label color="primary" position="floating">Asset Parent ID <ion-text color="danger">*</ion-text></ion-label>
+              <ion-input inputmode="tel" formControlName="parent_asset_id" maxlength="10"></ion-input>
+              <ion-button slot="end" fill="outline" color="danger" (click)="searchAssetId()">
+                <ion-icon name="search-outline"></ion-icon>
+              </ion-button>
+            </ion-item>
+            <!-- <div *ngFor="let error of errorMessages.ext_asset_id">
+              <ng-container *ngIf="parent_asset_id.hasError(error.type) && (parent_asset_id.dirty || parent_asset_id.touched)" style="padding:3px">
+                <small style="color: red">{{error.message}}</small>
+              </ng-container>
+            </div> -->
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="parentAssetObj.isExists">
+          <ion-col>
+            <ion-card>
+              <ion-card-header class="ion-no-padding ion-text-center" color="primary">Asset Parent Detail</ion-card-header>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-text color="dark">Device Name</ion-text>
+                </ion-col>
+                <ion-col> {{parentAssetObj.deviceName}} </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-text color="dark">Parent Asset Department</ion-text>
+                </ion-col>
+                <ion-col> {{parentAssetObj.deptName}} </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-text color="dark">Parent Asset Manufacturer</ion-text>
+                </ion-col>
+                <ion-col> {{parentAssetObj.manuFact}}</ion-col>
+              </ion-row>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary" position="floating">Device Group <ion-text color="danger">*</ion-text></ion-label>
+              <ion-select interface="action-sheet" formControlName="grp_id" (ionChange)="changeDeviceGroup($event)">
+                <ion-select-option *ngFor="let dat of myDeviceGroup" [value]="dat.value">{{dat.label}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <!-- <ion-item>
+              <ion-label color="primary" position="floating">Device Name  <ion-text color="danger">*</ion-text></ion-label>
+              <ion-select interface="action-sheet" formControlName="subgrp_id" (ionChange)="changeDeviceName($event)">
+                <ion-select-option *ngFor="let dat of myDeviceName" [value]="dat.value">{{dat.label}}</ion-select-option>
+              </ion-select>
+            </ion-item> -->
+            <ion-item (click)="openDeviceName()">
+              <ion-label color="primary" position="floating">Device Name <ion-text color="danger">*</ion-text></ion-label>
+              <ion-input type="text" formControlName="subgrp_id_desc" readonly></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary" position="floating">Device Class  <ion-text color="danger">*</ion-text></ion-label>
+              <ion-input type="text" formControlName="subgrp_class" readonly></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary" position="floating">Device Sub Cat Remark  <ion-text color="danger">*</ion-text></ion-label>
+              <ion-input type="text" formControlName="device_sub_cate_remark" ></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary" position="floating">Device Make</ion-label>
+              <ion-input type="text" formControlName="make"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary" position="floating">Device Model <ion-text color="danger">*</ion-text></ion-label>
+              <ion-input type="text" formControlName="model"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary" position="floating">S.No <ion-text color="danger">*</ion-text></ion-label>
+              <ion-input type="text" formControlName="serial_no"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <!-- <ion-item>
+              <ion-label color="primary" position="floating">Manufacturer <ion-text color="danger">*</ion-text></ion-label>
+              <ion-select interface="action-sheet" formControlName="manufacturer_id">
+                <ion-select-option *ngFor="let dat of myManufacturer" [value]="dat.mnfctrer_id">{{dat.mnfctrer_desc}}</ion-select-option>
+              </ion-select>
+            </ion-item> -->
+            <ion-item (click)="openManufacturer()">
+              <ion-label color="primary" position="floating">Manufacturer <ion-text color="danger">*</ion-text></ion-label>
+              <ion-input type="text" formControlName="manufacturer_id_desc" readonly></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary" position="floating">Accessories</ion-label>
+              <ion-input type="text" formControlName="accessories"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary" position="floating">Ownership <ion-text color="danger">*</ion-text></ion-label>
+              <ion-select interface="action-sheet" formControlName="ownership_id">
+                <ion-select-option *ngFor="let dat of myOwnership" [value]="dat.id">{{dat.label}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header color="primary"><b>Purchase Information</b></ion-card-header>
+      <ion-card-content>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary" position="floating">Ledger Reference</ion-label>
+              <ion-input type="text" formControlName="ledger_ref"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary" position="floating">Purchase Order No</ion-label>
+              <ion-input type="text" formControlName="pur_order_no"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <!-- <ion-item>
+              <ion-label color="primary" position="floating">Purchase Date</ion-label>
+              <ion-datetime max="2099" formControlName="pur_date"></ion-datetime>
+            </ion-item> -->
+            <ion-item id="asset-pur-date">
+              <ion-label color="primary" position="floating">Purchase Date</ion-label>
+              <ion-input type="text" [value]="addAsset.value.pur_date | date"   placeholder="Select Date"  readonly></ion-input>
+            </ion-item>
+            <ion-popover trigger="asset-pur-date" >
+              <ng-template>
+                <ion-datetime #popoverDatetime max="2099" presentation="date" size="cover" formControlName="pur_date" (ionChange)="changeDate()"></ion-datetime>
+              </ng-template>
+            </ion-popover>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary" position="floating">Purchase Value</ion-label>
+              <ion-input type="number" formControlName="pur_value"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-button size="small" color="danger" (click)="presentActionSheet(4)">Inv Image <ion-icon name="attach-outline" slot="end"></ion-icon></ion-button>
+            <br>
+            {{img4}}
+          </ion-col>
+          <ion-col>
+            <!-- <ion-item>
+              <ion-label color="primary" position="floating">Install Date </ion-label>
+              <ion-datetime max="2099" formControlName="install_date"></ion-datetime>
+            </ion-item> -->
+            <ion-item id="asset-install-date">
+              <ion-label color="primary" position="floating">Install Date</ion-label>
+              <ion-input type="text" [value]="addAsset.value.install_date | date"   placeholder="Select Date"  readonly></ion-input>
+            </ion-item>
+            <ion-popover trigger="asset-install-date" >
+              <ng-template>
+                <ion-datetime #popoverDatetime max="2099" presentation="date" size="cover" formControlName="install_date" (ionChange)="changeDate()"></ion-datetime>
+              </ng-template>
+            </ion-popover>
+          </ion-col>
+        </ion-row>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header color="primary"><b>Working Details</b></ion-card-header>
+      <ion-card-content>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary" position="floating">Equipment Status  <ion-text color="danger">*</ion-text></ion-label>
+              <ion-select interface="action-sheet" formControlName="is_asset">
+                <ion-select-option *ngFor="let dat of myEquipStatus" [value]="dat.id">{{dat.label}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary" position="floating">Techonology </ion-label>
+              <ion-select interface="action-sheet" formControlName="technology_id">
+                <ion-select-option *ngFor="let dat of myTechnology" [value]="dat.value">{{dat.label}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-item>
+          <ion-label color="primary" position="floating">Install By  </ion-label>
+          <ion-input type="text" formControlName="install_by"></ion-input>
+        </ion-item>
+        <ion-row>
+          <ion-col class="ion-text-center">
+            <ion-button fill="clear" color="danger" (click)="presentActionSheet(1)"> <!-- formcontrol name asset_img-->
+              <ion-icon name="camera-outline"></ion-icon>
+            </ion-button><br>
+            <ion-text color="dark">Asset Id</ion-text> <br>
+            {{img1}}
+          </ion-col>
+          <ion-col class="ion-text-center">
+            <ion-button fill="clear" color="danger" (click)="presentActionSheet(2)"> <!-- formcontrol name asset_img2-->
+              <ion-icon name="camera-outline"></ion-icon>
+            </ion-button><br>
+            <ion-text color="dark">Sr No</ion-text> <br>
+            {{img2}}
+          </ion-col>
+          <ion-col class="ion-text-center">
+            <ion-button fill="clear" color="danger" (click)="presentActionSheet(3)"> <!-- formcontrol name asset_img3-->
+              <ion-icon name="camera-outline"></ion-icon>
+            </ion-button><br>
+            <ion-text color="dark">Equp Pic</ion-text><br>
+            {{img3}}
+          </ion-col>
+        </ion-row>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header color="primary"><b>Warranty Information</b></ion-card-header>
+      <ion-card-content>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary" position="floating">Warranty</ion-label>
+              <ion-select interface="action-sheet" formControlName="warranty_id">
+                <ion-select-option *ngFor="let dat of myWarranty" [value]="dat.id">{{dat.warranty}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <!-- <ion-item>
+              <ion-label color="primary" position="floating">Start Date</ion-label>
+              <ion-datetime max="2099" formControlName="warranty_start_date"></ion-datetime>
+            </ion-item> -->
+            <ion-item id="asset-warranty-start-date">
+              <ion-label color="primary" position="floating">Start Date</ion-label>
+              <ion-input type="text" [value]="addAsset.value.warranty_start_date | date"   placeholder="Select Date"  readonly></ion-input>
+            </ion-item>
+            <ion-popover trigger="asset-warranty-start-date" >
+              <ng-template>
+                <ion-datetime #popoverDatetime max="2099" presentation="date" size="cover" formControlName="warranty_start_date" (ionChange)="changeDate()"></ion-datetime>
+              </ng-template>
+            </ion-popover>
+          </ion-col>
+          <ion-col>
+            <!-- <ion-item>
+              <ion-label color="primary" position="floating">End Date</ion-label>
+              <ion-datetime max="2099" formControlName="warranty_end_date"></ion-datetime>
+            </ion-item> -->
+            <ion-item id="asset-warranty-end-date">
+              <ion-label color="primary" position="floating">End Date</ion-label>
+              <ion-input type="text" [value]="addAsset.value.warranty_end_date | date"   placeholder="Select Date"  readonly></ion-input>
+            </ion-item>
+            <ion-popover trigger="asset-warranty-end-date" >
+              <ng-template>
+                <ion-datetime #popoverDatetime max="2099" presentation="date" size="cover" formControlName="warranty_end_date" (ionChange)="changeDate()"></ion-datetime>
+              </ng-template>
+            </ion-popover>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary" position="floating">Vendor Name</ion-label>
+              <ion-input type="text" formControlName="vend_code"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary" position="floating">Is Insured</ion-label>
+              <ion-select interface="action-sheet" formControlName="is_insured">
+                <ion-select-option value="1">YES</ion-select-option>
+                <ion-select-option value="0">NO</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label color="primary" position="floating">Remark</ion-label>
+              <ion-input type="text" formControlName="remark"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-card-content>
+    </ion-card>
+  </form>
+  <section *ngIf="floorImage">
+    <div style="position:sticky;top:0;z-index:999">
+      <ion-grid >
+        <ion-row>
+          <ion-col class="ion-text-center">
+            <button (click)="action('y', -1)">
+              <ion-icon name="caret-up-outline"></ion-icon>
+            </button>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col class="ion-text-center">
+            <div style="display: flex; width:260px; margin:auto">
+              <button (click)="action('x', -1)">
+                <ion-icon name="caret-back-outline"></ion-icon>
+              </button>
+              <input type="number" (keyup)="pinPointStyleFun()" [(ngModel)]="coordinate.x" >
+              <input type="number" (keyup)="pinPointStyleFun()" [(ngModel)]="coordinate.y" >
+              <button (click)="action('x', 1)">
+                <ion-icon name="caret-forward-outline"></ion-icon>
+              </button>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col class="ion-text-center">
+            <button (click)="action('y', 1)">
+              <ion-icon name="caret-down-outline"></ion-icon>
+            </button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+
+    <div class="outer">
+      <div class="inner">
+        <ion-scroll scrollX="true" scrollY="true">
+          <img [src]="floorImage" (click)="getImageCoordinates($event)" style="width:100%;height:100%">
+          <div class="pinpoint" [ngStyle]="pinpointStyle"></div>
+        </ion-scroll>
+      </div>
+    </div>
+  </section>
+</ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-button size="block" [disabled]="addAsset.invalid" (click)="saveAsset()">Submit <ion-icon name="save-outline" slot="end"></ion-icon></ion-button> <!--[disabled]="addAsset.invalid"-->
+  </ion-toolbar>
+</ion-footer>

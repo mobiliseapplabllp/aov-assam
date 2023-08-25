@@ -1,0 +1,72 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Complaint</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" >
+    <ion-fab-button fill="clear" color="primary" (click)="creteTicket()">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <ion-segment  [(ngModel)]='status' (ionChange)="changeSegment($event)">
+    <ion-segment-button value="not_resolved">
+      <ion-label>Assigned Ticket </ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="resolved">
+      <ion-label>Resolved </ion-label>
+    </ion-segment-button>
+  </ion-segment>
+  <div [ngSwitch]='status'>
+    <div *ngSwitchCase= "'not_resolved'">
+      <ion-row>
+        <ion-col>
+          <ion-item>
+            <ion-label position="floating">Search By</ion-label>
+            <ion-select interface="action-sheet" [(ngModel)]="searchBy" (ionChange)="changeSearch()">
+              <ion-select-option value="all">All</ion-select-option>
+              <ion-select-option value="pc_id"> Site Detail</ion-select-option>
+              <ion-select-option value="ticketId">Ticket No</ion-select-option>
+              <ion-select-option value="asset_id">Barcode No</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+        <ion-col [hidden]="searchBy === 'all' || !searchBy">
+          <ion-item *ngIf="searchBy === 'ticketId'">
+            <ion-label position="floating">Ticket NO</ion-label>
+            <ion-input type="text" [(ngModel)]="searchValue"> </ion-input>
+          </ion-item>
+          <ion-item *ngIf="searchBy === 'pc_id'" (click)="openRoName()">
+            <ion-label position="floating">Select Site</ion-label>
+            <ion-input type="text" [(ngModel)]="searchValueDesc" readonly> </ion-input>
+          </ion-item>
+          <ion-item *ngIf="searchBy === 'asset_id'">
+            <ion-label position="floating">Barcode No</ion-label>
+            <ion-input type="text" [(ngModel)]="searchValue"> </ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-button [hidden]="searchBy === 'all' || !searchBy" expand="block" (click)="searchTicketFromServer()">Search <ion-icon name="search-outline" slot="end"></ion-icon></ion-button>
+      <ion-item *ngIf="searchBy === 'all' || !searchBy">
+        <ion-label position="floating">Ticket Type <ion-text color="danger">*</ion-text></ion-label>
+        <ion-select interface="action-sheet" (ionChange)="changeTickeType($event)" [(ngModel)]="ticketStatus">
+          <ion-select-option *ngFor="let dat of ticketStages" [value]="dat.stage_id">{{dat.stage_desc}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <div *ngFor="let dat of tickets; let i = index">
+        <app-complaint-cards [data]="dat" [ticketType]="dat.status"  (greetEvent)="myCustom($event)"></app-complaint-cards>
+      </div>
+      <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)" [hidden]="isHideInfinite || tickets.length === 0">
+        <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data..."> </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </div>
+    <div *ngSwitchCase= "'resolved'">
+      <div *ngFor="let dat of resolveTicket; let i = index">
+        <app-complaint-cards [data]="dat" [ticketType]="dat.status"  (greetEvent)="myCustom($event)"></app-complaint-cards>
+      </div>
+    </div>
+  </div>
+</ion-content>
