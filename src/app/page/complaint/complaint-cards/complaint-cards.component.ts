@@ -108,23 +108,23 @@ export class ComplaintCardsComponent  implements OnInit {
     });
   }
 
-  async openWorkDetailModal() {
-    const modal = await this.modalCtrl.create({
-      component: 'WorkDetailsComponent',
-      cssClass: 'my-modal',
-      componentProps: { ticketId: this.data.ticket_id, phone: this.data.customer_mobile,
-        resolveable: this.data.resolveable, resolveablemsg: this.data.resolveable_msg, data: this.data }
-    });
-    modal.onWillDismiss().then(disModal => {
-      console.log(disModal);
-      if (disModal.data == null ) {
+  // async openWorkDetailModal() {
+  //   const modal = await this.modalCtrl.create({
+  //     component: WorkdetailsComponent,
+  //     cssClass: 'my-modal',
+  //     componentProps: { ticketId: this.data.ticket_id, phone: this.data.customer_mobile,
+  //       resolveable: this.data.resolveable, resolveablemsg: this.data.resolveable_msg, data: this.data }
+  //   });
+  //   modal.onWillDismiss().then(disModal => {
+  //     console.log(disModal);
+  //     if (disModal.data == null ) {
 
-      } else {
-        this.greetEvent.emit(this.data);
-      }
-    });
-    modal.present();
-  }
+  //     } else {
+  //       this.greetEvent.emit(this.data);
+  //     }
+  //   });
+  //   modal.present();
+  // }
 
   fsr(efsr: any) {
     this.presentLoading().then(preLoad => {

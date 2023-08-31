@@ -14,14 +14,19 @@ import { ResponseModalComponent } from './response-modal/response-modal.componen
 import { SiteDetailComponent } from './site-detail/site-detail.component';
 import { TicketHistoryComponent } from './ticket-history/ticket-history.component';
 import { TicketTypeComponent } from './ticket-type/ticket-type.component';
-
+import { TicketWorkComponent } from './ticket-work/ticket-work.component';
+import { NgOtpInputModule } from  'ng-otp-input';
+import { AssignTicketComponent } from './assign-ticket/assign-ticket.component';
+import { SharedModule } from 'src/app/shared/shared.module';
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
     ReactiveFormsModule,
-    ComplaintPageRoutingModule
+    ComplaintPageRoutingModule,
+    NgOtpInputModule,
+    SharedModule
   ],
   declarations: [
     ComplaintPage,
@@ -31,6 +36,8 @@ import { TicketTypeComponent } from './ticket-type/ticket-type.component';
     ResponseModalComponent,
     SiteDetailComponent,
     TicketHistoryComponent,
-    TicketTypeComponent]
+    TicketTypeComponent,
+    TicketWorkComponent,
+    AssignTicketComponent]
 })
 export class ComplaintPageModule {}

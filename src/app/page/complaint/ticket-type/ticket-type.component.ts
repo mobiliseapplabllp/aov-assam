@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { LoadingController, ModalController } from '@ionic/angular';
+import { LoadingController, ModalController, NavParams } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { ComplaintService } from 'src/app/provider/complaint/complaint.service';
 import { environment } from 'src/environments/environment';
@@ -27,8 +27,14 @@ export class TicketTypeComponent  implements OnInit {
     private httpComplaint: ComplaintService,
     private httpCommon: CommonService,
     private modalCtrl: ModalController,
-    private loadingController: LoadingController
-  ) { }
+    private loadingController: LoadingController,
+    public navParam: NavParams,
+  ) {
+    this.ticket = this.navParam.get('requestedData');
+    this.allData = this.navParam.get('allData');
+    console.log(this.allData);
+    console.log(this.ticket);
+  }
 
   ngOnInit() {
     this.initForm();
@@ -50,6 +56,7 @@ export class TicketTypeComponent  implements OnInit {
     setTimeout(() => {
       this.ticketForm.get('ticketId')?.setValue(this.ticket);
     });
+    console.log(this.ticket);
     this.getIssueType();
   }
 

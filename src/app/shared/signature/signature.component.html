@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Signature</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModal(null, false)">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div style="border:1px solid black;margin:10px" >
+    <signature-pad [options]="signaturePadOptions" (onBeginEvent)="drawStart()" (onEndEvent)="drawComplete()"></signature-pad>
+  </div>
+  <ion-row>
+    <ion-col>
+      <ion-text color="danger">Please Write Signature</ion-text>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col class="ion-text-center" (click)="submit()">
+      <ion-button>Submit</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-content>

@@ -18,7 +18,7 @@
         <ion-select-option *ngFor="let dat of issueType" [value]="dat.issue_id">{{dat.issue_desc}}</ion-select-option>
       </ion-select>
     </ion-item>
-    <div *ngIf="ticketForm.value.issue_type === '1'">
+    <div *ngIf="ticketForm.value.issue_type === 1">
       <ion-item>
         <ion-label position="floating">Is Barcode</ion-label>
         <ion-select interface="action-sheet" formControlName="is_barcode">
@@ -45,7 +45,7 @@
         </ion-radio-group>
       </section>
     </div>
-    <div *ngIf="ticketForm.value.issue_type === '2'">
+    <div *ngIf="ticketForm.value.issue_type === 2">
       <ion-item>
         <ion-label position="floating">Query Category</ion-label>
         <ion-select interface="action-sheet" formControlName="category" (ionChange)="changeQuery($event)">

@@ -6,7 +6,7 @@ import { ComplaintService } from 'src/app/provider/complaint/complaint.service';
 import { environment } from 'src/environments/environment';
 import { ResponseModalComponent } from '../response-modal/response-modal.component';
 import { CostCenterComponent } from '../cost-center/cost-center.component';
-
+import { Camera, CameraResultType } from '@capacitor/camera';
 @Component({
   selector: 'app-create-ticket',
   templateUrl: './create-ticket.component.html',
@@ -275,6 +275,31 @@ export class CreateTicketComponent  implements OnInit {
     return await modal.present();
   }
 
+  async openCamera() {
+    const takePicture = async () => {
+      const image = await Camera.getPhoto({
+        quality: 40,
+        allowEditing: false,
+        width:700,
+        height:700,
+        resultType: CameraResultType.Uri,
+      });
+      this.readImg(image)
+    };
+    takePicture();
+  }
+
+  async readImg(photo: any) {
+    let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg'
+    const response = await fetch(photo.webPath);
+    const blob = await response.blob();
+    this.formData.delete('img[]');
+    this.formData.append('img[]', blob, random);
+    this.fileName = random
+    this.presentLoading().then(preLoad => {
+      this.dismissloading();
+    })
+  }
   async presentActionSheet() {
     // const actionSheet = await this.actionSheetController.create({
     //   header: 'Choose Option  ',

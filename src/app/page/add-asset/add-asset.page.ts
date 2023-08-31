@@ -8,6 +8,7 @@ import { AssetPlantComponent } from './asset-plant/asset-plant.component';
 import { AssetDepartmentComponent } from './asset-department/asset-department.component';
 import { AssetDevicenameComponent } from './asset-devicename/asset-devicename.component';
 import { AssetManufacturerComponent } from './asset-manufacturer/asset-manufacturer.component';
+import { Camera, CameraResultType } from '@capacitor/camera';
 
 @Component({
   selector: 'app-add-asset',
@@ -231,8 +232,83 @@ export class AddAssetPage implements OnInit {
     // });
   }
 
-  presentActionSheet(val: any) {
+  // presentActionSheet(val: any) {
 
+  // }
+
+  async presentActionSheet(val: any) {
+    const takePicture = async () => {
+      const image = await Camera.getPhoto({
+        quality: 40,
+        allowEditing: false,
+        width:700,
+        height:700,
+        resultType: CameraResultType.Uri,
+      });
+      this.readImg(image, val)
+    };
+    takePicture();
+  }
+
+  async readImg(photo: any, imageno: any) {
+    let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg'
+    const response = await fetch(photo.webPath);
+    const blob = await response.blob();
+    // this.formData.delete('img[]');
+    // this.formData.append('img[]', blob, random);
+
+    if (imageno === 1) {
+      this.img1 = random;
+      this.formData.delete('asset_img');
+      this.formData.append('asset_img', blob, random);
+      this.presentLoading().then(preLoad => {
+        this.dismissloading();
+        return;
+      });
+      return;
+    }
+    if (imageno === 2) {
+      this.img2 = random;
+      this.formData.delete('asset_img2');
+      this.formData.append('asset_img2', blob, random );
+      this.presentLoading().then(preLoad => {
+        this.dismissloading();
+        return;
+      });
+      return;
+    }
+    if (imageno === 3) {
+      this.img3 = random;
+      this.formData.delete('asset_img3');
+      this.formData.append('asset_img3', blob, random);
+      this.presentLoading().then(preLoad => {
+        this.dismissloading();
+        return;
+      });
+      return;
+    }
+    if (imageno === 4) {
+      this.img4 = random;
+      this.formData.delete('pur_invoice');
+      this.formData.append('pur_invoice', blob, random);
+      this.presentLoading().then(preLoad => {
+        this.dismissloading();
+        return;
+      });
+      return;
+    }
+    let barcode, formData
+    barcode = this.addAsset.value.unique_no;
+    formData = new FormData();
+    formData.append('photo', blob, random);
+    formData.append('barcodeno', barcode);
+
+
+    this.presentLoading().then(preLoad => {
+      setTimeout(() => {
+        this.dismissloading();
+      }, 500)
+    });
   }
 
 

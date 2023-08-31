@@ -28,7 +28,7 @@
       <ion-item>
         <ion-label position="floating">Select issue type <ion-text color="danger">*</ion-text> </ion-label>
         <ion-select interface="action-sheet" formControlName="issue_id" (ionChange)="changeIssue()">
-          <ion-select-option *ngFor="let dat of allIssueType" [value]="dat.issue_id">{{dat.issue_id}} {{dat.issue_desc}}</ion-select-option>
+          <ion-select-option *ngFor="let dat of allIssueType" [value]="dat.issue_id"> {{dat.issue_desc}}</ion-select-option>
         </ion-select>
       </ion-item>
       <div *ngIf="createForm.value.issue_id === 1">
@@ -105,7 +105,9 @@
         <ion-label position="floating">Remark</ion-label>
         <ion-textarea rows="4" formControlName="remark"></ion-textarea>
       </ion-item>
-      <ion-button size="small" color="danger" fill="outline" (click)="presentActionSheet()">Attachment <ion-icon name="attach-outline" slot="end"></ion-icon></ion-button>
+      <ion-button size="small" color="danger" fill="outline" (click)="openCamera()" [color]="fileName ? 'success': 'danger' ">Attachment
+        <ion-icon [name]="fileName ?  'checkmark-done-outline': 'attach-outline'" slot="end"></ion-icon>
+      </ion-button>
       <br>
       <ion-button expand="block" [disabled]="createForm.invalid" (click)="submit()">Submit <ion-icon name="save-outline" slot="end"></ion-icon></ion-button>
 

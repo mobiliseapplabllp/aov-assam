@@ -9,6 +9,8 @@ import { ResponseModalComponent } from './response-modal/response-modal.componen
 import { SiteDetailComponent } from './site-detail/site-detail.component';
 import { TicketHistoryComponent } from './ticket-history/ticket-history.component';
 import { TicketTypeComponent } from './ticket-type/ticket-type.component';
+import { TicketWorkComponent } from './ticket-work/ticket-work.component';
+import { AssignTicketComponent } from './assign-ticket/assign-ticket.component';
 
 const routes: Routes = [
   {
@@ -42,6 +44,14 @@ const routes: Routes = [
   {
     path: 'ticket-type',
     component: TicketTypeComponent
+  },
+  {
+    path: 'ticket-work',
+    component: TicketWorkComponent
+  },
+  {
+    path: 'assign-ticket',
+    component: AssignTicketComponent
   }
 ];
 
