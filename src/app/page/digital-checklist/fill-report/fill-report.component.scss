@@ -1,0 +1,15 @@
+.critical {
+  border-right:4px solid var(--ion-color-danger);
+}
+
+.noncritical {
+  border-right:4px solid var(--ion-color-success);
+}
+
+.fullborder {
+  border:3px solid var(--ion-color-danger);
+}
+
+.redBorder {
+  border:2px solid var(--ion-color-danger);
+}

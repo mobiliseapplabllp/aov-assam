@@ -23,6 +23,10 @@ const routes: Routes = [
     path: 'complaint',
     loadChildren: () => import('./page/complaint/complaint.module').then( m => m.ComplaintPageModule)
   },
+  {
+    path: 'digital-checklist',
+    loadChildren: () => import('./page/digital-checklist/digital-checklist.module').then( m => m.DigitalChecklistPageModule)
+  },
 ];
 
 @NgModule({

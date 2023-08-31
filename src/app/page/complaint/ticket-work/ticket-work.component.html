@@ -52,10 +52,6 @@
               <ion-button size="small" color="danger" fill="outline" (click)="presentActionSheet()" [color]="fileName ? 'success': 'danger' ">Attachment
                 <ion-icon [name]="fileName ?  'checkmark-done-outline': 'attach-outline'" slot="end"></ion-icon>
               </ion-button>
-              <!-- <ion-button size="small" shape="round" fill="outline" color="danger"  class="ion-padding-start" (click)="presentActionSheet()">
-                Attachment
-                <ion-icon name="attach-outline" slot="end"> </ion-icon>
-              </ion-button> {{fileName}} -->
               <ion-row>
                 <ion-col >
                   <ion-button expand="block" shape="round" (click)="submitTicket()">Submit <ion-icon name="save-outline" slot="end"></ion-icon> </ion-button>

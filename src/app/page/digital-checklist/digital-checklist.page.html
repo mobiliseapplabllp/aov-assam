@@ -1,0 +1,69 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Digital Checklist</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" id="digital-checklist-date">
+        <ion-icon name="calendar-outline" slot="end"></ion-icon>
+      </ion-button>
+      <ion-popover trigger="digital-checklist-date" >
+        <ng-template>
+          <ion-datetime #popoverDatetime max="2099" presentation="date" size="cover" (ionChange)="changeDateComponent($event)"></ion-datetime>
+        </ng-template>
+      </ion-popover>
+    </ion-buttons>
+    <!-- <ion-item id="asset-pur-date">
+      <ion-label color="primary" position="floating">Purchase Date</ion-label>
+      <ion-input type="text" [value]="addAsset.value.pur_date | date"   placeholder="Select Date"  readonly></ion-input>
+    </ion-item>
+    <ion-popover trigger="asset-pur-date" >
+      <ng-template>
+        <ion-datetime #popoverDatetime max="2099" presentation="date" size="cover" formControlName="pur_date" (ionChange)="changeDate()"></ion-datetime>
+      </ng-template>
+    </ion-popover> -->
+    <!-- <ion-button (click)="picker.open()" fill="clear" slot="end" color="light" class="ion-text-capitalize" [hidden]="scanBarcode">
+      <ion-icon name="calendar-outline" slot="end"></ion-icon>
+      <ion-datetime #picker max="2099" (ionChange)="changeDateComponent($event)"></ion-datetime>
+    </ion-button> -->
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" >
+    <ion-fab-button fill="clear" color="primary" (click)="openBarcode()">
+      <ion-icon name="qr-code-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <ion-row [hidden]="scanBarcode">
+    <ion-col size="4" class="ion-text-left">
+      <ion-button fill="clear" (click)="changeDate('prev')">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </ion-button>
+    </ion-col>
+    <ion-col size="4" class="ion-text-center center">
+      <b>{{selectedDate | date: 'dd-MMM-yyyy'}}</b>
+    </ion-col>
+    <ion-col size="4" class="ion-text-right" >
+      <ion-button fill="clear" (click)="changeDate('next')">
+        <ion-icon name="chevron-forward-outline"></ion-icon>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+
+  <ion-item *ngFor="let dat of allChecklist" lines="full" color="none" (click)="openFillReport(dat.schedule_id)" [ngStyle]="{'border-left': '3px solid' + dat.backgroundColor }">
+    <ion-label class="ion-text-wrap">
+      <h2><b>{{dat.schedule_unique_id}}</b></h2>
+      <p>{{dat.chk_cat_name}}</p>
+      <p>{{dat.location_desc}}</p>
+    </ion-label>
+    <ion-label slot="end" class="ion-text-right">
+      {{dat.schedule_date | date: 'dd-MMM-yyyy'}}<br>
+      {{dat.schedule_time}}<br>
+      <b>{{dat.schedule_status}}</b>
+    </ion-label>
+  </ion-item>
+
+</ion-content>
