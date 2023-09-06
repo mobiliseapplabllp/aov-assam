@@ -47,13 +47,18 @@ export class LoginPage implements OnInit {
       this.isAndroid = true;
     }
     this.menu.enable(false);
-    const isLogin = localStorage.getItem('loginvalue');
-    console.log(isLogin);
-    if (isLogin) {
-      console.log(JSON.parse(isLogin));
-      this.login.userid = this.isLogin.userid;
-      this.login.password = this.isLogin.password;
+    if (localStorage.getItem('loginvalue')) {
+
+      const isLogin = localStorage.getItem('loginvalue');
+      console.log(isLogin);
+      if (isLogin) {
+        console.log(JSON.parse(isLogin));
+        const decrypt = JSON.parse(isLogin);
+        this.login.userid = decrypt.userid;
+        this.login.password = decrypt.password;
+      }
     }
+
 
     // this.storage.get('loginvalue').then(res => {
     //   this.isLogin = res;

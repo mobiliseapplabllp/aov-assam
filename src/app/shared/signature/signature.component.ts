@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { SignaturePad } from 'angular2-signaturepad/signature-pad';
+import { SignaturePad } from 'angular2-signaturepad';
 
 @Component({
   selector: 'app-signature',
@@ -8,7 +8,7 @@ import { SignaturePad } from 'angular2-signaturepad/signature-pad';
   styleUrls: ['./signature.component.scss'],
 })
 export class SignatureComponent  implements OnInit {
-  @ViewChild(SignaturePad, {static: true}) signaturePad: SignaturePad | undefined;
+  @ViewChild(SignaturePad, { static: true }) signaturePad!: SignaturePad;
   // tslint:disable-next-line: ban-types
   public signaturePadOptions: Object = {
     minWidth: 2,
@@ -30,10 +30,10 @@ export class SignatureComponent  implements OnInit {
   drawComplete() {}
 
   submit() {
-    this.closeModal(this.signaturePad?.toDataURL(), true);
-    // if (this.signaturePad?.toDataURL()) {
+    console.log('a');
+    console.log(this.signaturePad?.toDataURL());
 
-    // }
+    this.closeModal(this.signaturePad?.toDataURL(), true);
   }
 
 }

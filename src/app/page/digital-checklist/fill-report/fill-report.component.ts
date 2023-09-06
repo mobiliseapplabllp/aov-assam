@@ -5,8 +5,7 @@ import { CommonService } from 'src/app/provider/common/common.service';
 import { DigitalChecklistService } from 'src/app/provider/digital-checklist/digital-checklist.service';
 import { SignatureComponent } from 'src/app/shared/signature/signature.component';
 import { environment } from 'src/environments/environment';
-
-
+import { Camera, CameraResultType } from '@capacitor/camera';
 @Component({
   selector: 'app-fill-report',
   templateUrl: './fill-report.component.html',
@@ -218,6 +217,52 @@ export class FillReportComponent  implements OnInit {
     }
   }
 
+  async presentActionSheet(val: any) {
+    const takePicture = async () => {
+      const image = await Camera.getPhoto({
+        quality: 40,
+        allowEditing: false,
+        width:700,
+        height:700,
+        resultType: CameraResultType.Uri,
+      });
+      this.readImg(image, val)
+    };
+    takePicture();
+  }
+
+  async readImg(photo: any, val: any) {
+    let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg'
+    const response = await fetch(photo.webPath);
+    const blob = await response.blob();
+    let formData = new FormData();
+    formData.append('wo_id', this.schedule_id);
+    formData.append('q_id',  val.q_id);
+    formData.append('rspns_source', environment.source);
+    formData.append('attachment2', blob, random);
+    formData.append('on_behalf', this.on_behalf);
+    val.imagename = '';
+    this.presentLoading().then(preLoad => {
+      this.httpDigital.scheduleDocAction(formData).subscribe({
+        next:(data) => {
+          if (data.status) {
+            val.imagename = 'Uploaded';
+            this.common.presentToast(data.msg, 'success');
+          } else {
+            this.common.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.common.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
+        }
+      });
+    });
+  }
+
   // async presentActionSheet(val) {
   //   const actionSheet = await this.actionSheetController.create({
   //     header: 'Choose option',
@@ -340,22 +385,27 @@ export class FillReportComponent  implements OnInit {
       }
     }
     this.presentLoading().then(preLoad => {
-      this.httpDigital.finalSubmitCheckList(obj).subscribe(data => {
-        this.dismissloading();
-        if (data.status) {
-          this.common.presentToast(data.msg, 'success');
-          this.navCtrl.pop();
-        } else {
-          this.common.presentToastWithOk(data.msg, 'warning');
-          if (data.cat_head && data.cat_ques) {
-            // this.scrollCategory(data);
+      this.httpDigital.finalSubmitCheckList(obj).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.common.presentToast(data.msg, 'success');
+            this.navCtrl.pop();
           } else {
-            console.log('cat not found');
+            this.common.presentToastWithOk(data.msg, 'warning');
+            if (data.cat_head && data.cat_ques) {
+
+            } else {
+              console.log('cat not found');
+            }
           }
+        },
+        error:() => {
+          this.dismissloading();
+          this.common.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        alert(JSON.stringify(err));
       });
     });
   }
@@ -378,25 +428,10 @@ export class FillReportComponent  implements OnInit {
       componentProps: {  }
     });
     modal.onWillDismiss().then(async disModal => {
+      console.log(disModal);
       if (disModal.role) {
         let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg';
         this.signatureBase64 = disModal.data;
-        // if (data === 'engineer') {
-        //   this.engSigImg = 'Uploaded';
-        //   console.log(disModal.data);
-        //   this.engineerBase64 = disModal.data;
-        //   const base64Response = await fetch(disModal.data);
-        //   const blob = await base64Response.blob();
-        //   this.formData.delete('customer_signature');
-        //   this.formData.append('customer_signature', blob, random);
-        // } else if (data === 'customer') {
-        //   this.cusSigImg = 'Uploaded';
-        //   this.customerBase64 = disModal.data;
-        //   const base64Response = await fetch(disModal.data);
-        //   const blob1 = await base64Response.blob();
-        //   this.formData.delete('engineer_signature');
-        //   this.formData.append('engineer_signature', blob1, random);
-        // }
       }
     });
     modal.present();
