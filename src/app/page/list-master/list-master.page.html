@@ -227,7 +227,6 @@
       <ion-col *ngFor="let dat of myMenu" size="4" size-sm="4" size-md="3" size-xl="2" (click)="openPage(dat)">
         <ion-card  style="margin: 0;background-color:white;border:1px solid black" mode="ios">
           <ion-img [src]="dat.icon_path" ></ion-img>
-          <!-- <ion-chip color="dark">{{dat.smnu_desc}}</ion-chip> -->
           <ion-row>
             <ion-col class="ion-text-center">
               <span style="color:white; background-color:black;border-radius:6px;padding:2px"><b>{{dat.smnu_desc}}</b></span>

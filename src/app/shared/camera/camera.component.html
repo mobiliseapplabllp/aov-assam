@@ -1,0 +1,22 @@
+<ion-content id="content">
+
+</ion-content>
+<ion-footer style="position:absolute;z-index:999999999;bottom:0px">
+  <ion-row>
+    <ion-col>
+      <ion-button (click)="stopCamera('', false)" expand="block" id="close">
+        <ion-icon slot="icon-only" name="close-circle"></ion-icon>
+      </ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button (click)="takePicture()" expand="block" id="capture">
+        <ion-icon slot="icon-only" name="camera"></ion-icon>
+      </ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button (click)="flipCamera()" expand="block" id="flip">
+        <ion-icon slot="icon-only" name="repeat"></ion-icon>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

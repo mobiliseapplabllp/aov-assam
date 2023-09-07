@@ -4,12 +4,14 @@ import { SignatureComponent } from './signature/signature.component';
 import { SignaturePadModule } from 'angular2-signaturepad';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CameraComponent } from './camera/camera.component';
 
 
 
 @NgModule({
   declarations: [
-    SignatureComponent
+    SignatureComponent,
+    CameraComponent
   ],
   imports: [
     CommonModule,
@@ -19,7 +21,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     ReactiveFormsModule
   ],
   entryComponents: [
-    SignatureComponent
+    SignatureComponent,
+    CameraComponent
   ]
 })
 export class SharedModule { }

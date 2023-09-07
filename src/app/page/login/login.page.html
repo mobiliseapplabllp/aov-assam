@@ -38,7 +38,7 @@
     <div class="mobilise_logo">
       <img src="assets/mobilise_loader.gif" [ngClass]="{'loader-img': !isHidden}">
     </div>
-    <div class="company_title">
+    <div class="company_title" (click)="openCamera()">
       Powered by Mobilise
     </div>
   </div>

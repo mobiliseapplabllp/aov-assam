@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoadingController, ToastController } from '@ionic/angular';
+import { LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { ListMasterService } from 'src/app/provider/list-master/list-master.service';
 import { LoginService } from 'src/app/provider/login/login.service';
+// import { CameraComponent } from 'src/app/shared/camera/camera.component';
 
 @Component({
   selector: 'app-list-master',
@@ -40,7 +41,8 @@ export class ListMasterPage implements OnInit {
     private loginPro: LoginService,
     private loadingController: LoadingController,
     private common: CommonService,
-    public router: Router) {
+    public router: Router,
+    private modalCtrl: ModalController) {
     const user = localStorage.getItem('user');
     if (user) {
       this.userData = JSON.parse(user);
@@ -58,12 +60,26 @@ export class ListMasterPage implements OnInit {
         this.breakdown = data.data.breakdown;
         this.pr = data.data.pms;
         this.indent = data.data.indent
-
       }
     });
   }
 
-
+  // async openCamera() {
+  //   console.log('my site');
+  //   const modal = await this.modalCtrl.create({
+  //     component: CameraComponent,
+  //     componentProps: {  }
+  //   });
+  //   modal.onWillDismiss().then((disModal: any) => {
+  //     console.log(disModal);
+  //     if (disModal.role) {
+  //       const binaryString = atob(disModal.data.split(',')[1]);
+  //       const blob = new Blob([binaryString], { type: 'image/png' });
+  //       console.log(blob);
+  //     }
+  //   });
+  //   modal.present();
+  // }
 
   ionViewDidEnter() { }
 

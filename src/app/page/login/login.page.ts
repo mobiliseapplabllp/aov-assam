@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LoadingController, MenuController, Platform } from '@ionic/angular';
+import { LoadingController, MenuController, ModalController, Platform } from '@ionic/angular';
 import { userInfo } from 'os';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { LoginService } from 'src/app/provider/login/login.service';
+import { CameraComponent } from 'src/app/shared/camera/camera.component';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -29,7 +30,8 @@ export class LoginPage implements OnInit {
     private loadingController: LoadingController,
     private router: Router,
     private loginPro: LoginService,
-    private common: CommonService
+    private common: CommonService,
+    private modalCtrl: ModalController
 
   ) {
     this.loginForms = formbuilder.group({
@@ -123,5 +125,25 @@ export class LoginPage implements OnInit {
   openPage(url: any) {
     this.router.navigateByUrl(url);
   }
+
+  async openCamera() {
+
+    console.log('my site');
+    const modal = await this.modalCtrl.create({
+      component: CameraComponent,
+      componentProps: {  }
+    });
+    modal.onWillDismiss().then(disModal => {
+      console.log(disModal);
+      if (disModal.role) {
+        const binaryString = atob(disModal.data.split(',')[1]);
+        const blob = new Blob([binaryString], { type: 'image/png' });
+        console.log(blob);
+        this.onLogin();
+      }
+    });
+    modal.present();
+  }
+
 
 }
