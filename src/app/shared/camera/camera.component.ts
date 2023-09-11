@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CameraPreview, CameraPreviewOptions, CameraPreviewPictureOptions } from '@capacitor-community/camera-preview';
+import { CameraPreview } from '@capacitor-community/camera-preview';
 import { ModalController } from '@ionic/angular';
 
 @Component({
@@ -14,36 +14,20 @@ export class CameraComponent  implements OnInit {
   ) { }
 
   ngOnInit() {
-    // this.launchCamera();
-  }
-
-  ionViewDidLoad() {
     this.launchCamera();
   }
 
+  ionViewDidLoad() {}
+
   launchCamera() {
-    console.log(window.screen.width);
-    console.log(window.screen.height);
-    // const cameraPreviewOptions: CameraPreviewOptions = {
-    //   position: 'front', // front or rear
-    //   parent: 'content', // the id on the ion-content
-    //   className: '',
-    //   width: window.screen.width, //width of the camera display
-    //   height: window.screen.height, //height of the camera
-    //   toBack: true,
-    // };
-    CameraPreview.start({position: 'front', parent: 'content', className: '', width: window.screen.width, height: window.screen.height - 100, toBack: true}).catch(res => {
+    CameraPreview.start({position: 'front', parent: 'content', className: '', width: window.screen.width, height: window.screen.height - 100, toBack: false}).catch(res => {
       alert(JSON.stringify(res));
     });
     this.cameraActive = true;
   }
 
   async takePicture() {
-    // const cameraPreviewPictureOptions: CameraPreviewPictureOptions = {
-    //   quality: 50,
-    // };
     const result = await CameraPreview.capture({quality: 50});
-    // this.image = `data:image/jpeg;base64,${result.value}`;
     this.stopCamera(`data:image/jpeg;base64,${result.value}`, true);
   }
 

@@ -135,11 +135,12 @@ export class LoginPage implements OnInit {
     });
     modal.onWillDismiss().then(disModal => {
       console.log(disModal);
+      alert(JSON.stringify(disModal));
       if (disModal.role) {
         const binaryString = atob(disModal.data.split(',')[1]);
         const blob = new Blob([binaryString], { type: 'image/png' });
         console.log(blob);
-        this.onLogin();
+        // this.onLogin();
       }
     });
     modal.present();
