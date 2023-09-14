@@ -27,6 +27,10 @@ const routes: Routes = [
     path: 'digital-checklist',
     loadChildren: () => import('./page/digital-checklist/digital-checklist.module').then( m => m.DigitalChecklistPageModule)
   },
+  {
+    path: 'app/attendance',
+    loadChildren:() => import('./page/attendnce/attendnce.module').then(m => m.AttendncePageModule)
+  }
 ];
 
 @NgModule({

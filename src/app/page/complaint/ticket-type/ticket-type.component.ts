@@ -22,6 +22,8 @@ export class TicketTypeComponent  implements OnInit {
   subCategory2: any = [];
   allData: any;
   ticketPriority: any = [];
+  selectPriorityObj: any = {};
+  requestType: any = [];
   constructor(
     public formbuilder: FormBuilder,
     private httpComplaint: ComplaintService,
@@ -41,9 +43,29 @@ export class TicketTypeComponent  implements OnInit {
     this.getPriority();
   }
 
+  getRequestType(id: any) {
+    this.httpComplaint.getRequestType(id).subscribe(data => {
+      console.log(data);
+      this.dismissloading();
+      if (data.status) {
+        this.requestType = data.data;
+        setTimeout(() => {
+          this.ticketForm.get('req_type_id')?.setValue(this.allData.req_type_id);
+        }, 100);
+      } else {
+        this.httpCommon.presentToast(data.msg, 'danger');
+      }
+    }, err => {
+      this.dismissloading();
+      this.httpCommon.presentToast(environment.errMsg, 'danger');
+    });
+
+  }
+
   initForm() {
     this.ticketForm = this.formbuilder.group({
       issue_type: ['', Validators.required],
+      req_type_id: [''],
       is_barcode: [''],
       barcode: [''],
       category: [''],
@@ -56,7 +78,6 @@ export class TicketTypeComponent  implements OnInit {
     setTimeout(() => {
       this.ticketForm.get('ticketId')?.setValue(this.ticket);
     });
-    console.log(this.ticket);
     this.getIssueType();
   }
 
@@ -87,7 +108,10 @@ export class TicketTypeComponent  implements OnInit {
               this.ticketForm.get('issue_type')?.setValue(1);
               if (!this.allData.ext_asset_id) {
                 this.ticketForm.get('is_barcode')?.setValue('0');
-
+              } else {
+                this.ticketForm.get('is_barcode')?.setValue('1');
+                this.ticketForm.get('barcode')?.setValue(this.allData.ext_asset_id);
+                this.searchClientId();
               }
             }, 100)
           }
@@ -164,7 +188,17 @@ export class TicketTypeComponent  implements OnInit {
         if (data.status === false) {
           this.httpCommon.presentToast(data.msg, 'warning');
         } else {
-          this.barcodeList = data.data
+          this.barcodeList = data.data;
+          if (this.allData.ext_asset_id) {
+            let obj, asset_id;
+            obj = this.barcodeList.filter((val: any) => val.ext_asset_id === this.allData.ext_asset_id);
+            console.log(obj);
+            if (obj.length > 0) {
+              asset_id = obj[0].asset_id;
+              console.log(asset_id);
+              this.ticketForm.get('barcode_id')?.setValue(asset_id);
+            }
+          }
         }
       }, err => {
         this.dismissloading();
@@ -210,6 +244,12 @@ export class TicketTypeComponent  implements OnInit {
     })
   }
 
+  changePriority(ev: any) {
+    console.log(ev.target.value);
+    this.selectPriorityObj = this.ticketPriority.filter((val: any) => val.id == ev.target.value)[0];
+    console.log(this.selectPriorityObj);
+  }
+
   verify() {
     // if (!this.barcode) {
     //   this.presentToast('Enter Barcode No');
@@ -234,57 +274,6 @@ export class TicketTypeComponent  implements OnInit {
     // }
   }
 
-  // submit() {
-  //   if (this.ticketType === 'asset') {
-  //     if (!this.barcode) {
-  //         alert('Enter Barcode no');
-  //     } else {
-  //       if (this.barcode === 123) {
-  //         this.modalCtrl.dismiss(null);
-  //         this.router.navigate(['add-asset'], {
-  //           queryParams: {
-  //             data: JSON.stringify(this.paramsData),
-  //           }
-  //         });
-  //       } else {
-  //         Swal.fire('Verified', 'Alread Added ', 'success').then(res => {
-  //           this.modalCtrl.dismiss(true);
-  //         });
-  //       }
-  //     }
-  //   } else if (this.ticketType === 'service') {
-  //     this.modalCtrl.dismiss(true);
-  //   } else {
-  //     alert('Please Select Ticket Type');
-  //   }
-  // }
-
-  // add_asset() {
-  //   this.modalCtrl.dismiss(null);
-  //   this.router.navigate(['add-asset'], {
-  //     queryParams: {
-  //       data: JSON.stringify(this.paramsData),
-  //     }
-  //   });
-  // }
-
-  // async presentToast(msg) {
-  //   const toast = await this.toastController.create({
-  //     message: msg,
-  //     duration: 3000
-  //   });
-  //   toast.present();
-  // }
-
-  // openScanner() {
-  //   this.barcodeScanner.scan().then(barcodeData => {
-  //     console.log('Barcode data', barcodeData);
-  //     this.barcode = barcodeData.text;
-  //   }).catch(err => {
-  //     console.log('Error', err);
-  //   });
-  // }
-
   async presentLoading() {
     this.loading = await this.loadingController.create({
       cssClass: 'my-custom-class',
@@ -294,7 +283,9 @@ export class TicketTypeComponent  implements OnInit {
   }
 
   async dismissloading() {
-    this.loading.dismiss();
+    if (this.loading) {
+      this.loading.dismiss();
+    }
   }
 
 }

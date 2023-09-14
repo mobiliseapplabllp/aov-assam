@@ -4,7 +4,7 @@ import { LoadingController, ModalController } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { ComplaintService } from 'src/app/provider/complaint/complaint.service';
 import { environment } from 'src/environments/environment';
-import { CostCenterComponent } from './cost-center/cost-center.component';
+import { CostCenterComponent } from '../../shared/cost-center/cost-center.component';
 
 @Component({
   selector: 'app-complaint',

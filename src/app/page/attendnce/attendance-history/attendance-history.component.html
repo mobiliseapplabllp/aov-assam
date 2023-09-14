@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button deafultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Attendance History</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="contents">
+  <ion-card>
+    <ion-item (click)="openRoName()">
+      <ion-label position="floating">Select Site <ion-text color="danger">*</ion-text></ion-label>
+      <ion-input type="text" [(ngModel)]="costCenter" readonly></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Select Month</ion-label>
+      <ion-select interface="action-sheet" [(ngModel)]="currentMonth" (ionChange)="getAttendance()" mode="ios">
+        <ion-select-option value="01">January</ion-select-option>
+        <ion-select-option value="02">February</ion-select-option>
+        <ion-select-option value="03">March</ion-select-option>
+        <ion-select-option value="04">April</ion-select-option>
+        <ion-select-option value="05">May</ion-select-option>
+        <ion-select-option value="06">June</ion-select-option>
+        <ion-select-option value="07">July</ion-select-option>
+        <ion-select-option value="08">August</ion-select-option>
+        <ion-select-option value="09">September</ion-select-option>
+        <ion-select-option value="10">October</ion-select-option>
+        <ion-select-option value="11">November</ion-select-option>
+        <ion-select-option value="12">December</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <br>
+  </ion-card>
+  <ion-grid *ngIf="myAttendance.length > 0">
+    <ion-row>
+      <ion-col>
+        <ion-text color="primary">{{costCenter}}</ion-text>
+      </ion-col>
+    </ion-row>
+    <ion-row style="background-color:var(--ion-color-primary);color:white">
+      <ion-col> Date </ion-col>
+      <ion-col> In Time </ion-col>
+      <ion-col> Out Time </ion-col>
+    </ion-row>
+    <ion-row  *ngFor="let data of myAttendance;let i = index; let odd=odd;let even=even" [ngClass]="{ odd: odd, even: even}"  >
+      <ion-col> {{data.punch_in_date}} </ion-col>
+      <ion-col> {{data.punch_in_time}} </ion-col>
+      <ion-col> {{data.punch_out_date}} </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

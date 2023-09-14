@@ -14,14 +14,20 @@
     <div style="margin-top:16px;margin-left:16px"><b>Ticket Creation Remark :</b> {{allData.remark}}</div>
     <ion-item>
       <ion-label position="floating">Complaint Type</ion-label>
-      <ion-select interface="action-sheet" formControlName="issue_type" (ionChange)="changeType()">
+      <ion-select interface="action-sheet" formControlName="issue_type" (ionChange)="changeType()" mode="ios">
         <ion-select-option *ngFor="let dat of issueType" [value]="dat.issue_id">{{dat.issue_desc}}</ion-select-option>
       </ion-select>
     </ion-item>
-    <div *ngIf="ticketForm.value.issue_type === 1">
+    <ion-item>
+      <ion-label position="floating">Request Type</ion-label>
+      <ion-select interface="action-sheet" formControlName="req_type_id" mode="ios">
+        <ion-select-option *ngFor="let dat of requestType" [value]="dat.val">{{dat.label}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <div *ngIf="ticketForm.value.issue_type === '1'">
       <ion-item>
         <ion-label position="floating">Is Barcode</ion-label>
-        <ion-select interface="action-sheet" formControlName="is_barcode">
+        <ion-select interface="action-sheet" formControlName="is_barcode" mode="ios">
           <ion-select-option value="1">Yes</ion-select-option>
           <ion-select-option value="0">No</ion-select-option>
         </ion-select>
@@ -45,37 +51,46 @@
         </ion-radio-group>
       </section>
     </div>
-    <div *ngIf="ticketForm.value.issue_type === 2">
+    <div *ngIf="ticketForm.value.issue_type === '2'">
       <ion-item>
         <ion-label position="floating">Query Category</ion-label>
-        <ion-select interface="action-sheet" formControlName="category" (ionChange)="changeQuery($event)">
+        <ion-select interface="action-sheet" formControlName="category" (ionChange)="changeQuery($event)" mode="ios">
           <ion-select-option *ngFor="let dat of query" [value]="dat.value">{{dat.label}}</ion-select-option>
         </ion-select>
       </ion-item>
       <ion-item>
         <ion-label position="floating">Query Sub Category</ion-label>
-        <ion-select interface="action-sheet" formControlName="subcat1_id" (ionChange)="changeSubCat($event)">
+        <ion-select interface="action-sheet" formControlName="subcat1_id" (ionChange)="changeSubCat($event)" mode="ios">
           <ion-select-option *ngFor="let dat of subCategory" [value]="dat.value">{{dat.label}}</ion-select-option>
         </ion-select>
       </ion-item>
       <ion-item>
         <ion-label position="floating">Query Sub Category 2</ion-label>
-        <ion-select interface="action-sheet" formControlName="subcat2_id">
+        <ion-select interface="action-sheet" formControlName="subcat2_id" mode="ios">
           <ion-select-option *ngFor="let dat of subCategory2" [value]="dat.value">{{dat.label}}</ion-select-option>
         </ion-select>
       </ion-item>
     </div>
     <ion-item>
       <ion-label position="floating">Ticket Priority</ion-label>
-      <ion-select interface="action-sheet" formControlName="tkt_priority">
+      <ion-select interface="action-sheet" formControlName="tkt_priority" (ionChange)="changePriority($event)" mode="ios">
         <ion-select-option *ngFor="let dat of ticketPriority" [value]="dat.id">{{dat.name}}</ion-select-option>
       </ion-select>
     </ion-item>
-    <ion-row>
-      <ion-col class="ion-text-center">
-        <ion-button *ngIf="ticketForm.value.issue_type" (click)="saveData()">Submit <ion-icon name="save-outline" slot="end"></ion-icon> </ion-button>
+    <ion-row *ngIf="ticketForm.value.tkt_priority">
+      <ion-col>
+        <ion-text color="primary"><b>Attend Time</b></ion-text><br>
+        <ion-text>{{selectPriorityObj.attend_time}}</ion-text>
+      </ion-col>
+      <ion-col>
+        <ion-text color="primary"><b>Resolve Time</b></ion-text><br>
+        <ion-text>{{selectPriorityObj.resolve_time}}</ion-text>
       </ion-col>
     </ion-row>
-
+    <ion-row>
+      <ion-col class="ion-text-center">
+        <ion-button *ngIf="ticketForm.value.issue_type" [disabled]="ticketForm.invalid" (click)="saveData()">Submit <ion-icon name="save-outline" slot="end"></ion-icon> </ion-button>
+      </ion-col>
+    </ion-row>
   </form>
 </ion-content>

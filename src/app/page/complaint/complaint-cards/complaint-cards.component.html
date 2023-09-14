@@ -2,35 +2,38 @@
   <div style="background-color:var(--ion-color-primary)">
     <ion-row>
       <ion-col>
-        <ion-text color="light" class="head">Ticket Id: {{data.tkts_id}}</ion-text>
+        <ion-text color="light" class="head">Ticket Id: {{data.tkts_id}}({{data.req_type_desc}})</ion-text>
       </ion-col>
       <ion-col>
-        <ion-text color="light" class="head">{{data.stage_desc}}</ion-text>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col>
-        <ion-text color="light" class="head">{{data.assignedTo}}</ion-text>
-      </ion-col>
-      <ion-col>
-        <ion-text color="light" class="head">{{data.issue_desc}}</ion-text>
+        <ion-text color="light" class="head">{{data.log_date | date: 'dd/MMM/yyyy H:mm:ss'}}</ion-text>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-text color="light" class="head" *ngIf="data.rslv_date === '0000-00-00 00:00:00'  ">Not Resolved Yet</ion-text><br>
+        <ion-text class="head" [ngStyle]="{'color': data.attend_remark}">Attend: {{data.remain_attend}}</ion-text>
+      </ion-col>
+      <ion-col>
+        <ion-text class="head" [ngStyle]="{'color': data.resolve_remark}">Resolved: {{data.remain_resolve}}</ion-text>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-text color="light" class="head">{{data.stage_desc}} ({{data.issue_desc}})</ion-text>
+        <!-- <ion-text color="light" class="head" *ngIf="data.rslv_date == '0000-00-00 00:00:00'  ">Not Resolved Yet</ion-text><br>
         <ion-text color="light" class="head" *ngIf="data.rslv_date !== '0000-00-00 00:00:00'  ">Resolved Date {{data.rslv_date}}</ion-text><br>
-        <ion-text color="light" class="head">{{data.totalDelay}}</ion-text>
+        <ion-text color="light" class="head">{{data.totalDelay}}</ion-text> -->
       </ion-col>
       <ion-col>
-        <ion-text color="light" class="head">{{data.log_date | date: 'dd/MMM/yyyy'}}</ion-text>
+        <ion-text color="light" class="head" *ngIf="data.rslv_date === '0000-00-00 00:00:00'"> Ticket Ageing: {{data.totalDelay}}</ion-text>
+        <ion-text color="light" class="head" *ngIf="data.rslv_date !== '0000-00-00 00:00:00'">Resolved Date: {{data.rslv_date}}</ion-text>
+
       </ion-col>
     </ion-row>
   </div>
   <div>
     <ion-row>
       <ion-col>
-        <ion-text  class="medium">Plant</ion-text><br>
+        <ion-text  class="medium">Site</ion-text><br>
         <ion-text color="dark">{{data.pc_ext_id}} {{data.pc_desc}}</ion-text>
       </ion-col>
     </ion-row>
@@ -49,6 +52,10 @@
         <ion-col>
           <ion-text class="medium">Sub Category2</ion-text><br>
           <ion-text color="dark">{{data.subcat2_desc}}</ion-text>
+        </ion-col>
+        <ion-col>
+          <ion-text class="medium">Log By</ion-text><br>
+          <ion-text color="dark">{{data.logged_by_name}} </ion-text>
         </ion-col>
       </ion-row>
     </section>
@@ -78,13 +85,17 @@
           <ion-text class="medium">Purchase Value</ion-text><br>
           <ion-text color="dark">{{data.pur_value}} </ion-text>
         </ion-col>
+        <ion-col>
+          <ion-text class="medium">Log By</ion-text><br>
+          <ion-text color="dark">{{data.user}} </ion-text>
+        </ion-col>
       </ion-row>
     </section>
     <ion-row>
-      <ion-col>
+      <!-- <ion-col>
         <ion-text class="medium">Log By</ion-text><br>
         <ion-text color="dark">{{data.assignedTo}} </ion-text>
-      </ion-col>
+      </ion-col> -->
       <ion-col>
         <ion-text class="medium">Remark</ion-text><br>
         <ion-text color="dark">{{data.remark}} </ion-text>

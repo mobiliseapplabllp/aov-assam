@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { ComplaintPage } from './complaint.page';
-import { CostCenterComponent } from './cost-center/cost-center.component';
+import { CostCenterComponent } from '../../shared/cost-center/cost-center.component';
 import { ComplaintCardsComponent } from './complaint-cards/complaint-cards.component';
 import { CreateTicketComponent } from './create-ticket/create-ticket.component';
 import { ResponseModalComponent } from './response-modal/response-modal.component';

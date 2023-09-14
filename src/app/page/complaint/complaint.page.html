@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>Complaint</ion-title>
+    <ion-title>Helpdesk</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -26,7 +26,7 @@
         <ion-col>
           <ion-item>
             <ion-label position="floating">Search By</ion-label>
-            <ion-select interface="action-sheet" [(ngModel)]="searchBy" (ionChange)="changeSearch()">
+            <ion-select interface="action-sheet" [(ngModel)]="searchBy" (ionChange)="changeSearch()" mode="ios">
               <ion-select-option value="all">All</ion-select-option>
               <ion-select-option value="pc_id"> Site Detail</ion-select-option>
               <ion-select-option value="ticketId">Ticket No</ion-select-option>
@@ -52,7 +52,7 @@
       <ion-button [hidden]="searchBy === 'all' || !searchBy" expand="block" (click)="searchTicketFromServer()">Search <ion-icon name="search-outline" slot="end"></ion-icon></ion-button>
       <ion-item *ngIf="searchBy === 'all' || !searchBy">
         <ion-label position="floating">Ticket Type <ion-text color="danger">*</ion-text></ion-label>
-        <ion-select interface="action-sheet" (ionChange)="changeTickeType($event)" [(ngModel)]="ticketStatus">
+        <ion-select interface="action-sheet" (ionChange)="changeTickeType($event)" [(ngModel)]="ticketStatus" mode="ios">
           <ion-select-option *ngFor="let dat of ticketStages" [value]="dat.stage_id">{{dat.stage_desc}}</ion-select-option>
         </ion-select>
       </ion-item>

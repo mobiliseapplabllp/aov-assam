@@ -5,7 +5,7 @@ import { CommonService } from 'src/app/provider/common/common.service';
 import { ComplaintService } from 'src/app/provider/complaint/complaint.service';
 import { environment } from 'src/environments/environment';
 import { ResponseModalComponent } from '../response-modal/response-modal.component';
-import { CostCenterComponent } from '../cost-center/cost-center.component';
+import { CostCenterComponent } from '../../../shared/cost-center/cost-center.component';
 import { Camera, CameraResultType } from '@capacitor/camera';
 @Component({
   selector: 'app-create-ticket',
@@ -388,21 +388,21 @@ export class CreateTicketComponent  implements OnInit {
     this.loading.dismiss();
   }
 
-  async openRoName() {
-    const modal = await this.modalController.create({
-      component: CostCenterComponent,
-      cssClass: 'my-modal',
-      componentProps : { }
-    });
-    modal.onWillDismiss().then(disModal => {
-      console.log(disModal);
-      if (disModal.data) {
-        this.createForm.get('pc_id')?.setValue(disModal.data.value);
-        this.createForm.get('pc_id_desc')?.setValue(disModal.data.label);
-      }
-    });
-    return await modal.present();
-  }
+  // async openRoName() {
+  //   const modal = await this.modalController.create({
+  //     component: CostCenterComponent,
+  //     cssClass: 'my-modal',
+  //     componentProps : { }
+  //   });
+  //   modal.onWillDismiss().then(disModal => {
+  //     console.log(disModal);
+  //     if (disModal.data) {
+  //       this.createForm.get('pc_id')?.setValue(disModal.data.value);
+  //       this.createForm.get('pc_id_desc')?.setValue(disModal.data.label);
+  //     }
+  //   });
+  //   return await modal.present();
+  // }
 
   searchBarcode() {
     console.log(this.createForm.value.barcode);

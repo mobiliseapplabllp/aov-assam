@@ -5,13 +5,15 @@ import { SignaturePadModule } from 'angular2-signaturepad';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CameraComponent } from './camera/camera.component';
+import { CostCenterComponent } from './cost-center/cost-center.component';
 
 
 
 @NgModule({
   declarations: [
     SignatureComponent,
-    CameraComponent
+    CameraComponent,
+    CostCenterComponent
   ],
   imports: [
     CommonModule,
@@ -22,7 +24,8 @@ import { CameraComponent } from './camera/camera.component';
   ],
   entryComponents: [
     SignatureComponent,
-    CameraComponent
+    CameraComponent,
+    CostCenterComponent
   ]
 })
 export class SharedModule { }

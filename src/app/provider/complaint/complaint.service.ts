@@ -74,6 +74,10 @@ export class ComplaintService {
     return this.https.get(environment.url + 'complaints/select_issue_type');
   }
 
+  getRequestType(id: any): Observable<any> {
+    return this.https.get(environment.url + 'complaints/select_tkt_req_type?issue_id=' + id)
+  }
+
   getQueryCategoryTicket(cat_id: any, pc_id: any): Observable<any> {
     return this.https.get(environment.url + 'complaints/select_category/' + cat_id + '?pc_id=' + pc_id);
   }
