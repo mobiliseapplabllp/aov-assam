@@ -20,88 +20,107 @@
   </ion-segment>
   <div [ngSwitch]='segmentStatus'>
     <div *ngSwitchCase="'ticket'">
-      <section *ngIf="!isFormDisabled">
-        <ion-item *ngIf="isPriority === 1">
-          <ion-label position="floating">Ticket Priority</ion-label>
-          <ion-select interface="action-sheet" (ionChange)="presentAlert($event)" [(ngModel)]="selectPriority">
+      <div *ngIf="arr.attend_time || arr.attend_time === 0">
+        <ion-item >
+          <ion-label position="floating">Ticket Priority </ion-label>
+          <ion-select interface="action-sheet"  [disabled]="isPriority === 0 ? true: false " (ionChange)="presentAlert($event)" [(ngModel)]="arr.tkt_priority_id" mode="ios">
             <ion-select-option *ngFor="let dat of ticketPriority" [value]="dat.id">{{dat.name}}</ion-select-option>
           </ion-select>
         </ion-item>
-        <ion-row *ngIf="changePriorityObj.attend_time">
-          <ion-col size="6">
-            Attended Time : {{changePriorityObj.attend_time}}
+        <ion-row>
+          <ion-col size="6" class="ion-padding-start">
+            <ion-text >Attended Time : {{arr.attend_time}} </ion-text><br>
+            <ion-text [ngStyle]="{'color': arr.resp_remark}">{{arr.response_time}}</ion-text>
           </ion-col>
           <ion-col size="6">
-            Resolve Time : {{changePriorityObj.resolve_time}}
+            <ion-text>Resolve Time : {{arr.resolve_time}}</ion-text><br>
+            <ion-text [ngStyle]="{'color': arr.resolve_remark}">{{arr.resolv_time}}</ion-text>
           </ion-col>
         </ion-row>
+      </div>
+
+      <section *ngIf="!isFormDisabled">
         <form [formGroup]="workSpace">
           <ion-card>
-            <ion-item>
-              <ion-label position="floating">Status</ion-label>
-              <ion-select interface="action-sheet" formControlName="status" (ionChange)="changeStatus($event)">
-                <ion-select-option *ngFor="let dat of ticketStages" [value]="dat.stage_id">{{dat.stage_desc}}</ion-select-option>
-                <ion-select-option value="assign">Assign</ion-select-option>
-              </ion-select>
-            </ion-item>
+            <ion-row>
+              <ion-col>
+                <ion-item>
+                  <ion-label position="floating">Status</ion-label>
+                  <ion-select interface="action-sheet" formControlName="status" (ionChange)="changeStatus($event)" mode="ios">
+                    <ion-select-option *ngFor="let dat of ticketStages" [value]="dat.stage_id">{{dat.stage_desc}}</ion-select-option>
+                    <ion-select-option value="assign">Assign</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              <ion-col size="6" *ngIf="workSpace.value.status === 4">
+                <ion-item>
+                  <ion-label position="floating">Scope of Work</ion-label>
+                  <ion-select interface="action-sheet" mode="ios" formControlName="scope_of_work">
+                    <ion-select-option *ngFor="let dat of scopeOfWorkArr" [value]="dat.value">{{dat.label}}</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+
             <div *ngIf="workSpace.value.status === 3 ">
               <ion-item>
                 <ion-label position="floating">Remark</ion-label>
                 <ion-textarea rows="4" formControlName="remark"></ion-textarea>
               </ion-item>
-              <ion-button size="small" color="danger" fill="outline" (click)="presentActionSheet()" [color]="fileName ? 'success': 'danger' ">Attachment
-                <ion-icon [name]="fileName ?  'checkmark-done-outline': 'attach-outline'" slot="end"></ion-icon>
+              <ion-button  size="small" shape="round" fill="outline" color="danger" [color]="fileName ? 'success': 'danger'"  class="ion-padding-start" (click)="presentActionSheet()">
+                <ion-text *ngIf="isPtwMandatory">Upload PTW</ion-text>
+                <ion-text *ngIf="!isPtwMandatory">Upload Img</ion-text>
+                <ion-icon name="attach-outline" slot="end"> </ion-icon>
               </ion-button>
               <ion-row>
                 <ion-col >
                   <ion-button expand="block" shape="round" (click)="submitTicket()">Submit <ion-icon name="save-outline" slot="end"></ion-icon> </ion-button>
                 </ion-col>
                 <ion-col>
-                  <ion-button [hidden]="hasWip === 0 || ptwApproved === 0" expand="block" shape="round" color="danger" (click)="createIndent()" >Create Indent <ion-icon name="create-outline" slot="end"></ion-icon></ion-button>
+                  <ion-button [hidden]="hasWip === 0 || arr.ptwApproved === 0" expand="block" shape="round" color="danger" (click)="createIndent()" >Create Indent <ion-icon name="create-outline" slot="end"></ion-icon></ion-button>
                 </ion-col>
               </ion-row>
             </div>
             <div *ngIf="workSpace.value.status === 4">
               <ion-item>
                 <ion-label position="floating">Problem Reported By Customer</ion-label>
-                <ion-textarea type="text" rows="4" formControlName="problem_reported"></ion-textarea>
+                <ion-textarea type="text" rows="3" formControlName="problem_reported"></ion-textarea>
               </ion-item>
               <ion-item>
                 <ion-label position="floating">Action Taken By Engineer</ion-label>
-                <ion-textarea type="text" rows="4" formControlName="action_taken"></ion-textarea>
+                <ion-textarea type="text" rows="3" formControlName="action_taken"></ion-textarea>
               </ion-item>
               <ion-item>
-                <ion-button size="small" fill="outline" color="{{!engSigImg ? 'danger' : 'success'}}" (click)="openSign('engineer')">Engineer Signature <ion-icon *ngIf="engSigImg" name="checkmark-circle-outline"></ion-icon></ion-button>
-                <img [src]="engineerBase64" *ngIf="engineerBase64" style="height:30px;width:30px;border:1px solid var(--ion-color-success)" slot="end">
+                <ion-button size="small" fill="outline" color="{{fileName ? 'success': 'danger'}}"  (click)="presentActionSheet()"> Image </ion-button>
               </ion-item>
-              <ion-item>
-                <ion-button size="small" fill="outline" (click)="openSign('customer')" color="{{!cusSigImg ? 'danger' : 'success'}}">Customer Signature <ion-icon *ngIf="cusSigImg" name="checkmark-circle-outline"></ion-icon></ion-button>
-                <img [src]="customerBase64" *ngIf="customerBase64" style="height:30px;width:30px;border:1px solid var(--ion-color-success)" slot="end">
-              </ion-item>
+
               <ion-item [disabled]="isOtpSent">
                 <ion-label position="floating">Phone No</ion-label>
                 <ion-input type="text" [(ngModel)]="mobile" formControlName="phone_no" [disabled]="isOtpSent"></ion-input>
+                <ion-buttons slot="end">
+                  <ion-button shape="round" [hidden]="isOtpSent" expand="block" [disabled]="!workSpace.value.phone_no" (click)="sendOtp()">Send OTP</ion-button>
+                </ion-buttons>
               </ion-item>
+
               <ion-item  class="ion-text-center" [disabled]="isVerifyOtp" *ngIf="isOtpSent"> <!--*ngIf="isOtpSent"-->
                 <ng-otp-input  (onInputChange)="changeNgOtp($event)" [config]="{length:4, allowNumbersOnly:true}"></ng-otp-input>
                 <ion-button *ngIf="isOtpSent" slot="end" [hidden]="isVerifyOtp"  fill="clear" color="danger">{{mm | number : '2.0'}}:{{ss | number : '2.0'}}</ion-button>
               </ion-item>
               <ion-row>
                 <ion-col>
-                  <ion-button shape="round" [hidden]="isOtpSent" expand="block" (click)="sendOtp()">Send OTP</ion-button>
                   <ion-button shape="round" color="tertiary" *ngIf="isOtpSent" [hidden]="isVerifyOtp"  expand="block" (click)="verifyOtp()">Verify OTP</ion-button>
-                  <ion-button shape="round" *ngIf="isVerifyOtp" expand="block" (click)="submitTicket()">Submit</ion-button>
+                  <ion-button shape="round" *ngIf="isVerifyOtp || fileName" expand="block" (click)="submitTicket()">Submit</ion-button>
                 </ion-col>
                 <ion-col class="ion-text-right">
                   <ion-button shape="round" color="danger" [hidden]="isVerifyOtp"  expand="block" *ngIf="isOtpSent" (click)="resetOtp()">Reset Otp</ion-button>
                 </ion-col>
               </ion-row>
             </div>
+            <div class="ion-margin-start" [hidden]="fileName || isVerifyOtp">
+              <ion-text color="primary"  *ngIf="workSpace.value.status === 4"><b>Note:</b> You can resolve the ticket with an OPT or by uploading an image.</ion-text>
+            </div>
           </ion-card>
         </form>
-        <div *ngIf="hasWip === 0 || ptwApproved === 0" class="ion-padding" style="border:2px solid var(--ion-color-danger);margin:10px">
-          <ion-text color="danger">You will have to create atleast 1 WIP log to resolve a ticket !</ion-text>
-        </div>
       </section>
       <section *ngIf="isFormDisabled">
         <img src="assets/img/ptw_pending.jpeg" style="height:300px;width:100%;">
@@ -119,79 +138,75 @@
     </div>
     <div *ngSwitchCase="'asset'">
       <ion-card>
-        <ion-row>
-          <ion-col size="6">
-            <ion-text>Plant Name</ion-text><br>
-            <ion-text  color="secondary">{{assetInfo.pc_desc}}</ion-text>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col size="6">
-            <ion-text>Department </ion-text><br>
-            <ion-text color="secondary">{{assetInfo.dept_desc}}</ion-text>
-          </ion-col>
-          <ion-col size="6">
-            <ion-text>Device Group</ion-text><br>
-            <ion-text  color="secondary">{{assetInfo.grp_desc}}</ion-text>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col size="6">
-            <ion-text>Device Name</ion-text><br>
-            <ion-text color="secondary">{{assetInfo.subgrp_desc}}</ion-text>
-          </ion-col>
-          <ion-col size="6">
-            <ion-text>Device Class</ion-text><br>
-            <ion-text  color="secondary">{{assetInfo.subgrp_class}}</ion-text>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col size="6">
-            <ion-text>Manufacturer</ion-text><br>
-            <ion-text color="secondary">{{assetInfo.mnfctrer_desc}}</ion-text>
-          </ion-col>
-          <ion-col size="6">
-            <ion-text>Modal</ion-text><br>
-            <ion-text  color="secondary">{{assetInfo.model_id}}</ion-text>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col size="6">
-            <ion-text>S No</ion-text><br>
-            <ion-text color="secondary">{{assetInfo.serial_no}}</ion-text>
-          </ion-col>
-          <ion-col size="6">
-            <ion-text>Equip Status </ion-text><br>
-            <ion-text color="secondary">{{assetInfo.status_name}}</ion-text>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col size="6">
-            <ion-text>Warranty</ion-text><br>
-            <ion-text  color="secondary">{{assetInfo.warranty}}</ion-text>
-          </ion-col>
-        </ion-row>
-
-        <ion-row>
-          <ion-col size="6">
-            <ion-text>Warranty Start Date</ion-text><br>
-            <ion-text color="secondary">{{assetInfo.wrnty_start_date}}</ion-text>
-          </ion-col>
-          <ion-col size="6">
-            <ion-text>Warranty End Date</ion-text><br>
-            <ion-text  color="secondary">{{assetInfo.wrnty_end_date}}</ion-text>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col size="6">
-            <ion-text>Purchase Value </ion-text><br>
-            <ion-text color="secondary">{{assetInfo.pur_value}}</ion-text>
-          </ion-col>
-          <ion-col size="6">
-            <ion-text>Technology </ion-text><br>
-            <ion-text color="secondary">{{assetInfo.tchnlgy_desc}}</ion-text>
-          </ion-col>
-        </ion-row>
+        <ion-card-header color="primary"><b>Location Information</b></ion-card-header>
+        <ion-card-content>
+          <ion-row>
+            <ion-col>
+              <ion-text color="primary">Site</ion-text><br>
+              <ion-text>{{assetInfo.pc_ext_id}} {{assetInfo.pc_desc}}</ion-text>
+            </ion-col>
+            <ion-col>
+              <ion-text color="primary">Building</ion-text><br>
+              <ion-text>{{assetInfo.building_desc}}</ion-text>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-text color="primary">Floor Description</ion-text><br>
+              <ion-text>{{assetInfo.floor_desc}}</ion-text>
+            </ion-col>
+            <ion-col>
+              <ion-text color="primary">Ext Asset Id</ion-text><br>
+              <ion-text>{{assetInfo.ext_asset_id}} </ion-text>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-text color="primary">Group Description</ion-text><br>
+              <ion-text>{{assetInfo.grp_desc}}</ion-text>
+            </ion-col>
+            <ion-col>
+              <ion-text color="primary">Manufacturer</ion-text><br>
+              <ion-text>{{assetInfo.mnfctrer_desc}} </ion-text>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-text color="primary">PC Description</ion-text><br>
+              <ion-text>{{assetInfo.pc_desc}}</ion-text>
+            </ion-col>
+            <ion-col>
+              <ion-text color="primary">Serial Name</ion-text><br>
+              <ion-text>{{assetInfo.serial_no}} </ion-text>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-text color="primary">Sub Group Class</ion-text><br>
+              <ion-text>{{assetInfo.subgrp_class}}</ion-text>
+            </ion-col>
+            <ion-col>
+              <ion-text color="primary">Sub Group Description</ion-text><br>
+              <ion-text>{{assetInfo.subgrp_desc}} </ion-text>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-text color="primary">Warranty</ion-text><br>
+              <ion-text>{{assetInfo.warranty}}</ion-text>
+            </ion-col>
+            <ion-col>
+              <ion-text color="primary">Warranty Start Date</ion-text><br>
+              <ion-text>{{assetInfo.wrnty_start_date}} </ion-text>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-text color="primary">Warranty End Date</ion-text><br>
+              <ion-text>{{assetInfo.wrnty_end_date}}</ion-text>
+            </ion-col>
+          </ion-row>
+        </ion-card-content>
       </ion-card>
     </div>
     <div *ngSwitchCase="'service'">
@@ -200,6 +215,18 @@
           <ion-col size="12">
             <ion-text color="dark">Plant</ion-text><br>
             <ion-text color="medium">{{requestedData.pc_desc}}</ion-text>
+          </ion-col>
+          <ion-col size="12">
+            <ion-text color="dark">Building</ion-text><br>
+            <ion-text color="Medium">{{arr.building_desc}}</ion-text><br>
+          </ion-col>
+          <ion-col size="12">
+            <ion-text color="dark">Floor</ion-text><br>
+            <ion-text color="Medium">{{arr.floor_desc}}</ion-text><br>
+          </ion-col>
+          <ion-col size="12">
+            <ion-text color="dark">Location</ion-text><br>
+            <ion-text color="Medium">{{arr.location_desc}}</ion-text><br>
           </ion-col>
           <ion-col size="12">
             <ion-text color="dark">Category</ion-text><br>

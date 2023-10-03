@@ -5,6 +5,9 @@ import { CommonService } from 'src/app/provider/common/common.service';
 import { ListMasterService } from 'src/app/provider/list-master/list-master.service';
 import { LoginService } from 'src/app/provider/login/login.service';
 // import { CameraComponent } from 'src/app/shared/camera/camera.component';
+import { TextToSpeech } from '@capacitor-community/text-to-speech';
+import { SpeechRecognition } from "@capacitor-community/speech-recognition";
+
 
 @Component({
   selector: 'app-list-master',
@@ -62,6 +65,47 @@ export class ListMasterPage implements OnInit {
         this.indent = data.data.indent
       }
     });
+  }
+
+  speak() {
+    const speak = async () => {
+      await TextToSpeech.speak({
+        text: 'This is a sample text.',
+        lang: 'en-US',
+        rate: 1.0,
+        pitch: 1.0,
+        volume: 1.0,
+        category: 'ambient',
+      });
+    };
+    speak();
+  }
+
+  stopSpeak() {
+    TextToSpeech.stop();
+  }
+
+  permission() {
+    SpeechRecognition.requestPermissions().then(res => {
+      console.log(res);
+    })
+  }
+
+  listen() {
+    SpeechRecognition.start({
+      language: "en-US",
+      maxResults: 2,
+      prompt: "Say something",
+      partialResults: true,
+      popup: true,
+    });
+    SpeechRecognition.addListener("partialResults", (data: any) => {
+      console.log("partialResults was fired", data.matches);
+    });
+  }
+
+  removeListen() {
+    SpeechRecognition.removeAllListeners();
   }
 
   // async openCamera() {

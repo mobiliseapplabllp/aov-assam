@@ -131,11 +131,9 @@ export class AttendncePage implements OnInit {
   async presentActionSheet(val: any) {
     const takePicture = async () => {
       const image = await Camera.getPhoto({
-        quality: 40,
+        quality: 70,
         allowEditing: false,
-        width:700,
-        height:700,
-        // source: CameraSource.Camera,
+        source: CameraSource.Camera,
         resultType: CameraResultType.Uri,
       });
       this.readImg(image, val)
@@ -155,7 +153,7 @@ export class AttendncePage implements OnInit {
       this.formData.delete('att_time');
       this.formData.delete('att_type');
 
-      this.formData.append('photo', blob);
+      this.formData.append('photo', blob, random);
       this.formData.append('emp_id', this.userData.id);
       this.formData.append('att_date', moment().format('yyyy-MM-DD'));
       this.formData.append('att_lattitude', this.latitude);

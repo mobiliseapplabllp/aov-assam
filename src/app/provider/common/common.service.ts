@@ -39,6 +39,16 @@ export class CommonService {
       alert('Attachment Not Available');
       return;
     }
-    window.open(url, '_blank', 'location=no,zoom=yes');
+    console.log(url);
+    let brecked;
+    brecked = url.split('.');
+    let ext;
+    ext = brecked[brecked.length - 1];
+    // window.open(url, '_blank', 'location=no,zoom=yes');
+    if (ext === 'pdf') {
+      window.open(url, '_system', 'location=no,zoom=yes');
+    } else {
+      window.open(url, '_blank', 'location=no,zoom=yes');
+    }
   }
 }

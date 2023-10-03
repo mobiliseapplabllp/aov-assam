@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoadingController, MenuController, ModalController, Platform } from '@ionic/angular';
-import { userInfo } from 'os';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { LoginService } from 'src/app/provider/login/login.service';
 import { CameraComponent } from 'src/app/shared/camera/camera.component';
@@ -43,7 +42,7 @@ export class LoginPage implements OnInit {
   ngOnInit() {
   }
 
-  ionViewWillEnter() {
+  ionViewDidEnter() {
     console.log('login');
     if (this.platform.is('android')) {
       this.isAndroid = true;
@@ -59,6 +58,8 @@ export class LoginPage implements OnInit {
         this.login.userid = decrypt.userid;
         this.login.password = decrypt.password;
       }
+    } else {
+      console.log('not data');
     }
 
 

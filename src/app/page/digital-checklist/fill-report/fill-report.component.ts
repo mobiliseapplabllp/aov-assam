@@ -6,6 +6,8 @@ import { DigitalChecklistService } from 'src/app/provider/digital-checklist/digi
 import { SignatureComponent } from 'src/app/shared/signature/signature.component';
 import { environment } from 'src/environments/environment';
 import { Camera, CameraResultType } from '@capacitor/camera';
+import { TextToSpeech } from '@capacitor-community/text-to-speech';
+import { SpeechRecognition } from "@capacitor-community/speech-recognition";
 @Component({
   selector: 'app-fill-report',
   templateUrl: './fill-report.component.html',
@@ -16,7 +18,6 @@ export class FillReportComponent  implements OnInit {
   schedule_id: any;
   scheduleArr: any = [];
   loading: any;
-  isCapacitor!: boolean;
   remark: any;
   signatureBase64!: string;
   checkListUniqeId!: string;
@@ -27,6 +28,9 @@ export class FillReportComponent  implements OnInit {
   // on_behalf=1
   on_behalf: any;
   remarkErr = false;
+  arr: any = [];
+  offlineId: any = [];
+  isAlreadySaved!: boolean;
   constructor(
     private activeRoute: ActivatedRoute,
     private httpDigital: DigitalChecklistService,
@@ -41,6 +45,13 @@ export class FillReportComponent  implements OnInit {
     this.on_behalf = this.activeRoute.snapshot.paramMap.get('behalf');
     console.log(this.activeRoute.snapshot.paramMap.get('behalf'));
     console.log(this.schedule_id);
+    // console.log(this.offlineId.filter(val => val === this.schedule_id));
+    let check = this.offlineId.filter((val: any) => val === this.schedule_id);
+    if(check.length > 0) {
+      this.isAlreadySaved = true
+    } else {
+      this.isAlreadySaved = false;
+    }
     this.getScheduleQuestion();
   }
 
@@ -50,6 +61,7 @@ export class FillReportComponent  implements OnInit {
         next:(data) => {
           console.log(data);
           if (data.status) {
+            this.arr = data.data;
             this.scheduleArr = data.data.categories;
             this.checkListUniqeId = data.data.schedule_unique_id;
             this.schedule_status = data.data.schedule_status;
@@ -94,7 +106,6 @@ export class FillReportComponent  implements OnInit {
         }
       })
     })
-
   }
 
   async presentLoading() {
@@ -119,9 +130,9 @@ export class FillReportComponent  implements OnInit {
   changeResponseAction(val: any, ev: any) {
     console.log(val);
     if (val.response && val.rspns == val.response.optn_id) {
-      console.log('already saved');
       return;
     }
+
     val.isNotFill = false
     const obj = {
       wo_id: this.schedule_id,
@@ -141,8 +152,6 @@ export class FillReportComponent  implements OnInit {
             console.clear();
             val.isRemarkMandatory = obj.is_rmrk_mandatory;
             val.isDocMandatory = obj.is_doc_mandatory;
-            // console.log(val);
-            // val.response.optn_id = val.q_id;
           } else if(data.status == false) {
             this.common.presentToast(data.msg, 'warning');
           } else {
@@ -167,7 +176,8 @@ export class FillReportComponent  implements OnInit {
       remark: val.remark,
       q_id: val.q_id,
       rspns_source: environment.source,
-      on_behalf : this.on_behalf
+      on_behalf : this.on_behalf,
+      optn_id: val.rspns
     }
     console.log(obj);
     this.presentLoading().then(preLoad => {
@@ -220,10 +230,8 @@ export class FillReportComponent  implements OnInit {
   async presentActionSheet(val: any) {
     const takePicture = async () => {
       const image = await Camera.getPhoto({
-        quality: 40,
+        quality: 80,
         allowEditing: false,
-        width:700,
-        height:700,
         resultType: CameraResultType.Uri,
       });
       this.readImg(image, val)
@@ -263,7 +271,12 @@ export class FillReportComponent  implements OnInit {
     });
   }
 
+
   // async presentActionSheet(val) {
+  //   if (!this.platform.is('cordova')) {
+  //     val.imagename = 'abc.jpg';
+  //     return;
+  //   }
   //   const actionSheet = await this.actionSheetController.create({
   //     header: 'Choose option',
   //     cssClass: 'my-custom-class',
@@ -378,34 +391,28 @@ export class FillReportComponent  implements OnInit {
             this.scroll(i);
             return;
           } else {
-            // this.scheduleArr[i].isResponseShow = false;
             this.scheduleArr[i].qus[j].isNotFill = false;
           }
         }
       }
     }
     this.presentLoading().then(preLoad => {
-      this.httpDigital.finalSubmitCheckList(obj).subscribe({
-        next:(data) => {
-          if (data.status) {
-            this.common.presentToast(data.msg, 'success');
-            this.navCtrl.pop();
+      this.httpDigital.finalSubmitCheckList(obj).subscribe(data => {
+        this.dismissloading();
+        if (data.status) {
+          this.common.presentToast(data.msg, 'success');
+          this.navCtrl.pop();
+        } else {
+          this.common.presentToastWithOk(data.msg, 'warning');
+          if (data.cat_head && data.cat_ques) {
+            // this.scrollCategory(data);
           } else {
-            this.common.presentToastWithOk(data.msg, 'warning');
-            if (data.cat_head && data.cat_ques) {
-
-            } else {
-              console.log('cat not found');
-            }
+            console.log('cat not found');
           }
-        },
-        error:() => {
-          this.dismissloading();
-          this.common.presentToast(environment.errMsg, 'danger');
-        },
-        complete:() => {
-          this.dismissloading();
         }
+      }, err => {
+        this.dismissloading();
+        alert(JSON.stringify(err));
       });
     });
   }
@@ -428,7 +435,6 @@ export class FillReportComponent  implements OnInit {
       componentProps: {  }
     });
     modal.onWillDismiss().then(async disModal => {
-      console.log(disModal);
       if (disModal.role) {
         let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg';
         this.signatureBase64 = disModal.data;
@@ -436,5 +442,4 @@ export class FillReportComponent  implements OnInit {
     });
     modal.present();
   }
-
 }

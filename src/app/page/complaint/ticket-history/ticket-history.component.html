@@ -50,6 +50,14 @@
         <ion-text color="warning">{{dat.source}}</ion-text>
       </ion-col>
     </ion-row>
+    <ion-row *ngIf="dat.scope_desc">
+      <ion-col size="4">
+        <ion-text color="dark">Scope Of Work</ion-text>
+      </ion-col>
+      <ion-col >
+        <ion-text color="warning">{{dat.scope_desc}}</ion-text>
+      </ion-col>
+    </ion-row>
     <ion-row [hidden]="!dat.ticket_file">
       <ion-col class="ion-text-right">
         <ion-button color="danger"  size="small" fill="outline" (click)="viewDoc(dat.ticket_file)">Attachment <ion-icon name="attach-outline" slot="end"></ion-icon> </ion-button>

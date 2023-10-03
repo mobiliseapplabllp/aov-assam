@@ -7,6 +7,10 @@ import { environment } from 'src/environments/environment';
 import { ResponseModalComponent } from '../response-modal/response-modal.component';
 import { CostCenterComponent } from '../../../shared/cost-center/cost-center.component';
 import { Camera, CameraResultType } from '@capacitor/camera';
+import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner/ngx';
+import { QueryCatComponent } from 'src/app/shared/query-cat/query-cat.component';
+import { QuerySubCatComponent } from 'src/app/shared/query-sub-cat/query-sub-cat.component';
+import { QuerySubCat2Component } from 'src/app/shared/query-sub-cat2/query-sub-cat2.component';
 @Component({
   selector: 'app-create-ticket',
   templateUrl: './create-ticket.component.html',
@@ -17,17 +21,23 @@ export class CreateTicketComponent  implements OnInit {
   formData = new FormData();
   isSpinner!: boolean;
   isImageUpload = false;
-  loading!: any;
-  fileName!: any;
+  loading: any;
+  fileName: any;
+  buildingArr: any = [];
+  floorArr: any = [];
+  locationArr: any = [];
   allIssueType: any = [];
   allRoName: any = [];
   allQueryCat: any = [];
   allSubCat1: any = [];
   allSubCat2: any = [];
   myCategory: any = [];
+  isCordova!: boolean;
   userData: any = [];
   userName!: string;
   barcodeList: any = [];
+  requestType: any = [];
+
   constructor(
     private platform: Platform,
     private formbuilder: FormBuilder,
@@ -35,40 +45,67 @@ export class CreateTicketComponent  implements OnInit {
     private httpCommon: CommonService,
     private navCtrl: NavController,
     private modalController: ModalController,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private barcodeScanner: BarcodeScanner
   ) { }
 
   ngOnInit() {
-    const isUser = localStorage.getItem('user');
-    if (!isUser){
-      return
+    if (this.platform.is('cordova')) {
+      this.isCordova = true;
+    } else {
+      this.isCordova = false;
     }
-    this.userData = JSON.parse(isUser);
-    this.userName = this.userData.user_name
+    let temp = localStorage.getItem('user');
+    if(temp) {
+      this.userData = JSON.parse(temp);
+    }
+    console.log(this.userData);
+    this.userName = this.userData.user_name;
+    this.getEmpDetail();
     this.initializeForm();
   }
 
   initializeForm() {
     this.createForm = this.formbuilder.group({
-      usr_name: [''],
-      mobile: ['', Validators.required],
+      usr_name: ['', Validators.required],
+      mobile: [''],
+      email: ['', Validators.required],
       issue_id: ['', Validators.required],
+      req_type_id: ['', Validators.required],
       is_barcode: [''],
       barcode: [''],
       multi_barcode: [''],
       pc_id: [''],
+      pc_id_desc: [''],
+      bldg_id: [''],
+      floor_id: [''],
+      loc_code: [''],
+      category_desc: [''],
       category: [''],
+      subcat1_id_desc: [''],
       subcat1_id: [''],
+      subcat2_id_desc: [''],
       subcat2_id: [''],
       priority: ['', Validators.required],
-      remark: [''],
+      remark: ['', Validators.required],
       source: [environment.source]
     });
     this.createForm.get('usr_name')?.setValue(this.userName);
 
     this.getIssueType();
+    // this.getRequestType();
     // this.getCategory();
-    this.getCostCenter();
+    // this.getCostCenter();
+  }
+
+  getEmpDetail() {
+    this.httpComp.getEmpDetail().subscribe(data => {
+      console.log(data);
+      if (data.status) {
+        this.createForm.get('mobile')?.setValue(data.data.mobile);
+        this.createForm.get('email')?.setValue(data.data.email);
+      }
+    });
   }
 
   getIssueType() {
@@ -83,6 +120,62 @@ export class CreateTicketComponent  implements OnInit {
       });
     });
   }
+
+  getRequestType(id: any) {
+    this.presentLoading().then(preLoad => {
+      this.httpComp.getRequestType(id).subscribe(data => {
+        console.log(data);
+        this.dismissloading();
+        if (data.status) {
+          this.requestType = data.data;
+        } else {
+          this.httpCommon.presentToast(data.msg, 'danger');
+        }
+      }, err => {
+        this.dismissloading();
+        this.httpCommon.presentToast(environment.errMsg, 'danger');
+      });
+    })
+
+  }
+
+  openScanner() {
+    if (this.platform.is('cordova')) {
+      this.barcodeScanner.scan().then(barcodeData => {
+        console.log('Barcode data', barcodeData);
+        if (!barcodeData.text) {
+          return
+        }
+        let token, fullurl;
+        token = localStorage.getItem('token1');
+        fullurl = barcodeData.text + '?token=' + token;
+        this.httpCommon.openDoc(fullurl);
+        // this.openWebPage(fullurl);
+      }, err => {
+        let msg = JSON.stringify(err);
+        if (msg == 'Illegal access') {
+          this.httpCommon.presentToast('You Need to allow the Permission', 'warning');
+        } else {
+          this.httpCommon.presentToast(JSON.stringify(err), 'warning');
+        }
+      })
+    } else {
+      this.httpCommon.openDoc('https://ifmsuat.mobilisepro.com/#/auth');
+      // this.openWebPage('https://ifmsuat.mobilisepro.com/#/auth')
+    }
+
+  }
+
+  async openWebPage(url: any) {
+    // console.log('my site');
+    // const modal = await this.modalCtrl.create({
+    //   component: WebPageComponent,
+    //   // cssClass: 'my-modal2',
+    //   componentProps: { url: url }
+    // });
+    // modal.present();
+  }
+
 
   getCategory() {
     this.httpComp.getCategory().subscribe(data => {
@@ -104,13 +197,43 @@ export class CreateTicketComponent  implements OnInit {
     });
   }
 
+  async openCategory() {
+    if (!this.createForm.value.pc_id) {
+      alert('Please Select Site');
+      return;
+    }
+    const modal = await this.modalController.create({
+      component: QueryCatComponent,
+      cssClass: 'my-modal',
+      componentProps : {
+        issue_id: this.createForm.value.issue_id,
+        pc_id: this.createForm.value.pc_id
+      }
+    });
+    modal.onWillDismiss().then(disModal => {
+      console.log(disModal);
+      if (disModal.role) {
+        this.createForm.get('category_desc')?.setValue(disModal.data.label);
+        this.createForm.get('category')?.setValue(disModal.data.value);
+        this.createForm.get('subcat1_id')?.setValue('');
+        this.createForm.get('subcat1_id_desc')?.setValue('');
+        this.createForm.get('subcat2_id')?.setValue('');
+        this.createForm.get('subcat2_id_desc')?.setValue('');
+        this.changeQuery(disModal.data.value);
+        // this.createForm.get('pc_id_desc').setValue(disModal.data.label);
+        // this.createForm.get('pc_id').setValue(disModal.data.value);
+        // if (this.createForm.value.issue_id == 2) {
+        //   this.getQueryCategory();
+        // }
+      }
+    });
+    return await modal.present();
+  }
+
   getQueryCategory() {
     if (!this.createForm.value.pc_id) {
       return
     }
-    console.log('change');
-    console.log(this.createForm.value.issue_id);
-    console.log(this.createForm.value.pc_id);
     this.resetField();
     if (this.createForm.value.issue_id == 2 && this.createForm.value.pc_id) {
       this.presentLoading().then(preLoad => {
@@ -129,8 +252,24 @@ export class CreateTicketComponent  implements OnInit {
     }
   }
 
-  changeIssue() {
+  changeIssue(ev: any) {
+    console.log(ev.target.value);
     this.createForm.get('pc_id')?.setValue('');
+    this.createForm.get('pc_id_desc')?.setValue('');
+    this.createForm.get('bldg_id')?.setValue('');
+    this.createForm.get('floor_id')?.setValue('');
+    this.createForm.get('loc_code')?.setValue('');
+
+    this.createForm.get('pc_id_desc')?.setValue('');
+    this.createForm.get('bldg_id')?.setValue('');
+    this.createForm.get('floor_id')?.setValue('');
+    this.createForm.get('category_desc')?.setValue('');
+    this.createForm.get('subcat1_id_desc')?.setValue('');
+    this.createForm.get('subcat2_id_desc')?.setValue('');
+
+
+    this.getRequestType(ev.target.value);
+
   }
 
   // changeIssueType(ev) {
@@ -147,23 +286,49 @@ export class CreateTicketComponent  implements OnInit {
   // }
 
   resetField() {
-    // return;
     this.createForm.get('is_barcode')?.setValue('');
     this.createForm.get('barcode')?.setValue('');
-    // this.createForm.get('pc_id').setValue('');
     this.createForm.get('category')?.setValue('');
     this.createForm.get('subcat1_id')?.setValue('');
     this.createForm.get('subcat2_id')?.setValue('');
 
   }
 
-  changeQuery(ev: any) {
-    if (!ev.target.value) {
-      console.log('return 1')
+  async openCategorySubCat() {
+    if(!this.createForm.value.category) {
+      alert('Please Select Category');
       return;
     }
+    const modal = await this.modalController.create({
+      component: QuerySubCatComponent,
+      cssClass: 'my-modal',
+      componentProps : {
+        qry_id: this.createForm.value.category,
+        allData: this.allSubCat1,
+      }
+    });
+    modal.onWillDismiss().then(disModal => {
+      console.log(disModal);
+      if (disModal.role) {
+        this.createForm.get('subcat1_id_desc')?.setValue(disModal.data.label);
+        this.createForm.get('subcat1_id')?.setValue(disModal.data.value);
+        this.createForm.get('subcat2_id_desc')?.setValue('');
+        this.createForm.get('subcat2_id')?.setValue('');
+        this.allSubCat2 = [];
+        this.changeSubCat(disModal.data.value);
+      }
+    });
+    return await modal.present();
+  }
+
+  changeQuery(ev: any) {
+    if (!ev) {
+      return;
+    }
+    this.createForm.get('subcat1_id')?.setValue('');
+    this.createForm.get('subcat2_id')?.setValue('');
     this.presentLoading().then(preLoad => {
-      this.httpComp.getQuerySubCat1(ev.target.value).subscribe(data => {
+      this.httpComp.getQuerySubCat1(ev).subscribe(data => {
         this.dismissloading();
         console.log(data);
         if (data.status) {
@@ -173,16 +338,39 @@ export class CreateTicketComponent  implements OnInit {
     });
   }
 
-  changeSubCat(ev: any) {
-    if (!ev.target.value) {
-      console.log('return 2')
+  async openCategorySubCat2() {
+    if(!this.createForm.value.subcat1_id) {
+      alert('Please Select Category 1');
       return;
     }
+    const modal = await this.modalController.create({
+      component: QuerySubCat2Component,
+      cssClass: 'my-modal',
+      componentProps : {
+        qry_id1: this.createForm.value.subcat1_id,
+        allData: this.allSubCat2,
+      }
+    });
+    modal.onWillDismiss().then(disModal => {
+      console.log(disModal);
+      if (disModal.role) {
+        this.createForm.get('subcat2_id_desc')?.setValue(disModal.data.label);
+        this.createForm.get('subcat2_id')?.setValue(disModal.data.value);
+      }
+    });
+    return await modal.present();
+  }
+
+  changeSubCat(ev: any) {
+    if (!ev) {
+      return;
+    }
+    this.createForm.get('subcat2_id')?.setValue('');
     this.presentLoading().then(preLoad => {
-      this.httpComp.getQuerySubCat2(ev.target.value).subscribe(data => {
+      this.httpComp.getQuerySubCat2(ev).subscribe(data => {
         this.dismissloading();
         if (data.status) {
-          this.allSubCat2 = data.data
+          this.allSubCat2 = data.data;
         }
       });
     });
@@ -202,8 +390,14 @@ export class CreateTicketComponent  implements OnInit {
 
   submit() {
     for (let key in this.createForm.value)  {
-      this.formData.delete(key);
-      this.formData.append(key, this.createForm.value[key]);
+      if (!this.createForm.value[key]) {
+        this.formData.delete(key);
+        this.formData.append(key, '');
+      } else {
+        this.formData.delete(key);
+        this.formData.append(key, this.createForm.value[key]);
+      }
+
     }
     if (this.createForm.value.is_barcode == '1') {
       this.multiBarcodeTicketAction();
@@ -232,6 +426,7 @@ export class CreateTicketComponent  implements OnInit {
       this.httpComp.createMultipleTicketAction(this.formData).subscribe(data => {
         this.dismissloading();
         if(data.status) {
+
           this.openResponseModal(data.resData);
         } else {
           this.httpCommon.presentToast(data.msg, 'warning');
@@ -265,8 +460,9 @@ export class CreateTicketComponent  implements OnInit {
       cssClass: 'my-modal',
       componentProps : {data: JSON.stringify(data)}
     });
-    modal.onWillDismiss().then((disModal: any) => {
+    modal.onWillDismiss().then(disModal => {
       console.log(disModal);
+      this.navCtrl.pop();
       if (disModal.data) {
         // this.searchValueDesc = disModal.data.cc_desc;
         // this.searchValue = disModal.data.cc_id;
@@ -275,54 +471,29 @@ export class CreateTicketComponent  implements OnInit {
     return await modal.present();
   }
 
-  async openCamera() {
-    const takePicture = async () => {
-      const image = await Camera.getPhoto({
-        quality: 40,
-        allowEditing: false,
-        width:700,
-        height:700,
-        resultType: CameraResultType.Uri,
-      });
-      this.readImg(image)
-    };
-    takePicture();
-  }
-
-  async readImg(photo: any) {
-    let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg'
-    const response = await fetch(photo.webPath);
-    const blob = await response.blob();
-    this.formData.delete('img[]');
-    this.formData.append('img[]', blob, random);
-    this.fileName = random
-    this.presentLoading().then(preLoad => {
-      this.dismissloading();
-    })
-  }
-  async presentActionSheet() {
-    // const actionSheet = await this.actionSheetController.create({
-    //   header: 'Choose Option  ',
-    //   cssClass: 'my-custom-class',
-    //   buttons: [{
-    //     text: 'Camera',
-    //     role: 'destructive',
-    //     icon: 'camera-outline',
-    //     handler: () => {
-    //       console.log('Delete clicked');
-    //       this.chosePhotoOption(this.camera.PictureSourceType.CAMERA);
-    //     }
-    //   }, {
-    //     text: 'Gallery',
-    //     icon: 'image-outline',
-    //     handler: () => {
-    //       console.log('Share clicked');
-    //       this.chosePhotoOption(this.camera.PictureSourceType.PHOTOLIBRARY);
-    //     }
-    //   }]
-    // });
-    // await actionSheet.present();
-  }
+  // async presentActionSheet() {
+  //   const actionSheet = await this.actionSheetController.create({
+  //     header: 'Choose Option  ',
+  //     cssClass: 'my-custom-class',
+  //     buttons: [{
+  //       text: 'Camera',
+  //       role: 'destructive',
+  //       icon: 'camera-outline',
+  //       handler: () => {
+  //         console.log('Delete clicked');
+  //         this.chosePhotoOption(this.camera.PictureSourceType.CAMERA);
+  //       }
+  //     }, {
+  //       text: 'Gallery',
+  //       icon: 'image-outline',
+  //       handler: () => {
+  //         console.log('Share clicked');
+  //         this.chosePhotoOption(this.camera.PictureSourceType.PHOTOLIBRARY);
+  //       }
+  //     }]
+  //   });
+  //   await actionSheet.present();
+  // }
 
   // chosePhotoOption(src) {
   //   const options: CameraOptions = {
@@ -349,7 +520,13 @@ export class CreateTicketComponent  implements OnInit {
   //       alert(JSON.stringify(err) + 'File Not Supported');
   //     });
   //   }, (err) => {
-  //     alert(JSON.stringify(err) + src);
+  //     // alert(JSON.stringify(err) + src);
+  //     let errres = JSON.stringify(err);
+  //     if (errres == '20') {
+  //       alert('Plese Allow Camera Permission Or Gallery Permission');
+  //     } else {
+  //       alert(JSON.stringify(err) + src);
+  //     }
   //   });
   // }
 
@@ -363,18 +540,50 @@ export class CreateTicketComponent  implements OnInit {
   //     });
   //     this.formData.delete('img[]');
   //     this.formData.append('img[]', blob, random);
+  //     this.fileName = file.size + '.png';
+  //     this.presentLoading().then(preLoad => {
+  //       this.dismissloading();
+  //     })
   //   };
   // }
 
-  // changePhoto(event): void {
-  //   if (event.target.files.length > 0) {
-  //     let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg'
-  //     const file = event.target.files[0];
-  //     console.log(file);
-  //     this.formData.delete('img[]');
-  //     this.formData.append('img[]', file, random);
-  //   }
-  // }
+  async openCamera() {
+    const takePicture = async () => {
+      const image = await Camera.getPhoto({
+        quality: 80,
+        allowEditing: false,
+        resultType: CameraResultType.Uri,
+      });
+      this.readImg(image)
+    };
+    takePicture();
+  }
+
+  async readImg(photo: any) {
+    let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg'
+    const response = await fetch(photo.webPath);
+    const blob = await response.blob();
+    this.formData.delete('img[]');
+    this.formData.append('img[]', blob, random);
+    this.fileName = random
+    this.presentLoading().then(preLoad => {
+      this.dismissloading();
+    })
+  }
+  async presentActionSheet() {
+
+  }
+
+  changePhoto(event: any): void {
+    if (event.target.files.length > 0) {
+      let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg'
+      const file = event.target.files[0];
+      console.log(file);
+      this.formData.delete('img[]');
+      this.formData.append('img[]', file, random);
+      this.fileName = 'a.png';
+    }
+  }
 
   async presentLoading() {
     this.loading = await this.loadingController.create({
@@ -397,12 +606,114 @@ export class CreateTicketComponent  implements OnInit {
   //   modal.onWillDismiss().then(disModal => {
   //     console.log(disModal);
   //     if (disModal.data) {
-  //       this.createForm.get('pc_id')?.setValue(disModal.data.value);
-  //       this.createForm.get('pc_id_desc')?.setValue(disModal.data.label);
+  //       this.createForm.get('pc_id').setValue(disModal.data.value);
+  //       this.createForm.get('pc_id_desc').setValue(disModal.data.label);
   //     }
   //   });
   //   return await modal.present();
   // }
+
+  async openRoName() {
+    const modal = await this.modalController.create({
+      component: CostCenterComponent,
+      cssClass: 'my-modal',
+      componentProps : { }
+    });
+    modal.onWillDismiss().then(disModal => {
+      if (disModal.role) {
+        this.createForm.get('pc_id_desc')?.setValue(disModal.data.label);
+        this.createForm.get('pc_id')?.setValue(disModal.data.value);
+        this.createForm.get('category_desc')?.setValue('');
+        this.createForm.get('category')?.setValue('');
+        this.createForm.get('subcat1_id_desc')?.setValue('');
+        this.createForm.get('subcat1_id')?.setValue('');
+        this.createForm.get('subcat2_id_desc')?.setValue('');
+        this.createForm.get('subcat2_id')?.setValue('');
+        this.getBuilding(disModal.data.value);
+      }
+    });
+    return await modal.present();
+  }
+
+  getBuilding(id: any) {
+    this.presentLoading().then(preLoad => {
+      this.httpComp.getBuildingList(id).subscribe({
+        next:(data: any) => {
+          console.log(data);
+          if (data.status) {
+            this.buildingArr = data.data;
+          } else {
+            this.httpCommon.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
+        }
+      })
+    })
+  }
+
+  changeBuilding(ev: any) {
+    let id = ev.target.value;
+    if(!id) {
+      return;
+    }
+    this.getFloorList(id)
+  }
+
+  getFloorList(id: any) {
+    this.presentLoading().then(preLoad => {
+      this.httpComp.getFloorList(id).subscribe({
+        next:(data: any) => {
+          if (data.status) {
+            this.floorArr = data.data;
+          } else {
+            this.httpCommon.presentToast(data.msg , 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
+        }
+      })
+    })
+  }
+
+  changeFloor(ev: any) {
+    let id = ev.target.value;
+    if (!id) {
+      return;
+    }
+    this.getLocation(id);
+  }
+
+  getLocation(id: any) {
+    this.presentLoading().then(preLoad => {
+      this.httpComp.getLocationList(id).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.locationArr = data.data
+          } else {
+            this.httpCommon.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
+        }
+      })
+    })
+  }
 
   searchBarcode() {
     console.log(this.createForm.value.barcode);
@@ -420,7 +731,6 @@ export class CreateTicketComponent  implements OnInit {
         this.httpCommon.presentToast(environment.errMsg, 'danger');
       });
     })
-
   }
 
 

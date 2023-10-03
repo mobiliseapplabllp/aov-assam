@@ -20,6 +20,9 @@ export class ComplaintService {
     return this.assignTickets;
   }
 
+  getEmpDetail(): Observable<any> {
+    return this.https.get(environment.url + 'get_emp_detail');
+  }
 
   getAllTicketStages(): Observable<any> {
     return this.https.get(environment.url + 'complaints/get_all_ticket_stages');
@@ -110,8 +113,25 @@ export class ComplaintService {
     return this.https.get(environment.url + 'shared/get-user-pc-code');
   }
 
+  getBuildingList(id: any): Observable<any> {
+    return this.https.get(environment.url + 'shared/get-buildings-list/' + id);
+  }
+
+  getFloorList(id: any): Observable<any> {
+    return this.https.get(environment.url + 'shared/get-floors-list/' + id);
+  }
+
+  getLocationList(id: any): Observable<any> {
+    return this.https.get(environment.url + 'shared/get-locations-list/' + id);
+  }
+
+
   getCategory(): Observable<any> {
     return this.https.get(environment.url + 'pmscal/category/get_category');
+  }
+
+  getScopeOfWork(): Observable<any> {
+    return this.https.get(environment.url + 'complaints/getScopeOfWork')
   }
 
   getClientIdBarcode(clientId: any): Observable<any> {
@@ -175,7 +195,6 @@ export class ComplaintService {
   }
 
   getMyTicket(pageno: any): Observable<any> {
-    // return this.https.get(environment.url + 'complaints/get_ticket_master?limit=10&page=1&my_ticket=my_ticket');
     return this.https.get(environment.url + 'complaints/get_my_ticket_master?limit=10&page=' + pageno + '&dateWise=loggedBy');
   }
 

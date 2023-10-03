@@ -24,10 +24,10 @@
         <ion-select-option *ngFor="let dat of requestType" [value]="dat.val">{{dat.label}}</ion-select-option>
       </ion-select>
     </ion-item>
-    <div *ngIf="ticketForm.value.issue_type === '1'">
+    <div *ngIf="ticketForm.value.issue_type === 1">
       <ion-item>
         <ion-label position="floating">Is Barcode</ion-label>
-        <ion-select interface="action-sheet" formControlName="is_barcode" mode="ios">
+        <ion-select interface="action-sheet" formControlName="is_barcode" mode="ios" (ionChange)="changeIsBarcode($event)">
           <ion-select-option value="1">Yes</ion-select-option>
           <ion-select-option value="0">No</ion-select-option>
         </ion-select>
@@ -37,8 +37,8 @@
         <ion-input type="text" formControlName="barcode"> </ion-input>
         <ion-button size="small" slot="end" fill="outline" color="red" [disabled]="!ticketForm.value.barcode" (click)="searchClientId()">Search <ion-icon name="search-outline" slot="end"></ion-icon> </ion-button>
       </ion-item>
-      <section>
-        <ion-radio-group formControlName="barcode_id">
+      <section *ngIf="ticketForm.value.is_barcode === '1'">
+        <ion-radio-group formControlName="barcode_id" (ionChange)="changeRadio()">
           <ion-item *ngFor="let dat of barcodeList">
             <ion-radio slot="start" [value]="dat.asset_id" ></ion-radio>
             <ion-label>
@@ -46,12 +46,15 @@
               <p>{{dat.serial_no}}</p>
               <p>{{dat.subgrp_desc}}</p>
               <p>{{dat.client_asset_id}}</p>
+              <p><b>Building:</b> {{dat.building_desc}}</p>
+              <p><b>Floor:</b> {{dat.floor_desc}}</p>
+              <p><b>Location:</b> {{dat.location_desc}}</p>
             </ion-label>
           </ion-item>
         </ion-radio-group>
       </section>
     </div>
-    <div *ngIf="ticketForm.value.issue_type === '2'">
+    <div *ngIf="ticketForm.value.issue_type === 2">
       <ion-item>
         <ion-label position="floating">Query Category</ion-label>
         <ion-select interface="action-sheet" formControlName="category" (ionChange)="changeQuery($event)" mode="ios">
@@ -59,24 +62,47 @@
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">Query Sub Category</ion-label>
+        <ion-label position="floating">Query Sub Category One</ion-label>
         <ion-select interface="action-sheet" formControlName="subcat1_id" (ionChange)="changeSubCat($event)" mode="ios">
           <ion-select-option *ngFor="let dat of subCategory" [value]="dat.value">{{dat.label}}</ion-select-option>
         </ion-select>
       </ion-item>
-      <ion-item>
-        <ion-label position="floating">Query Sub Category 2</ion-label>
+      <ion-item *ngIf="subCategory2.length > 0">
+        <ion-label position="floating">Query Sub Category Two</ion-label>
         <ion-select interface="action-sheet" formControlName="subcat2_id" mode="ios">
           <ion-select-option *ngFor="let dat of subCategory2" [value]="dat.value">{{dat.label}}</ion-select-option>
         </ion-select>
       </ion-item>
     </div>
+    <section *ngIf="isShowBuilding">
+      <ion-item >
+        <ion-label position="floating">Building  <ion-text color="danger">*</ion-text> </ion-label>
+        <ion-select interface="action-sheet" mode="ios" formControlName="bldg_id" (ionChange)="changeBuilding($event)">
+          <ion-select-option *ngFor="let dat of buildingArr" [value]="dat.value">{{dat.label}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item >
+        <ion-label position="floating">Floor  <ion-text color="danger">*</ion-text> </ion-label>
+        <ion-select interface="action-sheet" mode="ios" formControlName="floor_id" (ionChange)="changeFloor($event)">
+          <ion-select-option *ngFor="let dat of floorArr" [value]="dat.value">{{dat.label}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item >
+        <ion-label position="floating">Location  <ion-text color="danger">*</ion-text> </ion-label>
+        <ion-select interface="action-sheet" mode="ios" formControlName="loc_code">
+          <ion-select-option *ngFor="let dat of locationArr" [value]="dat.value">{{dat.label}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </section>
+
     <ion-item>
       <ion-label position="floating">Ticket Priority</ion-label>
       <ion-select interface="action-sheet" formControlName="tkt_priority" (ionChange)="changePriority($event)" mode="ios">
         <ion-select-option *ngFor="let dat of ticketPriority" [value]="dat.id">{{dat.name}}</ion-select-option>
       </ion-select>
     </ion-item>
+
     <ion-row *ngIf="ticketForm.value.tkt_priority">
       <ion-col>
         <ion-text color="primary"><b>Attend Time</b></ion-text><br>

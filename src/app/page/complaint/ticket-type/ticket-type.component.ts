@@ -24,6 +24,11 @@ export class TicketTypeComponent  implements OnInit {
   ticketPriority: any = [];
   selectPriorityObj: any = {};
   requestType: any = [];
+  buildingArr: any = [];
+  floorArr: any = [];
+  locationArr: any = [];
+  isShowBuilding = false;
+  locations: any = [];
   constructor(
     public formbuilder: FormBuilder,
     private httpComplaint: ComplaintService,
@@ -33,9 +38,18 @@ export class TicketTypeComponent  implements OnInit {
     public navParam: NavParams,
   ) {
     this.ticket = this.navParam.get('requestedData');
-    this.allData = this.navParam.get('allData');
-    console.log(this.allData);
-    console.log(this.ticket);
+      this.allData = this.navParam.get('allData');
+      console.log(this.locations);
+      // console.log(this.allData);
+      // console.log('--------');
+      // *ngIf="((issueType == 2) || (issueType == 1 && isBarcode == 0))"
+      if ((this.allData.tkts_issue_id == 2) || this.allData.tkts_issue_id == 1 && !this.allData.ext_asset_id) {
+        this.isShowBuilding = true;
+        // this.getBuilding(this.allData.pc_id);
+      }
+      this.getBuilding(this.allData.pc_id);
+      console.log(this.ticket);
+      this.getRequestType(this.allData.tkts_issue_id);
   }
 
   ngOnInit() {
@@ -59,7 +73,6 @@ export class TicketTypeComponent  implements OnInit {
       this.dismissloading();
       this.httpCommon.presentToast(environment.errMsg, 'danger');
     });
-
   }
 
   initForm() {
@@ -69,6 +82,9 @@ export class TicketTypeComponent  implements OnInit {
       is_barcode: [''],
       barcode: [''],
       category: [''],
+      bldg_id: [''],
+      floor_id: [''],
+      loc_code: [''],
       subcat1_id: [''],
       subcat2_id: [''],
       barcode_id: [''],
@@ -80,6 +96,129 @@ export class TicketTypeComponent  implements OnInit {
     });
     this.getIssueType();
   }
+
+  changeRadio() {
+    console.log('change radio')
+    this.ticketForm.get('bldg_id')?.setValue('');
+    this.ticketForm.get('floor_id')?.setValue('');
+    this.ticketForm.get('loc_code')?.setValue('');
+    this.isShowBuilding = false
+  }
+
+  changeIsBarcode(ev: any) {
+    this.ticketForm.get('barcode')?.setValue('');
+    this.ticketForm.get('barcode_id')?.setValue('');
+    this.barcodeList = [];
+    if (ev.target.value == 0) {
+      this.isShowBuilding = true;
+      // this.presentLoading().then(preLoad => {
+      //   setTimeout(() => {
+      //     this.getBuilding(this.allData.pc_id);
+      //   }, 1500);
+      // })
+      setTimeout(() => {
+        if (this.locations.length > 0) {
+          this.ticketForm.get('bldg_id')?.setValue(this.locations[0].building_id)
+          // this.ticketForm.get('floor_id')?.setValue(this.locations[0].floor_id);
+          // this.ticketForm.get('loc_code')?.setValue(this.locations[0].id)
+        }
+      }, 100);
+    }
+  }
+
+  getBuilding(id: any) {
+    this.httpComplaint.getBuildingList(id).subscribe({
+      next:(data) => {
+        console.log(data);
+        if (data.status) {
+          this.buildingArr = data.data;
+          if (this.locations.length > 0) {
+            setTimeout(() => {
+              this.ticketForm.get('bldg_id')?.setValue(this.locations[0].building_id)
+            }, 100);
+          }
+        } else {
+          this.httpCommon.presentToast(data.msg, 'warning');
+        }
+      },
+      error:() => {
+        this.httpCommon.presentToast(environment.errMsg, 'danger');
+      },
+      complete:() => {
+      }
+    })
+  }
+
+  changeBuilding(ev: any) {
+    let id = ev.target.value;
+    if(!id) {
+      return;
+    }
+    this.dismissloading();
+    this.getFloorList(id)
+  }
+
+  getFloorList(id: any) {
+    this.presentLoading().then(preLoad => {
+      this.httpComplaint.getFloorList(id).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.floorArr = data.data;
+            if (this.locations.length > 0) {
+              setTimeout(() => {
+                this.ticketForm.get('floor_id')?.setValue(this.locations[0].floor_id);
+              }, 100);
+            }
+          } else {
+            this.httpCommon.presentToast(data.msg , 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
+        }
+      })
+    })
+  }
+
+  changeFloor(ev: any) {
+    let id = ev.target.value;
+    if (!id) {
+      return;
+    }
+    this.dismissloading();
+    this.getLocation(id);
+  }
+
+  getLocation(id: any) {
+    this.presentLoading().then(preLoad => {
+      this.httpComplaint.getLocationList(id).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.locationArr = data.data;
+            setTimeout(() => {
+              if (this.locations.length > 0) {
+                this.ticketForm.get('loc_code')?.setValue(this.locations[0].id)
+              }
+            }, 100)
+          } else {
+            this.httpCommon.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
+        }
+      })
+    })
+  }
+
 
   changeType() {
     this.ticketForm.get('is_barcode')?.setValue('');
@@ -274,7 +413,59 @@ export class TicketTypeComponent  implements OnInit {
     // }
   }
 
+  // submit() {
+  //   if (this.ticketType === 'asset') {
+  //     if (!this.barcode) {
+  //         alert('Enter Barcode no');
+  //     } else {
+  //       if (this.barcode === 123) {
+  //         this.modalCtrl.dismiss(null);
+  //         this.router.navigate(['add-asset'], {
+  //           queryParams: {
+  //             data: JSON.stringify(this.paramsData),
+  //           }
+  //         });
+  //       } else {
+  //         Swal.fire('Verified', 'Alread Added ', 'success').then(res => {
+  //           this.modalCtrl.dismiss(true);
+  //         });
+  //       }
+  //     }
+  //   } else if (this.ticketType === 'service') {
+  //     this.modalCtrl.dismiss(true);
+  //   } else {
+  //     alert('Please Select Ticket Type');
+  //   }
+  // }
+
+  // add_asset() {
+  //   this.modalCtrl.dismiss(null);
+  //   this.router.navigate(['add-asset'], {
+  //     queryParams: {
+  //       data: JSON.stringify(this.paramsData),
+  //     }
+  //   });
+  // }
+
+  // async presentToast(msg) {
+  //   const toast = await this.toastController.create({
+  //     message: msg,
+  //     duration: 3000
+  //   });
+  //   toast.present();
+  // }
+
+  // openScanner() {
+  //   this.barcodeScanner.scan().then(barcodeData => {
+  //     console.log('Barcode data', barcodeData);
+  //     this.barcode = barcodeData.text;
+  //   }).catch(err => {
+  //     console.log('Error', err);
+  //   });
+  // }
+
   async presentLoading() {
+    this.dismissloading();
     this.loading = await this.loadingController.create({
       cssClass: 'my-custom-class',
       message: 'Please wait...'

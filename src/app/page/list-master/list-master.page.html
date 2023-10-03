@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title> {{userName}} </ion-title>
+    <ion-title (click)="stopSpeak()"> {{userName}} </ion-title>
     <!-- <ion-buttons slot="end" >
       <ion-button (click)="openPageTest('/menu-roaster')">Roaster</ion-button>
       <ion-button (click)="openPageTest('/digital-checklist')">Digital</ion-button>
@@ -14,8 +14,11 @@
 
 </ion-header>
 <ion-content>
+  <!-- <ion-button (click)="listen()">Listen</ion-button>
+  <ion-button (click)="removeListen()">Remove Listen</ion-button>
+  <ion-button (click)="permission()">Permission</ion-button> -->
   <ion-row>
-    <ion-col class="ion-text-center">
+    <ion-col class="ion-text-center" (click)="speak()">
       <ion-text color="primary"><b>Working Summary</b></ion-text>
     </ion-col>
   </ion-row>

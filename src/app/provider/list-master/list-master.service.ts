@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
 })
 export class ListMasterService {
   data: any
-  private myMenuTemp = new BehaviorSubject(0);
+  private myMenuTemp = new BehaviorSubject([]);
   constructor(
     public https: HttpClient
   ) { }

@@ -4,6 +4,12 @@
       <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-title>Create Ticket</ion-title>
+    <ion-buttons slot=end>
+      <ion-button (click)="openScanner()">
+        History <ion-icon name="barcode-outline" slot="end"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
   </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -12,12 +18,16 @@
     <ion-card-header color="primary"> User Detail </ion-card-header>
     <ion-card-content>
       <ion-item>
-        <ion-label position="floating">Employee Name</ion-label>
-        <ion-input type="text" formControlName="usr_name" readonly></ion-input>
+        <ion-label position="floating">Name <ion-text color="danger">*</ion-text> </ion-label>
+        <ion-input type="text" formControlName="usr_name"></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">Mobile No  <ion-text color="danger">*</ion-text> </ion-label>
+        <ion-label position="floating">Mobile No  </ion-label>
         <ion-input type="number" formControlName="mobile"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Email  <ion-text color="danger">*</ion-text> </ion-label>
+        <ion-input type="text" formControlName="email"></ion-input>
       </ion-item>
     </ion-card-content>
   </ion-card>
@@ -25,21 +35,28 @@
   <ion-card>
     <ion-card-header color="primary">Problem Detail</ion-card-header>
     <ion-card-content>
+
       <ion-item>
         <ion-label position="floating">Select issue type <ion-text color="danger">*</ion-text> </ion-label>
-        <ion-select interface="action-sheet" formControlName="issue_id" (ionChange)="changeIssue()">
-          <ion-select-option *ngFor="let dat of allIssueType" [value]="dat.issue_id"> {{dat.issue_desc}}</ion-select-option>
+        <ion-select interface="action-sheet" formControlName="issue_id" (ionChange)="changeIssue($event)" mode="ios"><!-- -->
+          <ion-select-option *ngFor="let dat of allIssueType" [value]="dat.issue_id">{{dat.issue_desc}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Request Type <ion-text color="danger">*</ion-text></ion-label>
+        <ion-select interface="action-sheet" formControlName="req_type_id" mode="ios">
+          <ion-select-option *ngFor="let dat of requestType" [value]="dat.val">{{dat.label}}</ion-select-option>
         </ion-select>
       </ion-item>
       <div *ngIf="createForm.value.issue_id === 1">
         <ion-item>
           <ion-label position="floating">Has Barcode  <ion-text color="danger">*</ion-text> </ion-label>
-          <ion-select interface="action-sheet" formControlName="is_barcode" (ionChange)="changeHasBarcode()">
+          <ion-select interface="action-sheet" formControlName="is_barcode" (ionChange)="changeHasBarcode()" mode="ios">
             <ion-select-option value="1">Yes</ion-select-option>
             <ion-select-option value="0">No</ion-select-option>
           </ion-select>
         </ion-item>
-        <ion-item *ngIf="createForm.value.is_barcode === '1'">
+        <ion-item *ngIf="createForm.value.is_barcode ==='1'">
           <ion-label>Barcode No  <ion-text color="danger">*</ion-text> </ion-label>
           <ion-input type="text" formControlName="barcode"></ion-input>
           <ion-button color="danger" slot="end" (click)="searchBarcode()">
@@ -52,39 +69,72 @@
             <h2>{{dat.ext_asset_id}}</h2>
             <p>{{dat.client_asset_id}}</p>
             <p>{{dat.serial_no}}</p>
+            <p><b>Sub Group: </b>{{dat.subgrp_desc}}</p>
+            <p><b>Location: </b>{{dat.location_desc}}</p>
+            <p><b>Floor: </b>{{dat.floor_desc}}</p>
+            <p><b>Building: </b>{{dat.building_desc}}</p>
           </ion-label>
         </ion-item>
-        <ion-item *ngIf="createForm.value.is_barcode === '0'">
-          <ion-label position="floating">RO Name  <ion-text color="danger">*</ion-text> </ion-label>
-          <ion-select interface="action-sheet" formControlName="pc_id">
-            <ion-select-option *ngFor="let dat of allRoName" [value]="dat.value">{{dat.label}}</ion-select-option>
-          </ion-select>
-        </ion-item>
+        <div *ngIf="createForm.value.is_barcode  === '0'">
+          <ion-item  (click)="openRoName()">
+            <ion-label position="floating">Select Site  <ion-text color="danger">*</ion-text> </ion-label>
+            <ion-input type="text" formControlName="pc_id_desc" readonly></ion-input>
+          </ion-item>
+          <ion-item >
+            <ion-label position="floating">Building  <ion-text color="danger">*</ion-text> </ion-label>
+            <ion-select interface="action-sheet" mode="ios" formControlName="bldg_id" (ionChange)="changeBuilding($event)">
+              <ion-select-option *ngFor="let dat of buildingArr" [value]="dat.value">{{dat.label}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item >
+            <ion-label position="floating">Floor  <ion-text color="danger">*</ion-text> </ion-label>
+            <ion-select interface="action-sheet" mode="ios" formControlName="floor_id" (ionChange)="changeFloor($event)">
+              <ion-select-option *ngFor="let dat of floorArr" [value]="dat.value">{{dat.label}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item >
+            <ion-label position="floating">Location  <ion-text color="danger">*</ion-text> </ion-label>
+            <ion-select interface="action-sheet" mode="ios" formControlName="loc_code">
+              <ion-select-option *ngFor="let dat of locationArr" [value]="dat.value">{{dat.label}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </div>
+
       </div>
       <div *ngIf="createForm.value.issue_id === 2">
-        <ion-item>
-          <ion-label position="floating">RO Name <ion-text color="danger">*</ion-text> </ion-label>
-          <ion-select interface="action-sheet" formControlName="pc_id" (ionChange)="getQueryCategory()">
-            <ion-select-option *ngFor="let dat of allRoName" [value]="dat.value">{{dat.label}}</ion-select-option>
+        <ion-item (click)="openRoName()">
+          <ion-label position="floating">Select Site <ion-text color="danger">*</ion-text> </ion-label>
+          <ion-input type="text" formControlName="pc_id_desc" readonly></ion-input>
+        </ion-item>
+        <ion-item >
+          <ion-label position="floating">Building  <ion-text color="danger">*</ion-text> </ion-label>
+          <ion-select interface="action-sheet" mode="ios" formControlName="bldg_id" (ionChange)="changeBuilding($event)">
+            <ion-select-option *ngFor="let dat of buildingArr" [value]="dat.value">{{dat.label}}</ion-select-option>
           </ion-select>
         </ion-item>
-        <ion-item>
+        <ion-item >
+          <ion-label position="floating">Floor  <ion-text color="danger">*</ion-text> </ion-label>
+          <ion-select interface="action-sheet" mode="ios" formControlName="floor_id" (ionChange)="changeFloor($event)">
+            <ion-select-option *ngFor="let dat of floorArr" [value]="dat.value">{{dat.label}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item >
+          <ion-label position="floating">Location  <ion-text color="danger">*</ion-text> </ion-label>
+          <ion-select interface="action-sheet" mode="ios" formControlName="loc_code">
+            <ion-select-option *ngFor="let dat of locationArr" [value]="dat.value">{{dat.label}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item (click)="openCategory()">
           <ion-label position="floating">Query Category  <ion-text color="danger">*</ion-text> </ion-label>
-          <ion-select interface="action-sheet" formControlName="category" (ionChange)="changeQuery($event)">
-            <ion-select-option *ngFor="let dat of allQueryCat" [value]="dat.value">{{dat.label}}</ion-select-option>
-          </ion-select>
+          <ion-input type="text" formControlName="category_desc" readonly></ion-input>
         </ion-item>
-        <ion-item>
-          <ion-label position="floating">Query Sub Category  <ion-text color="danger">*</ion-text> </ion-label>
-          <ion-select interface="action-sheet" formControlName="subcat1_id" (ionChange)="changeSubCat($event)">
-            <ion-select-option *ngFor="let dat of allSubCat1" [value]="dat.value">{{dat.label}}</ion-select-option>
-          </ion-select>
+        <ion-item (click)="openCategorySubCat()" *ngIf="allSubCat1.length > 0">
+          <ion-label position="floating">Query Sub Category One  <ion-text color="danger">*</ion-text> </ion-label>
+          <ion-input type="text" formControlName="subcat1_id_desc" readonly></ion-input>
         </ion-item>
-        <ion-item>
-          <ion-label position="floating">Query Sub Category 2  <ion-text color="danger">*</ion-text> </ion-label>
-          <ion-select interface="action-sheet" formControlName="subcat2_id">
-            <ion-select-option *ngFor="let dat of allSubCat2" [value]="dat.value">{{dat.label}}</ion-select-option>
-          </ion-select>
+        <ion-item (click)="openCategorySubCat2()" *ngIf="allSubCat2.length > 0">
+          <ion-label position="floating">Query Sub Category Two <ion-text color="danger">*</ion-text> </ion-label>
+          <ion-input type="text" formControlName="subcat2_id_desc" readonly></ion-input>
         </ion-item>
       </div>
     </ion-card-content>
@@ -94,24 +144,23 @@
     <ion-card-header color="primary"> Document </ion-card-header>
     <ion-card-content>
       <ion-item>
-        <ion-label position="floating">Priority  <ion-text color="danger">*</ion-text> </ion-label>
-        <ion-select interface="action-sheet" formControlName="priority">
+        <ion-label position="floating">Urgency  <ion-text color="danger">*</ion-text> </ion-label>
+        <ion-select interface="action-sheet" formControlName="priority" mode="ios">
           <ion-select-option>Low</ion-select-option>
           <ion-select-option>Medium</ion-select-option>
           <ion-select-option>High</ion-select-option>
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">Remark</ion-label>
+        <ion-label position="floating">Remark <ion-text color="danger">*</ion-text></ion-label>
         <ion-textarea rows="4" formControlName="remark"></ion-textarea>
       </ion-item>
-      <ion-button size="small" color="danger" fill="outline" (click)="openCamera()" [color]="fileName ? 'success': 'danger' ">Attachment
-        <ion-icon [name]="fileName ?  'checkmark-done-outline': 'attach-outline'" slot="end"></ion-icon>
-      </ion-button>
+      <ion-button size="small" [color]="fileName ? 'success': 'danger'" fill="outline" (click)="openCamera()">Attachment <ion-icon name="attach-outline" slot="end"></ion-icon></ion-button>
       <br>
       <ion-button expand="block" [disabled]="createForm.invalid" (click)="submit()">Submit <ion-icon name="save-outline" slot="end"></ion-icon></ion-button>
 
     </ion-card-content>
   </ion-card>
 </form>
+
 </ion-content>

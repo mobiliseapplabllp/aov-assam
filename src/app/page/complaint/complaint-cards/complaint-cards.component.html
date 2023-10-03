@@ -49,7 +49,7 @@
         </ion-col>
       </ion-row>
       <ion-row>
-        <ion-col>
+        <ion-col *ngIf="data.subcat2_desc">
           <ion-text class="medium">Sub Category2</ion-text><br>
           <ion-text color="dark">{{data.subcat2_desc}}</ion-text>
         </ion-col>

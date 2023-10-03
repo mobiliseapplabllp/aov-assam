@@ -8,7 +8,8 @@ import { environment } from 'src/environments/environment';
 })
 export class LoginService {
   userDataTemp: any = [];
-  username = new BehaviorSubject<any>('');
+  username = new BehaviorSubject([]);
+  // private myMenuTemp = new BehaviorSubject(0);
   userData: any = [];
   constructor(
     public https: HttpClient
@@ -39,6 +40,10 @@ export class LoginService {
         }
       });
     });
+  }
+
+  getUserDataObs() {
+    return this.username;
   }
 
   getLoginUserValue() {

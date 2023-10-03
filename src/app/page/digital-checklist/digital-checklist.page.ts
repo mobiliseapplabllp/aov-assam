@@ -14,11 +14,14 @@ import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner/ngx';
 })
 export class DigitalChecklistPage implements OnInit {
   @ViewChild('popoverDatetime')  popoverDatetime!: IonDatetime;
+  segmentStatus = 'assigned';
   allChecklist: any = [];
   loading: any;
   selectedDate = moment().format('YYYY-MM-DD');
   scanBarcode: any;
   isOnBehalf = 0;
+  assignCheckList: any = [];
+  attendedCheckList: any = [];
   constructor(
     private common: CommonService,
     private router: Router,
@@ -45,13 +48,17 @@ export class DigitalChecklistPage implements OnInit {
 
   getSchedule(date: any) {
     this.allChecklist = [];
+    this.assignCheckList = [];
+    this.attendedCheckList = [];
     this.isOnBehalf = 0;
     this.presentLoading().then(preLoad => {
       this.httpDigital.getScheduleHistory(date).subscribe({
-        next:(data: any) => {
+        next:(data) => {
           console.log(data);
           if (data.status) {
             this.allChecklist = data.data;
+            this.assignCheckList = this.allChecklist.filter((val: any) => val.schedule_status == 'assigned');
+            this.attendedCheckList = this.allChecklist.filter((val: any) => val.schedule_status == 'attended');
             this.isOnBehalf = 0;
           } else {
             this.common.presentToast(data.msg, 'warning');
@@ -70,6 +77,8 @@ export class DigitalChecklistPage implements OnInit {
 
   getScheduleUsingBarcode(loc_id: any) {
     this.isOnBehalf = 0;
+    this.assignCheckList = [];
+    this.attendedCheckList = [];
     this.presentLoading().then(preLoad => {
       this.httpDigital.getSceduleMissed(loc_id).subscribe(data => {
         console.log(data);
@@ -77,6 +86,8 @@ export class DigitalChecklistPage implements OnInit {
         if (data.status) {
           this.isOnBehalf = 1;
           this.allChecklist = data.data;
+          this.assignCheckList = this.allChecklist.filter((val: any) => val.schedule_status == 'assigned');
+          this.attendedCheckList = this.allChecklist.filter((val: any) => val.schedule_status == 'attended');
         } else {
           this.common.presentToast(data.msg, 'warning');
         }
@@ -86,7 +97,7 @@ export class DigitalChecklistPage implements OnInit {
     })
   }
 
-  openPage(url: any) {
+  openPage(url: string) {
     this.router.navigateByUrl(url);
   }
 
@@ -107,13 +118,64 @@ export class DigitalChecklistPage implements OnInit {
 
   changeDateComponent(ev: any) {
     console.log(ev.detail.value);
-    this.selectedDate = moment(ev.detail.value).format('YYYY-MM-DD');
     this.popoverDatetime.confirm(true);
+    this.selectedDate = moment(ev.detail.value).format('YYYY-MM-DD');
     this.getSchedule(this.selectedDate);
   }
 
-  openFillReport(schedule_id: any) {
-    this.router.navigateByUrl('/digital-checklist/fill-report/' + schedule_id + '/' + this.isOnBehalf);
+  openFillReport(data: any) {
+    if (!data.barcode) {
+      this.router.navigateByUrl('/digital-checklist/fill-report/' + data.schedule_id + '/' + this.isOnBehalf);
+    } else {
+      if (this.platform.is('cordova')) {
+        this.barcodeScanner.scan().then(barcodeData => {
+          let temp, temp1;
+          temp = barcodeData.text;
+          temp1 = temp.split('qr=');
+          const obj = {
+            sch_id: data.schedule_id,
+            enc_barcode: temp1[1],
+          }
+          this.verifyBarcode(obj);
+        }, err => {
+          let msg = JSON.stringify(err);
+          if (msg == 'Illegal access') {
+            this.common.presentToast('You Need to allow the Permission', 'warning');
+          } else {
+            this.common.presentToast(JSON.stringify(err), 'warning');
+          }
+        })
+      } else {
+        let temp, temp1;
+        temp = 'https://ifmsuat.mobilisepro.com/#/complaint-qr-code/eyJpdiI6Ik1USXpORFUyTnpnNU1UQXhNVEV5TVE9PSIsInZhbHVlIjoiLytUMkk0L3BURGFyUmxJck9VR2F4Zz09IiwibWFjIjoiZDVlYjg4MjVlZjRkZDMxMzI5MDgyYzhhMWM5NmE1NDkzZmY0ZGJlMDAwMDc2OTA2MzQ4MTdmNTMzYzkxZjI4MSJ9?qr=eyJpdiI6Ik1USXpORFUyTnpnNU1UQXhNVEV5TVE9PSIsInZhbHVlIjoicmtzNUxERVlRTzlYcGYyNXNRN0N6eVp5cjZhS0sxMDJYSlNHRS9mU2RkRT0iLCJtYWMiOiJjNDRjMmQwMDIxOTMxNWMxNmMwOGRjMjhmYzJhZjhiN2EzNGFkMTk1MDU3MWU3MTgyNzZlYTU2ZDQwZjM4ZThjIn0';
+        temp1 = temp.split('qr=');
+        const obj = {
+          sch_id: data.schedule_id,
+          enc_barcode: temp1[1],
+        }
+        this.verifyBarcode(obj);
+      }
+    }
+  }
+
+  verifyBarcode(obj: any){
+    this.presentLoading().then(preLoad => {
+      this.httpDigital.verifyAssetByQr(obj).subscribe({
+        next:(dat: any) => {
+          if (dat.status) {
+            this.common.presentToast(dat.msg, 'success');
+            this.router.navigateByUrl('/digital-checklist/fill-report/' + obj.sch_id + '/' + this.isOnBehalf);
+          } else {
+            this.common.presentToast(dat.msg, 'warning');
+          }
+        }, error:() => {
+          this.dismissloading();
+          this.common.presentToast(environment.errMsg, 'danger');
+        }, complete:() => {
+          this.dismissloading();
+        }
+      })
+    })
   }
 
   changeDate(action: any) {
@@ -132,7 +194,7 @@ export class DigitalChecklistPage implements OnInit {
 
   openBarcode() {
     this.allChecklist = [];
-    if (this.platform.is('capacitor')) {
+    if (this.platform.is('cordova')) {
       this.barcodeScanner.scan().then(barcodeData => {
         let temp, temp1;
         temp = barcodeData.text;
@@ -140,12 +202,16 @@ export class DigitalChecklistPage implements OnInit {
         this.scanBarcode = temp1[5];
         this.getScheduleUsingBarcode(this.scanBarcode);
       }, err => {
-        alert(JSON.stringify(err));
+        let msg = JSON.stringify(err);
+        if (msg == 'Illegal access') {
+          this.common.presentToast('You Need to allow the Permission', 'warning');
+        } else {
+          this.common.presentToast(JSON.stringify(err), 'warning');
+        }
       })
     } else {
       this.scanBarcode = 5
       this.getScheduleUsingBarcode(this.scanBarcode);
     }
   }
-
 }

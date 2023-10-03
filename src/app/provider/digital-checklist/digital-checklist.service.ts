@@ -20,6 +20,10 @@ export class DigitalChecklistService {
     return this.http.get(this.baseurl + 'digicheck/get_scheduled_calender?date=' + date);
   }
 
+  verifyAssetByQr(obj: any): Observable<any> {
+    return this.http.post(this.baseurl + 'digicheck/verifyAssetDcByQr', obj);
+  }
+
   getSceduleMissed(loc_id: any): Observable<any> {
     return this.http.get(this.baseurl + 'digicheck/get_scheduled_calender?qr_loc_id=' + loc_id +  '&on_behalf=1')
   }

@@ -6,6 +6,9 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CameraComponent } from './camera/camera.component';
 import { CostCenterComponent } from './cost-center/cost-center.component';
+import { QueryCatComponent } from './query-cat/query-cat.component';
+import { QuerySubCatComponent } from './query-sub-cat/query-sub-cat.component';
+import { QuerySubCat2Component } from './query-sub-cat2/query-sub-cat2.component';
 
 
 
@@ -13,7 +16,10 @@ import { CostCenterComponent } from './cost-center/cost-center.component';
   declarations: [
     SignatureComponent,
     CameraComponent,
-    CostCenterComponent
+    CostCenterComponent,
+    QueryCatComponent,
+    QuerySubCatComponent,
+    QuerySubCat2Component
   ],
   imports: [
     CommonModule,
@@ -25,7 +31,10 @@ import { CostCenterComponent } from './cost-center/cost-center.component';
   entryComponents: [
     SignatureComponent,
     CameraComponent,
-    CostCenterComponent
+    CostCenterComponent,
+    QueryCatComponent,
+    QuerySubCatComponent,
+    QuerySubCat2Component
   ]
 })
 export class SharedModule { }
