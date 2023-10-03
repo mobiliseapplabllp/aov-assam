@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { LoginService } from './provider/login/login.service';
 import { App } from '@capacitor/app';
 import { Router } from '@angular/router';
-import { ListMasterPage } from './page/list-master/list-master.page';
 import { ListMasterService } from './provider/list-master/list-master.service';
 import { Platform } from '@ionic/angular';
 import { StatusBar, Style } from '@capacitor/status-bar';
