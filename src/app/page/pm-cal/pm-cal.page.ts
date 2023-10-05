@@ -7,8 +7,6 @@ import { CostCenterComponent } from 'src/app/shared/cost-center/cost-center.comp
 import { environment } from 'src/environments/environment';
 import { PmAssignComponent } from './pm-assign/pm-assign.component';
 import { Camera, CameraResultType } from '@capacitor/camera';
-// import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner';
-
 @Component({
   selector: 'app-pm-cal',
   templateUrl: './pm-cal.page.html',
@@ -56,8 +54,7 @@ export class PmCalPage implements OnInit {
     private common: CommonService,
     private modalCtrl: ModalController,
     private router: Router,
-    private platform: Platform,
-    // private barcodeScanner: BarcodeScanner
+    private platform: Platform
   ) { }
 
   ngOnInit() {
@@ -164,7 +161,7 @@ export class PmCalPage implements OnInit {
   }
 
   openFillReport(data: any) {
-    if (this.platform.is('cordova')) {
+    if (this.platform.is('capacitor')) {
       if (data.ext_asset_id) {
         this.common.presentToast('Please Scan QR Code', 'warning');
         this.openBarcode(data)

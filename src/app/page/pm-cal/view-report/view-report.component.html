@@ -1,0 +1,181 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title> View Report ({{requestedData.short_code}}/{{requestedData.year}}/{{requestedData.wo_id}})</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-card style="border-bottom:4px solid var(--ion-color-primary);border-radius: 5px;background-color:var(--ion-color-light)">
+    <ion-row>
+      <ion-col size="6">
+        <ion-text color="primary">RO Name</ion-text><br>
+        <ion-text>{{requestedData.pc_desc}}</ion-text>
+      </ion-col>
+      <ion-col size="6">
+        <ion-text color="primary">Pending Question</ion-text><br>
+        <ion-text>{{requestedData.pending_action}}</ion-text>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="6">
+        <ion-text color="primary">RO Contact No.</ion-text><br>
+        <ion-text>{{requestedData.cont_1}}</ion-text>
+      </ion-col>
+      <ion-col size="6">
+        <ion-text color="primary">CC Code</ion-text><br>
+        <ion-text>{{requestedData.pc_ext_id}}</ion-text>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="6">
+        <ion-text color="primary">Asset Id</ion-text><br>
+        <ion-text>{{requestedData.ext_asset_id}}</ion-text>
+      </ion-col>
+      <ion-col size="6">
+        <ion-text color="primary">Asset Name</ion-text><br>
+        <ion-text>{{requestedData.subgrp_desc}}</ion-text>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="6">
+        <ion-text color="primary">Warranty Status</ion-text><br>
+        <ion-text>{{requestedData.warranty}}</ion-text>
+      </ion-col>
+      <ion-col size="6">
+        <ion-text color="primary">Manufacturer</ion-text><br>
+        <ion-text>{{requestedData.mnfctrer_desc}}</ion-text>
+      </ion-col>
+    </ion-row>
+
+  </ion-card>
+  <div *ngFor="let dat of fillReport; let i = index">
+    <div #a>
+      <ion-item (click)="expand(dat, i)">
+        <ion-label class="ion-text-wrap">
+          <b>{{i+1}}. {{dat.cat_desc}}</b>
+        </ion-label>
+        <ion-text *ngIf="!dat.pending_count" color="success">0</ion-text>
+        <ion-text *ngIf="dat.pending_count" color="danger">{{dat.pending_count}}</ion-text>
+        <ion-icon slot="end" [name]="dat.isView ? 'chevron-down-outline': 'chevron-forward-outline'"></ion-icon>
+      </ion-item>
+    </div>
+
+    <section *ngIf="dat.isView">
+      <div *ngFor="let val of dat.qus;let i = index">
+        <ion-card>
+          <ion-item>
+            <ion-avatar slot="start" class="center">
+              <div style="height:20px;width:20px;font-size: smaller;border-radius: 50%;padding:5px" class="center" [ngClass]="{cr: val.isDtlShow && val.status === 0, ncr: ((val.isDtlShow === false) || (val.isDtlShow === true && val.status === '1')) }">{{i+1}}</div>
+            </ion-avatar>
+            <ion-label class="ion-text-wrap" [innerHTML]="val.q_desc"></ion-label>
+          </ion-item>
+
+          <ion-row *ngIf="val.isDtlShow && val.status === 0">
+            <ion-col class="ion-text-wrap">
+              <div ><ion-text color="primary">{{val.critical_desc}} ({{val.scope_desc}}) </ion-text> </div>
+            </ion-col>
+          </ion-row>
+
+          <ion-item *ngIf="val.isDtlShow && val.status === 0">
+            <ion-label class="ion-text-wrap">
+              <b>Requirement:</b> {{val.requirement}}
+            </ion-label>
+            <ion-text slot="end" *ngIf="val.sla !== 0 ">
+              SLA:{{val.slaDate}}
+            </ion-text>
+          </ion-item>
+
+          <div style='border:1px solid var(--ion-color-primary)'>
+            <ion-row>
+              <ion-col>
+                <ion-text color="primary">Original Response</ion-text><br>
+              </ion-col>
+              <ion-col>
+                <ion-text color="dark">{{val.rspns}}</ion-text>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-text color="primary">Original Remark</ion-text><br>
+              </ion-col>
+              <ion-col>
+                <ion-text color="dark"> {{val.remark}}</ion-text>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-text color="primary">Original Attachment</ion-text><br>
+              </ion-col>
+              <ion-col>
+                <ion-button *ngIf="val.attachment1" fill="clear" (click)="viewDocs(val.attachment1)">
+                  <ion-icon name="attach-outline"></ion-icon>
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </div>
+          <ion-row>
+            <ion-col  size="6" *ngIf="val.response_txn.length > 0"> <!---->
+              <ion-button size="full" color="secondary" (click)="showMore(val)"> More
+                <ion-icon slot="end" [name]="val.showMore ? 'arrow-down-outline': 'arrow-forward-outline'"></ion-icon>
+              </ion-button>
+            </ion-col>
+            <ion-col class="ion-text-right"  size="6" *ngIf="val.isDtlShow && val.status === 0"> <!---->
+              <ion-button color="success" size="full" (click)="addResponse(val, dat.created_at)"><ion-icon name="add-outline" slot="start"></ion-icon> Add Response</ion-button>
+            </ion-col>
+          </ion-row>
+          <div *ngIf="val.showMore">
+            <ion-card *ngFor="let txt of val.response_txn" style="border-bottom:2px solid var(--ion-color-primary)">
+              <ion-grid>
+                <ion-row>
+                  <ion-col>
+                    <ion-text color="primary">Name</ion-text>
+                  </ion-col>
+                  <ion-col>
+                    <ion-text>{{txt.emp_name}}</ion-text>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col>
+                    <ion-text color="primary">Corrective Action</ion-text>
+                  </ion-col>
+                  <ion-col>
+                    <ion-text>{{txt.corrective_action}}</ion-text>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col>
+                    <ion-text color="primary">Action Remark</ion-text>
+                  </ion-col>
+                  <ion-col>
+                    <ion-text>{{txt.remark}}</ion-text>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col>
+                    <ion-text color="primary">Action Date</ion-text>
+                  </ion-col>
+                  <ion-col>
+                    <ion-text>{{txt.action_date}}</ion-text>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col>
+                    <ion-text color="primary">Evidence</ion-text>
+                  </ion-col>
+                  <ion-col>
+                    <ion-button fill="clear" (click)="viewDocs(txt.artifact)">
+                      <ion-icon name="attach-outline"></ion-icon>
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card>
+          </div>
+        </ion-card>
+      </div>
+    </section>
+  </div>
+</ion-content>

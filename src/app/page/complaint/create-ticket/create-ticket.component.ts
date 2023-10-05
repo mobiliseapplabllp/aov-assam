@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
 import { ResponseModalComponent } from '../response-modal/response-modal.component';
 import { CostCenterComponent } from '../../../shared/cost-center/cost-center.component';
 import { Camera, CameraResultType } from '@capacitor/camera';
-import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner/ngx';
+// import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner/ngx';
 import { QueryCatComponent } from 'src/app/shared/query-cat/query-cat.component';
 import { QuerySubCatComponent } from 'src/app/shared/query-sub-cat/query-sub-cat.component';
 import { QuerySubCat2Component } from 'src/app/shared/query-sub-cat2/query-sub-cat2.component';
@@ -46,11 +46,11 @@ export class CreateTicketComponent  implements OnInit {
     private navCtrl: NavController,
     private modalController: ModalController,
     private loadingController: LoadingController,
-    private barcodeScanner: BarcodeScanner
+    // private barcodeScanner: BarcodeScanner
   ) { }
 
   ngOnInit() {
-    if (this.platform.is('cordova')) {
+    if (this.platform.is('capacitor')) {
       this.isCordova = true;
     } else {
       this.isCordova = false;
@@ -140,25 +140,25 @@ export class CreateTicketComponent  implements OnInit {
   }
 
   openScanner() {
-    if (this.platform.is('cordova')) {
-      this.barcodeScanner.scan().then(barcodeData => {
-        console.log('Barcode data', barcodeData);
-        if (!barcodeData.text) {
-          return
-        }
-        let token, fullurl;
-        token = localStorage.getItem('token1');
-        fullurl = barcodeData.text + '?token=' + token;
-        this.httpCommon.openDoc(fullurl);
-        // this.openWebPage(fullurl);
-      }, err => {
-        let msg = JSON.stringify(err);
-        if (msg == 'Illegal access') {
-          this.httpCommon.presentToast('You Need to allow the Permission', 'warning');
-        } else {
-          this.httpCommon.presentToast(JSON.stringify(err), 'warning');
-        }
-      })
+    if (this.platform.is('capacitor')) {
+      // this.barcodeScanner.scan().then(barcodeData => {
+      //   console.log('Barcode data', barcodeData);
+      //   if (!barcodeData.text) {
+      //     return
+      //   }
+      //   let token, fullurl;
+      //   token = localStorage.getItem('token1');
+      //   fullurl = barcodeData.text + '?token=' + token;
+      //   this.httpCommon.openDoc(fullurl);
+      //   // this.openWebPage(fullurl);
+      // }, err => {
+      //   let msg = JSON.stringify(err);
+      //   if (msg == 'Illegal access') {
+      //     this.httpCommon.presentToast('You Need to allow the Permission', 'warning');
+      //   } else {
+      //     this.httpCommon.presentToast(JSON.stringify(err), 'warning');
+      //   }
+      // })
     } else {
       this.httpCommon.openDoc('https://ifmsuat.mobilisepro.com/#/auth');
       // this.openWebPage('https://ifmsuat.mobilisepro.com/#/auth')
