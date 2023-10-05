@@ -1,0 +1,147 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title> Fill Report ({{requestedData.short_code}}/{{requestedData.year}}/{{requestedData.wo_id}}) </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-card style="border-bottom:4px solid var(--ion-color-primary);border-radius: 5px;background-color:var(--ion-color-light)">
+    <ion-row>
+      <ion-col size="6">
+        <ion-text color="primary">Site Name</ion-text><br>
+        <ion-text>{{requestedData.pc_desc}}</ion-text>
+      </ion-col>
+      <ion-col size="6">
+        <ion-text color="primary">Work Order No</ion-text><br>
+        <ion-text>{{requestedData.short_code}}/{{requestedData.year}}/{{requestedData.wo_id}}</ion-text>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="6">
+        <ion-text color="primary">Site Contact No</ion-text><br>
+        <ion-text>{{requestedData.cont_1}}</ion-text>
+      </ion-col>
+      <ion-col size="6">
+        <ion-text color="primary">CC Code</ion-text><br>
+        <ion-text>{{requestedData.pc_ext_id}}</ion-text>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="6">
+        <ion-text color="primary">Asset Id</ion-text><br>
+        <ion-text>{{requestedData.ext_asset_id}}</ion-text>
+      </ion-col>
+      <ion-col size="6">
+        <ion-text color="primary">Asset Name</ion-text><br>
+        <ion-text>{{requestedData.subgrp_desc}}</ion-text>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="6">
+        <ion-text color="primary">Warranty Status</ion-text><br>
+        <ion-text>{{requestedData.warranty}}</ion-text>
+      </ion-col>
+      <ion-col size="6">
+        <ion-text color="primary">Manufacturer</ion-text><br>
+        <ion-text>{{requestedData.mnfctrer_desc}}</ion-text>
+      </ion-col>
+    </ion-row>
+  </ion-card>
+  <ion-row *ngIf="myCategory.length > 0">
+    <ion-col class="ion-text-center">
+      <b>Question List</b>
+    </ion-col>
+  </ion-row>
+  <div *ngFor="let dat of myCategory; let i = index" [ngClass]="{fullborder: dat.isError === true}">
+    <div #a>
+      <section style="background-color:var(--ion-color-light); margin:3px;border:2px solid var(--ion-color-medium);border-radius: 6px;box-shadow: 1px 1px 3px rgb(101, 98, 98);">
+        <ion-item color="none" lines="none">
+          <ion-label class="ion-text-wrap">  <b> {{i + 1}}. {{dat.cat_desc}} </b></ion-label>
+        </ion-item>
+        <ion-row >
+          <ion-col size="5" style="font-size:large;font-weight: 500;display: flex; align-items: center; padding-left: 10px">Applicable</ion-col>
+          <ion-col class="ion-text-right">
+            <ion-button size="small" [fill]="dat.is_applicable === 3 ? 'solid': 'outline'" shape="round" (click)="notApplicable(dat)" [color]="dat.is_applicable === 3 ? 'success': 'medium'" [disabled]="dat.is_applicable === 3"> <!-- [disabled]="dat.is_applicable === 3"-->
+              NA <ion-icon *ngIf="dat.is_applicable === 3" name="checkmark-outline" slot="end"></ion-icon>
+            </ion-button>
+            <ion-button size="small" [fill]="dat.is_applicable === 1 ? 'solid': 'outline'" shape="round" (click)="expand(dat, i)" [color]="dat.is_applicable === 1 ? 'success': 'medium'" [disabled]="dat.is_applicable === 1"> <!-- [disabled]="dat.is_applicable === 1"-->
+              YES <ion-icon *ngIf="dat.is_applicable === 1" name="checkmark-outline" slot="end"></ion-icon>
+            </ion-button>
+            <ion-button size="small" shape="round" color="secondary" fill="outline" *ngIf="dat.is_applicable === 1" [hidden]="dat.isResponseShow" (click)="viewMore(dat, i)"> <!-- (click)="dat.isResponseShow = true"-->
+              <ion-icon name="eye-outline"></ion-icon>
+            </ion-button>
+            <ion-button size="small" shape="round" color="secondary" fill="outline" *ngIf="dat.is_applicable === 1" [hidden]="!dat.isResponseShow" (click)="viewMore(dat, i)"> <!-- (click)="dat.isResponseShow = false" -->
+              <ion-icon name="eye-off-outline"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </section>
+    </div>
+
+    <div *ngIf="dat.isResponseShow" style="border-radius: 10px;">
+      <div style="margin:10px;border:1px solid black;border-radius: 10px;" *ngFor="let val of dat.qus; let i = index" [ngClass]="{critical: val.critical_desc === 'Critical', noncritical: val.critical_desc === 'Non Critical', fullborder: val.isNotFill === true}">
+        <ion-item color="none" lines="full">
+          <ion-avatar slot="start" class="center">
+            <b>{{i+1}}</b>
+          </ion-avatar>
+          <ion-label class="ion-text-wrap" [innerHTML]="val.q_desc"> </ion-label>
+        </ion-item>
+        <ion-row *ngIf="val.showColor">
+          <ion-col class="ion-padding-start">
+            <ion-text color="dark">Requirement</ion-text><br>
+            <ion-text color="medium">{{val.requirement}}</ion-text>
+          </ion-col>
+        </ion-row>
+        <ion-row  *ngIf="val.showColor">
+          <ion-col size="4">
+            <ion-button expand="block" fill="outline" color="warning">{{val.critical_desc}}</ion-button>
+          </ion-col>
+          <ion-col size="4">
+            <ion-button expand="block" fill="outline">{{val.scope_desc}}</ion-button>
+          </ion-col>
+          <ion-col size="4" *ngIf="val.sla !== 0 ">
+            <ion-button expand="block" fill="outline" color="warning">{{val.sla}}: Days</ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-radio-group *ngIf="val.q_type === '226'" [(ngModel)]="val.rspns" (ionChange)="changeOptionResponse(val, $event)">
+              <ion-row>
+                <ion-col size="4" *ngFor="let opt of val.options">
+                  <ion-item lines="none">
+                    <ion-label> {{opt.optn_desc}}</ion-label>
+                    <ion-radio slot="start" [value]="opt.optn_id" style="margin-right:3px"></ion-radio>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+            </ion-radio-group>
+          </ion-col>
+        </ion-row>
+        <ion-item [ngClass]="{redBorder: val.showColor && !val.remark}">
+          <ion-input type="text" [(ngModel)]="val.remark" placeholder="Enter Remark" (change)="changeRemark(val)"></ion-input>
+        </ion-item>
+        <ion-row>
+          <ion-col class="ion-text-left" size="6" [ngClass]="{redBorder: val.showColor && !val.imagename}">
+            <ion-button size="small" [color]="!val.imagename ? 'primary': 'success'" [fill]="!val.imagename ? 'outline' : 'solid' " (click)="presentActionSheet(val)">
+              IMG
+              <ion-icon name="attach-outline" slot="end" *ngIf="!val.imagename"></ion-icon>
+              <ion-icon name="checkmark-done-outline" slot="end" *ngIf="val.imagename"></ion-icon>
+            </ion-button>
+          </ion-col>
+          <ion-col *ngIf="val.attachment" class="ion-text-right">
+            <ion-button color="danger" (click)="viewDocs(val.attachment)" fill="clear">
+              <ion-icon name="attach-outline"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </div>
+    </div>
+  </div>
+  <ion-row *ngIf="myCategory.length > 0">
+    <ion-col>
+      <ion-button expand="full" (click)="finalSubmit()">Submit</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-content>

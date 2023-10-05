@@ -1,0 +1,78 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Menu Roaster</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="menuRoaster">
+    <ion-item>
+      <ion-label position="floating">Select RO Name  <ion-text color="danger">*</ion-text> </ion-label>
+      <ion-select interface="action-sheet" formControlName="pc_code" (ionChange)="changeRo($event)" mode="ios">
+        <ion-select-option *ngFor="let dat of allRoName" [value]="dat.value">{{dat.label}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Location  <ion-text color="danger">*</ion-text> </ion-label>
+      <ion-select interface="action-sheet" formControlName="location" mode="ios">
+        <ion-select-option *ngFor="let dat of location" [value]="dat.value">{{dat.label}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Meal Type </ion-label>
+      <ion-select interface="action-sheet" formControlName="meal_type" mode="ios">
+        <ion-select-option *ngFor="let dat of mealType" [value]="dat.value">{{dat.label}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- <ion-item>
+      <ion-label position="floating">Date  <ion-text color="danger">*</ion-text> </ion-label>
+      <ion-datetime formControlName="date_from" max="2099"></ion-datetime>
+    </ion-item> -->
+    <ion-item id="menu-roaster">
+      <ion-label color="primary" position="floating">Date</ion-label>
+      <ion-input type="text" [value]="menuRoaster.value.date_from | date"   placeholder="Select Date"  readonly></ion-input>
+    </ion-item>
+    <ion-popover trigger="menu-roaster" >
+      <ng-template>
+        <ion-datetime #popoverDatetime max="2099" presentation="date" size="cover" formControlName="date_from" (ionChange)="changeDate()"></ion-datetime>
+      </ng-template>
+    </ion-popover>
+
+    <ion-row>
+      <ion-col>
+        <ion-button expand="block" [disabled]="menuRoaster.invalid" (click)="search()">Search</ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button expand="block" fill="outline" (click)="reset()">Reset</ion-button>
+      </ion-col>
+    </ion-row>
+  </form>
+
+  <ion-card *ngFor="let dat of roasterArr">
+    <ion-card-header color="primary">
+      <b>{{dat.meal_type_name}}({{dat.start_time}}-{{dat.end_time}})</b>
+    </ion-card-header>
+    <ion-card-content >
+      <section *ngFor="let val of dat.dates_data;let i = index">
+        <div *ngIf="i < 1">
+          <ion-item *ngFor="let item of val.items;let j = index" lines="full">
+            <ion-avatar class="center" slot="start" style="width:10px !important;"><b>{{j+1}}</b></ion-avatar>
+            <ion-label>{{item.item_name}}</ion-label>
+          </ion-item>
+        </div>
+
+      </section>
+
+    </ion-card-content>
+  </ion-card>
+
+
+
+
+</ion-content>

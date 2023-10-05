@@ -1,0 +1,145 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Manuals</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-segment [(ngModel)]="status">
+    <ion-segment-button value="manual">
+      <ion-label>Manual </ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="hns">
+      <ion-label>H&S</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+  <div [ngSwitch]='status'>
+    <div *ngSwitchCase="'manual'">
+      <form [formGroup]="manuals" >
+        <ion-card>
+          <ion-item>
+            <ion-label position="floating">Equipment Name</ion-label>
+            <ion-input type="text" formControlName="equipment_name"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Make</ion-label>
+            <ion-input type="text" formControlName="make"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Model</ion-label>
+            <ion-input type="text" formControlName="model"></ion-input>
+          </ion-item>
+          <ion-row>
+            <ion-col>
+              <ion-button shape="round" expand="block" (click)="getManuals()">Search</ion-button>
+            </ion-col>
+            <ion-col>
+              <ion-button shape="round" expand="block" fill="outline" (click)="reset()">Reset</ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-card>
+      </form>
+
+      <ion-card *ngFor="let dat of manualsList">
+        <ion-row>
+          <ion-col size="4">
+            <ion-text color="dark">Equipment Name</ion-text>
+          </ion-col>
+          <ion-col>
+            <ion-text>{{dat.equipment_name}}</ion-text>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="4">
+            <ion-text color="dark">Make</ion-text>
+          </ion-col>
+          <ion-col>
+            <ion-text>{{dat.make}}</ion-text>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="4">
+            <ion-text color="dark">Model</ion-text>
+          </ion-col>
+          <ion-col>
+            <ion-text>{{dat.model}}</ion-text>
+          </ion-col>
+        </ion-row>
+        <ion-row style="background-color:var(--ion-color-dark)" *ngIf="dat.attach.length > 0">
+          <ion-col size="4" >
+            <ion-text color="light">User Manual</ion-text>
+          </ion-col>
+          <ion-col size="4" >
+            <ion-text color="light">Service Manual</ion-text>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngFor="let val of dat.attach">
+          <ion-col size="4">
+            <ion-button fill="clear" (click)="openDoc(val.user_manual)" *ngIf="val.user_manual">
+              <ion-icon name="attach-outline"></ion-icon>
+            </ion-button>
+          </ion-col>
+          <ion-col size="4">
+            <ion-button fill="clear" (click)="openDoc(val.service_manual)" *ngIf="val.service_manual">
+              <ion-icon name="attach-outline"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-card>
+    </div>
+    <div *ngSwitchCase="'hns'">
+      <form [formGroup]="hns">
+        <ion-item>
+          <ion-label position="floating">Category</ion-label>
+          <ion-select interface="action-sheet" formControlName="cat_id" mode="ios">
+            <ion-select-option *ngFor="let dat of category" [value]="dat.value">{{dat.label}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Description</ion-label>
+          <ion-input type="text" formControlName="cat_desc"></ion-input>
+        </ion-item>
+      </form>
+      <ion-row>
+        <ion-col>
+          <ion-button expand="block" shape="round" (click)="searchHns()">Search</ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button expand="block" shape="round" (click)="resethns()" fill="outline">Reset</ion-button>
+        </ion-col>
+      </ion-row>
+
+      <ion-card *ngFor="let dat of hnsArr">
+        <ion-row>
+          <ion-col size="4">
+            <ion-text color="dark">Category</ion-text>
+          </ion-col>
+          <ion-col>
+            {{dat.cat_title}}
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="4">
+            <ion-text color="dark">Description</ion-text>
+          </ion-col>
+          <ion-col>
+            {{dat.desc}}
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-button fill="clear" (click)="openDoc(dat.attach)">
+              <ion-icon name="attach-outline"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-card>
+
+
+    </div>
+  </div>
+
+</ion-content>

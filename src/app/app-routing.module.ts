@@ -30,6 +30,26 @@ const routes: Routes = [
   {
     path: 'app/attendance',
     loadChildren:() => import('./page/attendnce/attendnce.module').then(m => m.AttendncePageModule)
+  },
+  {
+    path: 'manuals',
+    loadChildren: () => import('./page/manuals/manuals.module').then( m => m.ManualsPageModule)
+  },
+  {
+    path: 'forgot-password',
+    loadChildren: () => import('./page/forgot-password/forgot-password.module').then( m => m.ForgotPasswordPageModule)
+  },
+  {
+    path: 'register',
+    loadChildren: () => import('./page/register/register.module').then( m => m.RegisterPageModule)
+  },
+  {
+    path: 'menu-roaster',
+    loadChildren: () => import('./page/menu-roaster/menu-roaster.module').then( m => m.MenuRoasterPageModule)
+  },
+  {
+    path: 'pm-calibration',
+    loadChildren: () => import('./page/pm-cal/pm-cal.module').then( m => m.PmCalPageModule)
   }
 ];
 

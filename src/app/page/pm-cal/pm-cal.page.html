@@ -1,0 +1,370 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>i-FMS</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment value="all" [(ngModel)]='status' color="primary" (ionChange)="changeSeg($event)" scrollable="true">
+      <ion-segment-button value="open">
+        <ion-label>ASSIGN({{openPm.length}})</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="actionable">
+        <ion-label>ACTIONABLE({{actionPm.length}})</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="closed">
+        <ion-label>CLOSED({{closePm.length}})</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+    <ion-row *ngIf="selectedPms.length > 0">
+      <ion-col class="ion-text-right">
+        <ion-button size="small" (click)="multiAssign()">Assign <ion-icon name="arrow-forward-outline" slot="end"></ion-icon></ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" >
+    <ion-fab-button fill="clear" color="primary" (click)="cretePM()">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <div [ngSwitch]='status' class="mostOuter">
+    <div *ngSwitchCase="'open'">
+      <ion-row>
+        <ion-col>
+          <ion-item>
+            <ion-label position="floating">Search By</ion-label>
+            <ion-select interface="action-sheet" [(ngModel)]="searchBy" mode="ios">
+              <ion-select-option value="all">All</ion-select-option>
+              <ion-select-option value="pc_id"> Site</ion-select-option>
+              <ion-select-option value="wo_id">WO ID</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+        <ion-col *ngIf="searchBy">
+          <ion-item *ngIf="searchBy === 'wo_id'">
+            <ion-label position="floating">Wo ID</ion-label>
+            <ion-input type="text" [(ngModel)]="searchValue"> </ion-input>
+          </ion-item>
+          <ion-item *ngIf="searchBy === 'pc_id'" (click)="openRoName()">
+            <ion-label position="floating">Select Site</ion-label>
+            <ion-input type="text" [(ngModel)]="searchValueDesc" readonly> </ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-button *ngIf="searchBy" expand="block" (click)="searchWoFromServer(1)">Search <ion-icon name="search-outline" slot="end"></ion-icon></ion-button>
+      <ion-card class="myCard" *ngFor="let dat of openPm; let i = index" >
+        <ion-card-header color="primary">
+          <ion-text> <b>{{i+1}}. {{dat.pc_desc}} ( {{dat.chklist_desc}} )</b> </ion-text>
+          <ion-checkbox style="float:right" [(ngModel)]="dat.isSelect" (click)="changeCheckbox(dat.isSelect)"></ion-checkbox>
+        </ion-card-header>
+        <ion-card-content class="ion-padding" style="background-color: var(--ion-color-light)">
+          <ion-row>
+            <ion-col size="6">
+              <ion-text color="primary">WO </ion-text><br>
+              <ion-text>{{dat.wo_no}}</ion-text>
+            </ion-col>
+            <ion-col size="6">
+              <ion-text color="primary">Date</ion-text><br>
+              <ion-text>{{dat.log_date}}</ion-text>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="6">
+              <div>
+                <ion-text color="primary">Asset Id</ion-text><br>
+                <ion-text>{{dat.ext_asset_id}}</ion-text>
+              </div>
+            </ion-col>
+            <ion-col size="6">
+              <ion-text color="primary">Asset Name</ion-text><br>
+              <ion-text>{{dat.subgrp_desc}}</ion-text>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="6">
+              <ion-text color="primary">Warranty Status</ion-text>
+              <ion-text>{{dat.warranty}}</ion-text>
+            </ion-col>
+            <ion-col size="6">
+              <ion-text color="primary">Manufacturer</ion-text><br>
+              <ion-text>{{dat.mnfctrer_desc}}</ion-text>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="4">
+              <ion-button class="ion-text-capitalize" color="secondary" size="small" expand="block" (click)="pmAssign(dat)"> Assign </ion-button>
+            </ion-col>
+            <ion-col size="4">
+              <ion-button class="ion-text-capitalize" size="small" color="danger" *ngIf="!dat.ptw_attach" expand="block" (click)="dat.showPtw = !dat.showPtw" >Upload PTW</ion-button>
+              <ion-button class="ion-text-capitalize" size="small" color="medium" *ngIf="dat.ptw_attach" expand="block" (click)="viewAttachment(dat.ptw_attach)" >PTW Img</ion-button>
+            </ion-col>
+            <ion-col size="4">
+              <ion-button class="ion-text-capitalize" color="tertiary" size="small" expand="block" (click)="openFillReport(dat)" *ngIf="dat.ptw_attach">Fill Checklist  </ion-button>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="dat.showPtw">
+            <ion-col>
+              <ion-button size="small" fill="outline" (click)="presentActionSheet(dat)">Photo</ion-button><br>
+              {{dat.imgname_tmp}}
+            </ion-col>
+            <ion-col class="ion-text-right">
+              <label for="choose-file3" class="custom-file-upload" id="choose-file-label">
+                Upload Document
+             </label>
+             {{dat.docname_tmp}}
+             <input name="uploadDocument" type="file" id="choose-file3"
+                accept=".jpg,.jpeg,.pdf,doc,docx,application/msword,.png" style="display: none;" (change)="changeFile($event, dat)" />
+            </ion-col>
+          </ion-row>
+        </ion-card-content>
+      </ion-card>
+      <ion-infinite-scroll [hidden]="currentPage > lastPage" *ngIf="openPm.length > 0"  threshold="100px" (ionInfinite)="loadData($event, 1)">
+        <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data..."> </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </div>
+    <div *ngSwitchCase="'actionable'">
+      <ion-toolbar>
+        <ion-searchbar (ionChange)="searchItem($event, 2)" debounce="1000"></ion-searchbar>
+      </ion-toolbar>
+      <ion-card class="myCard" *ngFor="let dat of actionPm; let i = index" >
+        <ion-card-header color="primary" class="ion-no-padding">
+          <ion-item color="none" lines="none">
+             <b>{{i+1}}. {{dat.pc_desc}} ({{dat.chklist_desc}})</b>
+            <ion-text slot="end" class="center">{{dat.pending_action}}</ion-text>
+          </ion-item>
+        </ion-card-header>
+        <ion-card-content class="ion-padding" style="background-color: var(--ion-color-light)">
+          <ion-row>
+            <ion-col size="6">
+              <div>
+                <ion-text>
+                  <b>WO</b>
+                </ion-text><br>
+                {{dat.wo_no}}
+              </div>
+            </ion-col>
+            <ion-col>
+              <div>
+                <ion-text>
+                  <b>Date</b>
+                </ion-text><br>
+                {{dat.log_date}}
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="6">
+              <div>
+                <ion-text>
+                  <b>Asset Id</b>
+                </ion-text><br>
+                {{dat.ext_asset_id}}
+              </div>
+            </ion-col>
+            <ion-col size="6">
+              <div>
+                <ion-text>
+                  <b>Asset Name</b>
+                </ion-text><br>
+                {{dat.subgrp_desc}}
+              </div>
+            </ion-col>
+          </ion-row>
+
+          <ion-row>
+            <ion-col size="6">
+              <div>
+                <ion-text>
+                  <b>Warranty Status</b>
+                </ion-text><br>
+
+              </div>
+            </ion-col>
+            <ion-col size="6">
+              <div>
+                <ion-text>
+                  <b>Manufacturer</b>
+                </ion-text><br>
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-button size="small" fill="outline" (click)="pmAssign(dat)" expand="block">Assign</ion-button>
+            </ion-col>
+            <ion-col>
+              <ion-button class="ion-text-capitalize" size="small" color="medium" *ngIf="dat.ptw_attach" expand="block" (click)="viewAttachment(dat.ptw_attach)" >PTW Img</ion-button>
+            </ion-col>
+            <ion-col>
+              <ion-button size="small"  color="success" (click)="openViewReport(dat)" expand="block">View Report</ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-card-content>
+      </ion-card>
+      <ion-infinite-scroll *ngIf="actionPm.length > 0" [hidden]="currentPage > lastPage" threshold="100px" (ionInfinite)="loadData($event, 2)">
+        <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data..."> </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </div>
+    <!-- RESOLVED -->
+    <div *ngSwitchCase="'closed'" class="openInner">
+      <ion-toolbar>
+        <ion-searchbar (ionChange)="searchItem($event, 3)" debounce="1000"></ion-searchbar>
+      </ion-toolbar>
+      <ion-card class="myCard" *ngFor="let dat of closePm; let i = index" >
+        <ion-card-header color="primary">
+          <ion-text> <b>{{i+1}}. {{dat.pc_desc}} ( {{dat.chklist_desc}} )</b> </ion-text>
+        </ion-card-header>
+        <ion-card-content class="ion-padding" style="background-color: var(--ion-color-light)">
+          <ion-row>
+            <ion-col size="6">
+              <div>
+                <ion-text>
+                  <b>WO</b>
+                </ion-text><br>
+                {{dat.wo_no}}
+              </div>
+            </ion-col>
+            <ion-col>
+              <div>
+                <ion-text>
+                  <b>Date</b>
+                </ion-text><br>
+                {{dat.log_date}}
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="6">
+              <div>
+                <ion-text>
+                  <b>Asset Id</b>
+                </ion-text><br>
+                {{dat.ext_asset_id}}
+              </div>
+            </ion-col>
+            <ion-col size="6">
+              <div>
+                <ion-text>
+                  <b>Asset Name</b>
+                </ion-text><br>
+                {{dat.subgrp_desc}}
+              </div>
+            </ion-col>
+          </ion-row>
+
+          <ion-row>
+            <ion-col size="6">
+              <div>
+                <ion-text>
+                  <b>Warranty Status</b>
+                </ion-text><br>
+
+              </div>
+            </ion-col>
+            <ion-col size="6">
+              <div>
+                <ion-text>
+                  <b>Manufacturer</b>
+                </ion-text><br>
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-button class="ion-text-capitalize" size="small" color="medium" *ngIf="dat.ptw_attach" expand="block" (click)="viewAttachment(dat.ptw_attach)" >PTW Img</ion-button>
+            </ion-col>
+            <ion-col class="ion-text-right">
+              <ion-button size="small"  color="tertiary" (click)="openViewReport(dat)" >
+                Check Report <ion-icon name="share-outline" slot="end"></ion-icon>
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-card-content>
+      </ion-card>
+      <ion-infinite-scroll threshold="100px" [hidden]="currentPage > lastPage" (ionInfinite)="loadData($event, 3)" *ngIf="closePm.length > 0" >
+        <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data..."> </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </div>
+    <div *ngSwitchCase="'mywo'">
+      <ion-card class="myCard" *ngFor="let dat of myWorkOrder; let i = index" >
+        <ion-card-header color="primary">
+          <ion-text> <b>{{i+1}}. {{dat.pc_desc}} ( {{dat.chklist_desc}} )</b> </ion-text>
+        </ion-card-header>
+        <ion-card-content class="ion-padding" style="background-color: var(--ion-color-light)">
+          <ion-row>
+            <ion-col size="6">
+              <div>
+                <ion-text>
+                  <b>WO</b>
+                </ion-text><br>
+                {{dat.wo_no}}
+              </div>
+            </ion-col>
+            <ion-col>
+              <div>
+                <ion-text>
+                  <b>Status</b>
+                </ion-text><br>
+                {{dat.status_desc}}
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="6">
+              <div>
+                <ion-text>
+                  <b>Mobile No</b>
+                </ion-text><br>
+                <a href="tel:{{dat.ro_cont_no}}" class="button button-positive">
+                  {{dat.ro_cont_no}}
+                </a>
+
+              </div>
+            </ion-col>
+            <ion-col size="6">
+              <div>
+                <ion-text>
+                  <b>Cluster</b>
+                </ion-text><br>
+                {{dat.rgn_name}}
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <div>
+                <ion-text>
+                  <b>Last PMS</b>
+                </ion-text><br>
+                {{dat.last_pms}}
+              </div>
+            </ion-col>
+
+            <ion-col>
+              <div>
+                <ion-text>
+                  <b>Date</b>
+                </ion-text><br>
+                {{dat.log_date}}
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <div>
+                <ion-text>
+                  <b>RO Code</b>
+                </ion-text><br>
+                {{dat.pc_ext_id}}
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>

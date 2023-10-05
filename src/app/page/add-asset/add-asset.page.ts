@@ -9,7 +9,6 @@ import { AssetDepartmentComponent } from './asset-department/asset-department.co
 import { AssetDevicenameComponent } from './asset-devicename/asset-devicename.component';
 import { AssetManufacturerComponent } from './asset-manufacturer/asset-manufacturer.component';
 import { Camera, CameraResultType } from '@capacitor/camera';
-
 @Component({
   selector: 'app-add-asset',
   templateUrl: './add-asset.page.html',
@@ -65,12 +64,11 @@ export class AddAssetPage implements OnInit {
   floorImage!: string;
   constructor(
     private formbuilder: FormBuilder,
-    private platform: Platform,
     private httpAsset: MyAssetGetService,
     private modalController: ModalController,
     private httpCommon: CommonService,
     public loadingController: LoadingController,) {
-    this.addAsset = formbuilder.group({
+    this.addAsset = this.formbuilder.group({
       faciity_type: ['', Validators.required],
       site_id_description:[''],
       site_id: ['', Validators.required],
@@ -239,10 +237,8 @@ export class AddAssetPage implements OnInit {
   async presentActionSheet(val: any) {
     const takePicture = async () => {
       const image = await Camera.getPhoto({
-        quality: 40,
+        quality: 80,
         allowEditing: false,
-        width:700,
-        height:700,
         resultType: CameraResultType.Uri,
       });
       this.readImg(image, val)
@@ -254,8 +250,6 @@ export class AddAssetPage implements OnInit {
     let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg'
     const response = await fetch(photo.webPath);
     const blob = await response.blob();
-    // this.formData.delete('img[]');
-    // this.formData.append('img[]', blob, random);
 
     if (imageno === 1) {
       this.img1 = random;
@@ -605,119 +599,6 @@ export class AddAssetPage implements OnInit {
       }
     });
   }
-
-  // async presentActionSheet(imageno) {
-  //   const actionSheet = await this.actionSheetController.create({
-  //     header: 'Choose option',
-  //     cssClass: 'my-custom-class',
-  //     buttons: [{
-  //       text: 'Camera',
-  //       icon: 'camera-outline',
-  //       handler: () => {
-  //         this.photoOption(this.camera.PictureSourceType.CAMERA, imageno);
-  //       }
-  //     }, {
-  //       text: 'Gallery',
-  //       icon: 'albums-outline',
-  //       handler: () => {
-  //         this.photoOption(this.camera.PictureSourceType.PHOTOLIBRARY, imageno);
-  //       }
-  //     }]
-  //   });
-  //   await actionSheet.present();
-  // }
-
-  // photoOption(src, imageno) {
-  //   const options: CameraOptions = {
-  //     quality: 70,
-  //     destinationType: this.camera.DestinationType.FILE_URI,
-  //     encodingType: this.camera.EncodingType.JPEG,
-  //     mediaType: this.camera.MediaType.PICTURE,
-  //     sourceType: src,
-  //     correctOrientation: true
-  //   };
-
-  //   this.camera.getPicture(options).then((imageData) => {
-  //     this.convertImageToFile(imageData, imageno);
-  //   }, (err) => {
-  //     alert(JSON.stringify(err));
-  //   });
-  // }
-
-  // convertImageToFile(imageData, imageno) {
-  //   this.file.resolveLocalFilesystemUrl(imageData).then((entry: FileEntry) => {
-  //     entry.file(file => {
-  //       console.log(file);
-  //       if (imageno === 1) {
-  //         this.img1 = file.size + '.jpg';
-  //       } else if (imageno === 2) {
-  //         this.img2 = file.size + '.jpg';
-  //       } else if (imageno === 3) {
-  //         this.img3 = file.size + '.jpg';
-  //       } else if (imageno === 4) {
-  //         this.img4 = file.size + '.jpg';
-  //       }
-  //       setTimeout(() => {
-  //         this.read(file, imageno);
-  //       }, 500);
-  //     });
-  //   }, err => {
-  //     alert(JSON.stringify(err) + 'File Not Supported');
-  //   });
-  // }
-
-  // read(file, imageno) {
-  //   let random;
-  //   random = Math.floor(Math.random() * 90000) + 10000;
-  //   const reader = new FileReader();
-  //   reader.readAsArrayBuffer(file);
-  //   reader.onload = () => {
-  //     const blob = new Blob([reader.result], {
-  //       type: file.type
-  //     });
-  //     if (imageno === 1) {
-  //       this.formData.delete('asset_img');
-  //       this.formData.append('asset_img', blob, random + '.jpg');
-  //       this.presentLoading().then(preLoad => {
-  //         this.dismissloading();
-  //         return;
-  //       });
-  //       return;
-  //     }
-  //     if (imageno === 2) {
-  //       this.formData.delete('asset_img2');
-  //       this.formData.append('asset_img2', blob, random + '.jpg');
-  //       this.presentLoading().then(preLoad => {
-  //         this.dismissloading();
-  //         return;
-  //       });
-  //       return;
-  //     }
-  //     if (imageno === 3) {
-  //       this.formData.delete('asset_img3');
-  //       this.formData.append('asset_img3', blob, random + '.jpg');
-  //       this.presentLoading().then(preLoad => {
-  //         this.dismissloading();
-  //         return;
-  //       });
-  //       return;
-  //     }
-  //     if (imageno === 4) {
-  //       this.formData.delete('pur_invoice');
-  //       this.formData.append('pur_invoice', blob, random + '.jpg');
-  //       this.presentLoading().then(preLoad => {
-  //         this.dismissloading();
-  //         return;
-  //       });
-  //       return;
-  //     }
-  //     let barcode, formData, randomNumber = Date.now() + Math.floor(Math.random() * 90000) + 10000;
-  //     barcode = this.addAsset.value.unique_no;
-  //     formData = new FormData();
-  //     formData.append('photo', blob, randomNumber + '.jpg');
-  //     formData.append('barcodeno', barcode);
-  //   };
-  // }
 
   async presentLoading() {
     this.loading = await this.loadingController.create({
