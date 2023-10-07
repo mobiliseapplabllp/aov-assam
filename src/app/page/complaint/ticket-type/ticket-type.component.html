@@ -24,6 +24,13 @@
         <ion-select-option *ngFor="let dat of requestType" [value]="dat.val">{{dat.label}}</ion-select-option>
       </ion-select>
     </ion-item>
+    <ion-item>
+      <ion-label position="floating">Ticket Tag</ion-label>
+      <ion-select interface="action-sheet" formControlName="tkt_tag" mode="ios">
+        <ion-select-option value="1">Pro-Active</ion-select-option>
+        <ion-select-option value="2">Re-Active</ion-select-option>
+      </ion-select>
+    </ion-item>
     <div *ngIf="ticketForm.value.issue_type === 1">
       <ion-item>
         <ion-label position="floating">Is Barcode</ion-label>

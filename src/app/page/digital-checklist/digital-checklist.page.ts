@@ -146,9 +146,9 @@ export class DigitalChecklistPage implements OnInit {
   }
 
   openFillReport(data: any) {
-    this.qrType = data.schedule_id;
-    this.router.navigateByUrl('/barcode');
-    return;
+    // this.qrType = data.schedule_id;
+    // this.router.navigateByUrl('/barcode');
+    // return;
     if (!data.barcode) {
       this.router.navigateByUrl('/digital-checklist/fill-report/' + data.schedule_id + '/' + this.isOnBehalf);
     } else {

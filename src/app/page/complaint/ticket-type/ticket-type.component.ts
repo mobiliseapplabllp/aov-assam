@@ -79,6 +79,7 @@ export class TicketTypeComponent  implements OnInit {
     this.ticketForm = this.formbuilder.group({
       issue_type: ['', Validators.required],
       req_type_id: [''],
+      tkt_tag: [''],
       is_barcode: [''],
       barcode: [''],
       category: [''],

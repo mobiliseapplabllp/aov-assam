@@ -48,6 +48,7 @@ export class PmCalPage implements OnInit {
    searchBy: any;
    searchValue: any;searchValueDesc: any;
    fileName1!: string;
+   selectedBarcode: any;
   constructor(
     private loadingController: LoadingController,
     private httpPms: PmCalService,
@@ -58,10 +59,19 @@ export class PmCalPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.common.setBarcode('');
   }
 
   ionViewDidEnter() {
     this.getPm(this.lastSegment);
+    let bar = this.common.getBarcode();
+    if (bar) {
+      console.log('Your Barcode is ' + bar);
+      if (this.selectedBarcode.ext_asset_id == bar ) {
+        this.openPage(this.selectedBarcode);
+      }
+      this.common.setBarcode('');
+    }
   }
 
   ionViewDidLeave() {
@@ -174,7 +184,9 @@ export class PmCalPage implements OnInit {
   }
 
   openBarcode(data: any) {
-    this.openPage(data);
+    this.selectedBarcode = data;
+    this.router.navigateByUrl('/barcode');
+    // this.openPage(data);
     // this.barcodeScanner.scan().then((barcodeData: any) => {
     //   console.log('Barcode data', barcodeData);
     //   if (data.ext_asset_id == barcodeData.text) {

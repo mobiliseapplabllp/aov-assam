@@ -21,15 +21,15 @@ export class BarcodeComponent  implements OnInit {
   }
 
   ionViewDidEnter() {
-    if (this.platform.is('android')) {
+    if (this.platform.is('capacitor')) {
       this.startScan();
     } else {
       let random = 'https://ifmsuat.mobilisepro.com/#/complaint-qr-code/eyJpdiI6Ik1USXpORFUyTnpnNU1UQXhNVEV5TVE9PSIsInZhbHVlIjoiUVI2TzdJdWlwQStTcjhyN3Zocmxudz09IiwibWFjIjoiMDFiZmRlMWRmNDdmOWQ4N2M3MzEzZGFmOGYzYmU3YmFkNmRlNjlhMWM2YTIyNjYzNTU2N2I3NjRmYmFjZjZlOSJ9';
       this.barcodeNo = random;
-      setTimeout(() => {
-        this.common.setBarcode(this.barcodeNo);
-        this.navCtrl.pop();
-      }, 1000);
+      // setTimeout(() => {
+      //   this.common.setBarcode(this.barcodeNo);
+      //   this.navCtrl.pop();
+      // }, 1000);
     }
   }
 

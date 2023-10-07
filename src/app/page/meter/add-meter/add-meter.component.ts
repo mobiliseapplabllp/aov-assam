@@ -270,12 +270,15 @@ export class AddMeterComponent implements OnInit {
     if (imageno === 1) {
       this.formData.delete('photo1');
       this.formData.append('photo1', blob, random + '.jpg');
+      this.img1 = random;
     } else  if (imageno === 2) {
       this.formData.delete('photo2');
       this.formData.append('photo2', blob, random + '.jpg');
+      this.img2 = random;
     } else if (imageno === 3) {
       this.formData.delete('photo3');
       this.formData.append('photo3', blob, random + '.jpg');
+      this.img3 = random;
     }
     this.presentLoading().then(preLoad => {
       this.dismissloading();
