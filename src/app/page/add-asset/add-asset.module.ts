@@ -7,10 +7,10 @@ import { IonicModule } from '@ionic/angular';
 import { AddAssetPageRoutingModule } from './add-asset-routing.module';
 
 import { AddAssetPage } from './add-asset.page';
-import { AssetPlantComponent } from './asset-plant/asset-plant.component';
 import { AssetDepartmentComponent } from './asset-department/asset-department.component';
 import { AssetDevicenameComponent } from './asset-devicename/asset-devicename.component';
 import { AssetManufacturerComponent } from './asset-manufacturer/asset-manufacturer.component';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
   imports: [
@@ -18,11 +18,11 @@ import { AssetManufacturerComponent } from './asset-manufacturer/asset-manufactu
     FormsModule,
     IonicModule,
     ReactiveFormsModule,
-    AddAssetPageRoutingModule
+    AddAssetPageRoutingModule,
+    SharedModule
   ],
   declarations: [
     AddAssetPage,
-    AssetPlantComponent,
     AssetDepartmentComponent,
     AssetDevicenameComponent,
     AssetManufacturerComponent

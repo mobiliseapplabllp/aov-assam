@@ -20,6 +20,10 @@ export class ComplaintService {
     return this.assignTickets;
   }
 
+  reOpenTicket(obj: any): Observable<any> {
+    return this.https.post(environment.url + 'complaints/reopen_tkt', obj);
+  }
+
   getEmpDetail(): Observable<any> {
     return this.https.get(environment.url + 'get_emp_detail');
   }

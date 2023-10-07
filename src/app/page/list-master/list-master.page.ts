@@ -125,11 +125,18 @@ export class ListMasterPage implements OnInit {
   //   modal.present();
   // }
 
-  ionViewDidEnter() { }
+  ionViewDidEnter() {
+    // let bar = this.common.getBarcode();
+    // if (bar) {
+    //   console.log('Your Barcode is ' + bar);
+    //   this.common.setBarcode('');
+    // }
+  }
 
   ionViewWillLeave() {
     this.dismissloading();
   }
+
   async presentToast() {
     const toast = await this.toastController.create({
       message: 'Press again to exit',
@@ -140,6 +147,7 @@ export class ListMasterPage implements OnInit {
 
 
   ngOnInit() {
+    this.common.setBarcode('');
     this.userData = this.loginPro.getLoginUserValue();
     console.log(this.userData);
   }

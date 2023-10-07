@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>
+      Add Reading
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close(null, false)">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-card>
+    <ion-item>
+      <ion-label position="floating">PC Code</ion-label>
+      <ion-input type="text" readonly></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Location</ion-label>
+      <ion-input type="text" readonly></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Meter</ion-label>
+      <ion-input type="text" readonly></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">New Reading</ion-label>
+      <ion-input type="text" readonly></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Date</ion-label>
+      <ion-input type="text" readonly></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Time</ion-label>
+      <ion-input type="text" readonly></ion-input>
+    </ion-item>
+    <ion-button expand="block" (click)="save()">Submit <ion-icon name="save-outline" slot="end"></ion-icon> </ion-button>
+
+
+  </ion-card>
+</ion-content>

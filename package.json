@@ -20,6 +20,7 @@
     "@angular/platform-browser-dynamic": "^15.0.0",
     "@angular/router": "^15.0.0",
     "@awesome-cordova-plugins/core": "^6.4.0",
+    "@capacitor-community/barcode-scanner": "^4.0.1",
     "@capacitor-community/camera-preview": "^5.0.0",
     "@capacitor-community/speech-recognition": "^5.0.0",
     "@capacitor-community/text-to-speech": "^3.0.1",

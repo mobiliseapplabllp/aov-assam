@@ -7,7 +7,7 @@
     <div class="formDiv">
       <form [formGroup]="loginForms" (ngSubmit)="onLogin()">
         <ion-list class="bg-transparent">
-          <ion-item color="none" lines="none">
+          <ion-item color="none" lines="none" >
             <ion-label position="floating" color="primary">USER ID.</ion-label>
             <ion-input [(ngModel)]="login.userid" type="text"  formControlName="userid" required>
             </ion-input>
@@ -38,7 +38,7 @@
     <div class="mobilise_logo">
       <img src="assets/mobilise_loader.gif" [ngClass]="{'loader-img': !isHidden}">
     </div>
-    <div class="company_title" (click)="openCamera()">
+    <div class="company_title">
       Powered by Mobilise
     </div>
   </div>

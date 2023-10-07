@@ -1,14 +1,26 @@
 import { Injectable } from '@angular/core';
 import { ToastController } from '@ionic/angular';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CommonService {
 
+export class CommonService {
+  public barcode!: string;
   constructor(
     private toastController: ToastController
   ) { }
+
+  setBarcode(barcode: string) {
+    this.barcode = barcode
+  }
+
+  getBarcode() {
+    return this.barcode;
+  }
+
+
 
   async presentToast(msg: any, clr: any) {
     const toast = await this.toastController.create({

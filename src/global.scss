@@ -44,3 +44,8 @@
   align-items: center;
   justify-content: center;
 }
+
+body.scanner-active {
+  --background: '#00000000';
+  --ion-background-color: '#00000000';
+}

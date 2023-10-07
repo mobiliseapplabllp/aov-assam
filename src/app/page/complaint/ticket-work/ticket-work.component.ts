@@ -8,6 +8,7 @@ import { environment } from 'src/environments/environment';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { AssignTicketComponent } from '../assign-ticket/assign-ticket.component';
 import { SignatureComponent } from 'src/app/shared/signature/signature.component';
+import { InstructionModalComponent } from '../instruction-modal/instruction-modal.component';
 
 @Component({
   selector: 'app-ticket-work',
@@ -234,6 +235,32 @@ export class TicketWorkComponent  implements OnInit {
     if(ev.target.value === 'asset') {
 
     }
+  }
+
+  checkHasWip() {
+    // this.openInstructionModal();
+    // return;
+    if (this.arr.hasWIP == 0) {
+      this.openInstructionModal();
+    } else {
+      this.submitTicket();
+    }
+  }
+
+  async openInstructionModal() {
+    const modal = await this.modalCtrl.create({
+      component: InstructionModalComponent,
+      cssClass: 'my-modal',
+      backdropDismiss:false,
+      componentProps: { }
+    });
+    modal.onWillDismiss().then(disModal => {
+      console.log(disModal);
+      if (disModal.role == 'true') {
+        this.submitTicket();
+      }
+    });
+    modal.present();
   }
 
   submitTicket() {

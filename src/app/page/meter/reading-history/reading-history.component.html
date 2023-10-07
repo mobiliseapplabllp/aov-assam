@@ -1,0 +1,56 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Meter Reading History</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-card>
+    <ion-row>
+      <ion-col>
+        <ion-text color="dark">meter_name</ion-text><br>
+        <ion-text>{{requestedData.meter_name}}</ion-text>
+      </ion-col>
+      <ion-col>
+        <ion-text color="dark">meter_type</ion-text><br>
+        <ion-text>{{requestedData.meter_type}}</ion-text>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-text color="dark">lst_reading_dte</ion-text><br>
+        <ion-text>{{requestedData.lst_reading_dte}}</ion-text>
+      </ion-col>
+      <ion-col>
+        <ion-text color="dark">model</ion-text><br>
+        <ion-text>{{requestedData.model}}</ion-text>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-text color="dark">uom</ion-text><br>
+        <ion-text>{{requestedData.uom}}</ion-text>
+      </ion-col>
+      <ion-col>
+        <ion-text color="dark">frequently_reading</ion-text><br>
+        <ion-text>{{requestedData.frequently_reading}}</ion-text>
+      </ion-col>
+    </ion-row>
+  </ion-card>
+  <ion-grid>
+    <ion-row class="odd">
+      <ion-col size="4"><ion-text>Date</ion-text> </ion-col>
+      <ion-col><ion-text>Reading</ion-text> </ion-col>
+    </ion-row>
+    <ion-row *ngFor="let dat of readingHistory;let i = index; let odd=odd;let even=even" [ngClass]="{ odd: odd, even: even}">
+      <ion-col size="4"><ion-text>{{dat.date}}</ion-text> </ion-col>
+      <ion-col><ion-text> {{dat.reading}}</ion-text></ion-col>
+    </ion-row>
+  </ion-grid>
+
+
+
+
+</ion-content>

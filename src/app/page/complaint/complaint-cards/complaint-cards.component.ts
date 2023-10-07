@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoadingController, ModalController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController, NavController } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { ComplaintService } from 'src/app/provider/complaint/complaint.service';
 import { environment } from 'src/environments/environment';
@@ -30,7 +30,9 @@ export class ComplaintCardsComponent  implements OnInit {
     private httpComplaint: ComplaintService,
     private common: CommonService,
     private router: Router,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private alertController: AlertController,
+    private navCtrl: NavController
   ) { }
 
   ngOnInit() {
@@ -162,6 +164,67 @@ export class ComplaintCardsComponent  implements OnInit {
           this.dismissLoading();
         }
       })
+    })
+  }
+
+  async presentAlertConfirm(tkts_id: any) {
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Re-Open Ticket ?',
+      message: 'Are you Sure Want to Re-Open Ticket No ' + tkts_id,
+      mode: 'ios',
+      inputs: [{
+        name: 'remark',
+        type:'textarea',
+        placeholder: 'Enter Remarks',
+      }],
+      buttons: [{
+        text: 'Cancel',
+          handler: (data) => {
+            console.log("Cancel");
+          }
+        },{
+          text: 'YES',
+          handler: (data) => {
+            if(data.remark){
+              const obj = {
+                tktId : tkts_id,
+                reopenRemark: data.remark,
+                source: environment.source
+              }
+              this.reOpenTicket(obj);
+            } else {
+              this.errMsg('Please Enter Remark');
+            }
+          }
+        }]
+    });
+    await alert.present();
+  }
+
+  errMsg(msg: string) {
+    alert(msg)
+  }
+
+  reOpenTicket(data: any) {
+    this.presentLoading().then(preLoad => {
+      this.httpComplaint.reOpenTicket(data).subscribe({
+        next:(data: any) => {
+          if (data.status) {
+            this.common.presentToast(data.msg, 'success');
+            this.navCtrl.pop();
+          } else {
+            this.common.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissLoading();
+          this.common.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissLoading();
+        }
+      });
     })
   }
 

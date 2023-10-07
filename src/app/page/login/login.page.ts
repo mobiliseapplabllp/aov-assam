@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { LoadingController, MenuController, ModalController, Platform } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { LoginService } from 'src/app/provider/login/login.service';
+import { BarcodeComponent } from 'src/app/shared/barcode/barcode.component';
 import { CameraComponent } from 'src/app/shared/camera/camera.component';
 import { environment } from 'src/environments/environment';
 
@@ -40,6 +41,7 @@ export class LoginPage implements OnInit {
   }
 
   ngOnInit() {
+    this.common.setBarcode('');
   }
 
   ionViewDidEnter() {
@@ -48,8 +50,12 @@ export class LoginPage implements OnInit {
       this.isAndroid = true;
     }
     this.menu.enable(false);
+    // let bar = this.common.getBarcode();
+    // if (bar) {
+    //   console.log('Your Barcode is ' + bar);
+    //   this.common.setBarcode('');
+    // }
     if (localStorage.getItem('loginvalue')) {
-
       const isLogin = localStorage.getItem('loginvalue');
       console.log(isLogin);
       if (isLogin) {
@@ -72,6 +78,7 @@ export class LoginPage implements OnInit {
     //  });
   }
   ionViewDidLeave() {
+    // this.common.setBarcode('');
     this.menu.enable(true);
   }
 
@@ -128,23 +135,22 @@ export class LoginPage implements OnInit {
   }
 
   async openCamera() {
-
-    console.log('my site');
-    const modal = await this.modalCtrl.create({
-      component: CameraComponent,
-      componentProps: {  }
-    });
-    modal.onWillDismiss().then(disModal => {
-      console.log(disModal);
-      alert(JSON.stringify(disModal));
-      if (disModal.role) {
-        const binaryString = atob(disModal.data.split(',')[1]);
-        const blob = new Blob([binaryString], { type: 'image/png' });
-        console.log(blob);
-        // this.onLogin();
-      }
-    });
-    modal.present();
+    // document.querySelector('body')?.classList.add('scanner-active');
+    // const modal = await this.modalCtrl.create({
+    //   component: BarcodeComponent,
+    //   componentProps: {  }
+    // });
+    // modal.onWillDismiss().then(disModal => {
+    //   console.log(disModal);
+    //   document.querySelector('body')?.classList.remove('scanner-active');
+    //   alert(JSON.stringify(disModal));
+    //   if (disModal.role) {
+    //     const binaryString = atob(disModal.data.split(',')[1]);
+    //     const blob = new Blob([binaryString], { type: 'image/png' });
+    //     console.log(blob);
+    //   }
+    // });
+    // modal.present();
   }
 
 

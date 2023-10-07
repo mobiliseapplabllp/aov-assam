@@ -9,6 +9,7 @@ import { AssetDepartmentComponent } from './asset-department/asset-department.co
 import { AssetDevicenameComponent } from './asset-devicename/asset-devicename.component';
 import { AssetManufacturerComponent } from './asset-manufacturer/asset-manufacturer.component';
 import { Camera, CameraResultType } from '@capacitor/camera';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-add-asset',
   templateUrl: './add-asset.page.html',
@@ -67,7 +68,9 @@ export class AddAssetPage implements OnInit {
     private httpAsset: MyAssetGetService,
     private modalController: ModalController,
     private httpCommon: CommonService,
-    public loadingController: LoadingController,) {
+    private loadingController: LoadingController,
+    private router: Router
+    ) {
     this.addAsset = this.formbuilder.group({
       faciity_type: ['', Validators.required],
       site_id_description:[''],
@@ -216,7 +219,21 @@ export class AddAssetPage implements OnInit {
     this.pinPointStyleFun();
   }
 
+  ionViewDidEnter() {
+    let bar = this.httpCommon.getBarcode();
+    if (bar) {
+      console.log('Your Barcode is ' + bar);
+      this.addAsset.get('input_asset_id')?.setValue(bar);
+      this.httpCommon.setBarcode('');
+    }
+  }
+
+  ionViewDidLeave() {
+    this.httpCommon.setBarcode('');
+  }
+
   openScanner() {
+    this.router.navigateByUrl('/barcode');
     // this.barcodeScanner.scan().then(barcodeData => {
     //   console.log('Barcode data', barcodeData);
     //   let barcode = barcodeData.text;
@@ -739,6 +756,7 @@ export class AddAssetPage implements OnInit {
   }
 
   ngOnInit() {
+    this.httpCommon.setBarcode('');
   }
 
   changeDate() {

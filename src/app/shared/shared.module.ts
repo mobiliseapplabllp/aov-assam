@@ -9,9 +9,8 @@ import { CostCenterComponent } from './cost-center/cost-center.component';
 import { QueryCatComponent } from './query-cat/query-cat.component';
 import { QuerySubCatComponent } from './query-sub-cat/query-sub-cat.component';
 import { QuerySubCat2Component } from './query-sub-cat2/query-sub-cat2.component';
-
-
-
+import { BarcodeComponent } from './barcode/barcode.component';
+import { AssetPlantComponent } from '../page/add-asset/asset-plant/asset-plant.component';
 @NgModule({
   declarations: [
     SignatureComponent,
@@ -19,7 +18,9 @@ import { QuerySubCat2Component } from './query-sub-cat2/query-sub-cat2.component
     CostCenterComponent,
     QueryCatComponent,
     QuerySubCatComponent,
-    QuerySubCat2Component
+    QuerySubCat2Component,
+    BarcodeComponent,
+    AssetPlantComponent
   ],
   imports: [
     CommonModule,
@@ -34,7 +35,9 @@ import { QuerySubCat2Component } from './query-sub-cat2/query-sub-cat2.component
     CostCenterComponent,
     QueryCatComponent,
     QuerySubCatComponent,
-    QuerySubCat2Component
+    QuerySubCat2Component,
+    BarcodeComponent,
+    AssetPlantComponent
   ]
 })
 export class SharedModule { }

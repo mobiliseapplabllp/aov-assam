@@ -1,0 +1,136 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title> Add Meter </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <form [formGroup]="addAsset">
+  <ion-card>
+    <ion-card-header color="primary"> Location Information </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="floating">Facility Type <ion-text color="danger">*</ion-text> </ion-label>
+        <ion-select interface="action-sheet" formControlName="faciity_type"  mode="ios"> <!-- (ionChange)="changeFacility($event)"-->
+          <ion-select-option *ngFor="let dat of facilityTypeArr" [value]="dat.id">{{dat.pc_cat_ext_id}}-{{dat.pc_cat}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item (click)="openSiteModal()">
+        <ion-label position="floating">Select Site  <ion-text color="danger">*</ion-text> </ion-label>
+        <ion-input type="text" formControlName="site_id_description" readonly></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Block <ion-text color="danger">*</ion-text> </ion-label>
+        <ion-select interface="action-sheet" formControlName="block_id" (ionChange)="changeBlock($event)" mode="ios">
+          <ion-select-option *ngFor="let dat of myBlocks" [value]="dat.value">{{dat.label}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Building <ion-text color="danger">*</ion-text> </ion-label>
+        <ion-select interface="action-sheet" formControlName="bldg_id" (ionChange)="changeBuilding($event)" mode="ios">
+          <ion-select-option *ngFor="let dat of myBuildingArr" [value]="dat.value">{{dat.label}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Floor <ion-text color="danger">*</ion-text> </ion-label>
+        <ion-select interface="action-sheet" formControlName="floor_id" (ionChange)="changeFloor($event)" mode="ios">
+          <ion-select-option *ngFor="let dat of myFloor" [value]="dat.value"> {{dat.label}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Location <ion-text color="danger">*</ion-text> </ion-label>
+        <ion-select interface="action-sheet" formControlName="location_id" mode="ios">
+          <ion-select-option *ngFor="let dat of myLocation" [value]="dat.value"> {{dat.label}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header color="primary"> Meter Information</ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="floating">Ext Id <ion-text color="danger">*</ion-text> </ion-label>
+        <ion-input type="text" formControlName="ext_id"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Has Asset id <ion-text color="danger">*</ion-text> </ion-label>
+        <ion-select interface="action-sheet" formControlName="is_child_asset" (click)="changeAssetChild()" mode="ios">
+          <ion-select-option value="1">YES</ion-select-option>
+          <ion-select-option value="0">NO</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Meter Type <ion-text color="danger">*</ion-text> </ion-label>
+        <ion-select interface="action-sheet" formControlName="meter_type_id" mode="ios">
+          <ion-select-option *ngFor="let dat of meterType" [value]="dat.id"> {{dat.meter_type}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Meter Name <ion-text color="danger">*</ion-text> </ion-label>
+        <ion-input type="text" formControlName="meter_name"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">UOM <ion-text color="danger">*</ion-text> </ion-label>
+        <!-- <ion-input type="text"></ion-input> -->
+        <ion-select interface="action-sheet" formControlName="uom_id" mode="ios">
+          <ion-select-option *ngFor="let dat of uomMeter" [value]="dat.value"> {{dat.label}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Price Unit <ion-text color="danger">*</ion-text>  </ion-label>
+        <ion-input type="text" formControlName="unit_price"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Model <ion-text color="danger">*</ion-text> </ion-label>
+        <ion-input type="text" formControlName="model"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Serial No <ion-text color="danger">*</ion-text> </ion-label>
+        <ion-input type="text" formControlName="s_no"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Frequency Reading <ion-text color="danger">*</ion-text> </ion-label>
+        <ion-input type="text" formControlName="read_frequency"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">MNF Detail <ion-text color="danger">*</ion-text> </ion-label>
+        <ion-input type="text" formControlName="mnf_details"></ion-input>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+  <ion-card>
+    <ion-card-header color="primary"> Working Detail</ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="floating">Remark</ion-label>
+        <ion-input type="text" formControlName="remark"></ion-input>
+      </ion-item>
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="danger" (click)="presentActionSheet(1)">
+            <ion-icon name="camera-outline"></ion-icon>
+          </ion-button><br>
+          <ion-text>{{img1}}</ion-text>
+        </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="danger" (click)="presentActionSheet(2)">
+            <ion-icon name="camera-outline"></ion-icon>
+          </ion-button><br>
+          <ion-text>{{img2}}</ion-text>
+        </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="danger" (click)="presentActionSheet(3)">
+            <ion-icon name="camera-outline"></ion-icon>
+          </ion-button><br>
+          <ion-text>{{img3}}</ion-text>
+        </ion-col>
+      </ion-row>
+    </ion-card-content>
+  </ion-card>
+  <ion-button expand="block"  (click)="addMeter()" [disabled]="addAsset.invalid">Add meter <ion-icon name="save-outline" slot="end"></ion-icon> </ion-button>
+  </form>
+
+</ion-content>

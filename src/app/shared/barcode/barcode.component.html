@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Scan QrCode</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <section>
+    <ion-row class="scanner-buttons">
+      <ion-col class="ion-no-padding">
+        <ion-button expand="full" (click)="stopScanner()">Stop Scanner</ion-button>
+      </ion-col>
+    </ion-row>
+    <div class="scan-box" ></div>
+  </section>
+</ion-content>

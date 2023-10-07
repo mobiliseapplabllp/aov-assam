@@ -1,12 +1,13 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { BarcodeComponent } from './shared/barcode/barcode.component';
 
 const routes: Routes = [
-  {
-    path: '',
-    redirectTo: '/login',
-    pathMatch: 'full'
-  },
+  // {
+  //   path: '',
+  //   redirectTo: '/login',
+  //   pathMatch: 'full'
+  // },
   {
     path: 'login',
     loadChildren: () => import('./page/login/login.module').then(m => m.LoginPageModule)
@@ -50,7 +51,23 @@ const routes: Routes = [
   {
     path: 'pm-calibration',
     loadChildren: () => import('./page/pm-cal/pm-cal.module').then( m => m.PmCalPageModule)
-  }
+  },
+  {
+    path: 'barcode',
+    component: BarcodeComponent
+  },
+  {
+    path: 'meal-checking',
+    loadChildren: () => import('./page/meal-checkin/meal-checkin.module').then( m => m.MealCheckinPageModule)
+  },
+  {
+    path: 'indents',
+    loadChildren: () => import('./page/indents/indents.module').then( m => m.IndentsPageModule)
+  },
+  {
+    path: 'meter',
+    loadChildren: () => import('./page/meter/meter.module').then( m => m.MeterPageModule)
+  },
 ];
 
 @NgModule({

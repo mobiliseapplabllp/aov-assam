@@ -117,16 +117,23 @@
     <ion-grid class="grid1">
       <ion-row>
         <ion-col class="ion-text-center" >
-          <ion-button style="width:80%;font-size:xx-small;" color="secondary" (click)="openSite()">Site Details</ion-button>
+          <ion-button style="width:80%;font-size:xx-small;" color="secondary" (click)="openSite()">Details</ion-button>
         </ion-col>
         <ion-col class="ion-text-center">
           <ion-button style="width:80%;font-size:xx-small;" color="medium" (click)="history()">History </ion-button>
         </ion-col>
         <ion-col class="ion-text-center" >
-          <ion-button *ngIf="data.rslv_date === '0000-00-00 00:00:00';else efsr" style="width:80%;font-size:xx-small;" color="warning" (click)="work_now()">Work Now</ion-button>
+          <ion-button *ngIf="data.stage_id === 4 || data.stage_id === 6; else worknow" style="width:80%;font-size:xx-small;" color="success" (click)="fsr(data.tkts_id)">EFSR</ion-button>
+          <ng-template #worknow>
+            <ion-button style="width:80%;font-size:xx-small;" color="warning" (click)="work_now()">Work Now</ion-button>
+          </ng-template>
+          <!-- <ion-button *ngIf="data.rslv_date === '0000-00-00 00:00:00';else efsr" style="width:80%;font-size:xx-small;" color="warning" (click)="work_now()">Work Now</ion-button>
           <ng-template #efsr>
             <ion-button style="width:80%;font-size:xx-small;" color="success" (click)="fsr(data.tkts_id)">EFSR</ion-button>
-          </ng-template>
+          </ng-template> -->
+        </ion-col>
+        <ion-col class="ion-text-center" *ngIf="data.is_reopen_icon === 1">
+          <ion-button style="width:80%;font-size:xx-small;" color="tertiary"  (click)="presentAlertConfirm(data.tkts_id)">Re-open</ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>

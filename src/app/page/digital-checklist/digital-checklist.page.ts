@@ -5,7 +5,6 @@ import * as moment from 'moment';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { DigitalChecklistService } from 'src/app/provider/digital-checklist/digital-checklist.service';
 import { environment } from 'src/environments/environment';
-// import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner/ngx';
 
 @Component({
   selector: 'app-digital-checklist',
@@ -22,23 +21,46 @@ export class DigitalChecklistPage implements OnInit {
   isOnBehalf = 0;
   assignCheckList: any = [];
   attendedCheckList: any = [];
+  qrType = 'null';
   constructor(
     private common: CommonService,
     private router: Router,
     private httpDigital: DigitalChecklistService,
     private loadingController: LoadingController,
     private platform: Platform,
-    // private barcodeScanner: BarcodeScanner
   ) { }
 
   ngOnInit() {
+    this.common.setBarcode('');
   }
 
   ionViewDidLeave() {
+    this.common.setBarcode('');
     this.dismissloading();
   }
 
   ionViewDidEnter() {
+    let bar = this.common.getBarcode();
+    if (bar) {
+      if (this.qrType == 'otherbarcode') {
+        console.log('Your Barcode is ' + bar);
+        this.common.setBarcode('');
+        let temp, temp1;
+        temp = bar;
+        temp1 = temp.split('/');
+        this.scanBarcode = temp1[5];
+      } else {
+        let temp, temp1;
+        temp = bar;
+        temp1 = temp.split('qr=');
+        const obj = {
+          sch_id: this.qrType,
+          enc_barcode: temp1[1],
+        }
+        this.verifyBarcode(obj);
+        return;
+      }
+    }
     if (!this.scanBarcode) {
       this.getSchedule(this.selectedDate);
     } else {
@@ -124,9 +146,14 @@ export class DigitalChecklistPage implements OnInit {
   }
 
   openFillReport(data: any) {
+    this.qrType = data.schedule_id;
+    this.router.navigateByUrl('/barcode');
+    return;
     if (!data.barcode) {
       this.router.navigateByUrl('/digital-checklist/fill-report/' + data.schedule_id + '/' + this.isOnBehalf);
     } else {
+      this.qrType = data.schedule_id;
+      this.router.navigateByUrl('/barcode');
       // if (this.platform.is('capacitor')) {
       //   this.barcodeScanner.scan().then(barcodeData => {
       //     let temp, temp1;
@@ -194,24 +221,26 @@ export class DigitalChecklistPage implements OnInit {
 
   openBarcode() {
     this.allChecklist = [];
-    if (this.platform.is('capacitor')) {
-      // this.barcodeScanner.scan().then(barcodeData => {
-      //   let temp, temp1;
-      //   temp = barcodeData.text;
-      //   temp1 = temp.split('/');
-      //   this.scanBarcode = temp1[5];
-      //   this.getScheduleUsingBarcode(this.scanBarcode);
-      // }, err => {
-      //   let msg = JSON.stringify(err);
-      //   if (msg == 'Illegal access') {
-      //     this.common.presentToast('You Need to allow the Permission', 'warning');
-      //   } else {
-      //     this.common.presentToast(JSON.stringify(err), 'warning');
-      //   }
-      // })
-    } else {
-      this.scanBarcode = 5
-      this.getScheduleUsingBarcode(this.scanBarcode);
-    }
+    this.qrType = 'otherbarcode';
+    this.router.navigateByUrl('/barcode');
+    // if (this.platform.is('capacitor')) {
+    //   // this.barcodeScanner.scan().then(barcodeData => {
+    //   //   let temp, temp1;
+    //   //   temp = barcodeData.text;
+    //   //   temp1 = temp.split('/');
+    //   //   this.scanBarcode = temp1[5];
+    //   //   this.getScheduleUsingBarcode(this.scanBarcode);
+    //   // }, err => {
+    //   //   let msg = JSON.stringify(err);
+    //   //   if (msg == 'Illegal access') {
+    //   //     this.common.presentToast('You Need to allow the Permission', 'warning');
+    //   //   } else {
+    //   //     this.common.presentToast(JSON.stringify(err), 'warning');
+    //   //   }
+    //   // })
+    // } else {
+    //   this.scanBarcode = 5
+    //   this.getScheduleUsingBarcode(this.scanBarcode);
+    // }
   }
 }
