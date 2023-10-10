@@ -25,7 +25,7 @@
       </ion-select>
     </ion-item>
     <ion-item>
-      <ion-label position="floating">Ticket Tag</ion-label>
+      <ion-label position="floating">Activity Type</ion-label>
       <ion-select interface="action-sheet" formControlName="tkt_tag" mode="ios">
         <ion-select-option value="1">Pro-Active</ion-select-option>
         <ion-select-option value="2">Re-Active</ion-select-option>
@@ -95,7 +95,7 @@
         </ion-select>
       </ion-item>
 
-      <ion-item >
+      <ion-item *ngIf="allData.source !== 'QRCODE' ">
         <ion-label position="floating">Location  <ion-text color="danger">*</ion-text> </ion-label>
         <ion-select interface="action-sheet" mode="ios" formControlName="loc_code">
           <ion-select-option *ngFor="let dat of locationArr" [value]="dat.value">{{dat.label}}</ion-select-option>

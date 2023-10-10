@@ -238,8 +238,8 @@ export class TicketWorkComponent  implements OnInit {
   }
 
   checkHasWip() {
-    // this.openInstructionModal();
-    // return;
+    this.openInstructionModal();
+    return;
     if (this.arr.hasWIP == 0) {
       this.openInstructionModal();
     } else {
@@ -420,13 +420,13 @@ export class TicketWorkComponent  implements OnInit {
 
 
   sendOtp() {
-    console.log (this.workSpace.value.phone_no.length);
-    if (this.workSpace.value.phone_no.length != 10) {
-      this.httpCommon.presentToast('Mobile No Should be 10 Digit', 'warning');
-      return;
-    }
+    // console.log (this.workSpace.value.phone_no.length);
+    // if (this.workSpace.value.phone_no.length != 10) {
+    //   this.httpCommon.presentToast('Mobile No Should be 10 Digit', 'warning');
+    //   return;
+    // }
     const obj = {
-      phone_no: this.workSpace.value.phone_no,
+      phone_no: this.mobile,
       ticket_id: this.ticket_id
     }
     this.presentLoading().then(preLoad => {

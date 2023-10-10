@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-instruction-modal',
@@ -20,11 +21,14 @@ export class InstructionModalComponent  implements OnInit {
   },{
     label: 'instruction 6'
   }]
+  url!: any;
   constructor(
     private modalCtrl: ModalController
   ) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.url = environment.url2 + 'backend/public/uploads/safety-inst-sm.jpg';
+  }
 
   changeCheckBox(ev: any) {
     console.log(ev);

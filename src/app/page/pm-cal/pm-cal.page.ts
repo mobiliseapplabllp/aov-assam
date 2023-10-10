@@ -7,6 +7,7 @@ import { CostCenterComponent } from 'src/app/shared/cost-center/cost-center.comp
 import { environment } from 'src/environments/environment';
 import { PmAssignComponent } from './pm-assign/pm-assign.component';
 import { Camera, CameraResultType } from '@capacitor/camera';
+import { PtwUploadComponent } from './ptw-upload/ptw-upload.component';
 @Component({
   selector: 'app-pm-cal',
   templateUrl: './pm-cal.page.html',
@@ -227,6 +228,26 @@ export class PmCalPage implements OnInit {
     });
     return await modal.present();
   }
+
+  async uploadPtw(dat: any) {
+    const modal = await this.modalCtrl.create({
+      component: PtwUploadComponent,
+      cssClass: 'my-modal2',
+      componentProps : {
+        data: dat
+      }
+    });
+    modal.onWillDismiss().then(disModal => {
+      console.log(disModal);
+      if (disModal.role) {
+        console.log(disModal.data.ptw_attach);
+        dat.ptw_attach = disModal.data.ptw_attach
+      }
+    });
+    return await modal.present();
+  }
+
+
 
   searchWoFromServer(stage_id: any) {
     if (this.searchBy == 'all') {

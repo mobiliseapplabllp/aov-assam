@@ -176,11 +176,13 @@ export class ComplaintService {
   assignTicket(d: any, ticketStatus: any, start: any, lengt: any) {
     return new Promise(resolve => {
       this.https.get(environment.url + '/assigned_ticket1.php?emp_id=' + d.user_id + '&mix_ticket_status=' + ticketStatus +
-      '&start=' + start + '&length=' + lengt + '&searching_method=datatable').subscribe(data => {
-        console.log(data);
-        resolve(data);
-      }, err => {
-        resolve(false);
+      '&start=' + start + '&length=' + lengt + '&searching_method=datatable').subscribe({
+        next:(data) => {
+          resolve(data);
+        },
+        error:() => {
+          resolve(false);
+        }
       });
     });
   }
@@ -189,11 +191,13 @@ export class ComplaintService {
     console.log(dat.ticket_id);
     return new Promise(resolve => {
       this.https.get(environment.url + 'specific_ticket.php?ticket_id=' + dat.ticket_id +
-      '&ticket_type=' + dat.product_type).subscribe(data => {
-        console.log(data);
-        resolve(data);
-      }, err => {
-        resolve(false);
+      '&ticket_type=' + dat.product_type).subscribe({
+        next:(data) => {
+          resolve(data)
+        },
+        error:() => {
+          resolve(false);
+        }
       });
     });
   }
@@ -204,10 +208,13 @@ export class ComplaintService {
 
   ticketTransaction(formdata: any) {
     return new Promise(resolve => {
-      this.https.post(environment.url + 'submit_ticket_transaction.php', formdata).subscribe(dat => {
-        resolve(dat);
-      }, err => {
-        resolve(false)
+      this.https.post(environment.url + 'submit_ticket_transaction.php', formdata).subscribe({
+        next:(data) => {
+          resolve(data)
+        },
+        error:() => {
+          resolve(false);
+        }
       });
     });
   }
@@ -218,11 +225,13 @@ export class ComplaintService {
     return new Promise(resolve => {
       const url = environment.url + 'submit_ticket_transaction.php';
       const option = new HttpParams({fromObject: data});
-      this.https.post(url, option).subscribe( dat => {
-        console.log(dat);
-        resolve(dat);
-      }, err => {
-        resolve(false);
+      this.https.post(url, option).subscribe({
+        next:(data) => {
+          resolve(data)
+        },
+        error:() => {
+          resolve(false);
+        }
       });
     });
   }
@@ -235,7 +244,8 @@ export class ComplaintService {
       postdata.append('ticket_id', d.ticket_id);
       postdata.append('logged_by', d.logged_by);
       postdata.append('remark', d.remark);
-      this.https.post(url, postdata).subscribe( dat => {
+      this.https.post(url, postdata).subscribe(
+        dat => {
         resolve(dat);
       }, err => {
         resolve(false);
@@ -245,31 +255,39 @@ export class ComplaintService {
 
   getTeams(empId: any) {
     return new Promise(resolve => {
-      this.https.get(environment.url + '/get_teams_mem.php?ticket_id=' + empId).subscribe(data => {
-        resolve(data);
-      }, err => {
-        resolve(false);
+      this.https.get(environment.url + '/get_teams_mem.php?ticket_id=' + empId).subscribe({
+        next:(data) => {
+          resolve(data)
+        },
+        error:() => {
+          resolve(false);
+        }
       });
     });
   }
 
   sentOtp(mobile: any) {
     return new Promise(resolve => {
-      this.https.get(environment.url + '/customer_send_otp.php?mobile=' + mobile + '&type=mobile').subscribe(data => {
-        resolve(data);
-      }, err => {
-        console.log(err);
-        resolve(false);
+      this.https.get(environment.url + '/customer_send_otp.php?mobile=' + mobile + '&type=mobile').subscribe({
+        next:(data) => {
+          resolve(data)
+        },
+        error:() => {
+          resolve(false);
+        }
       });
     });
   }
 
   verifyOtp(mobile: any, otp: any) {
     return new Promise(resolve => {
-      this.https.get(environment.url + '/customer_verify_otp.php?mobile=' + mobile + '&otp=' + otp).subscribe(data => {
-        resolve(data);
-      }, err => {
-        resolve(false);
+      this.https.get(environment.url + '/customer_verify_otp.php?mobile=' + mobile + '&otp=' + otp).subscribe({
+        next:(data) => {
+          resolve(data)
+        },
+        error:() => {
+          resolve(false);
+        }
       });
     });
   }

@@ -96,15 +96,16 @@
               </ion-item>
               <ion-item>
                 <ion-button size="small" fill="outline" color="{{fileName ? 'success': 'danger'}}"  (click)="presentActionSheet()"> Image </ion-button>
+                <ion-button shape="round" [hidden]="isOtpSent" expand="block" (click)="sendOtp()">Send OTP</ion-button>
               </ion-item>
 
-              <ion-item [disabled]="isOtpSent">
+              <!-- <ion-item [disabled]="isOtpSent">
                 <ion-label position="floating">Phone No</ion-label>
                 <ion-input type="text" [(ngModel)]="mobile" formControlName="phone_no" [disabled]="isOtpSent"></ion-input>
                 <ion-buttons slot="end">
                   <ion-button shape="round" [hidden]="isOtpSent" expand="block" [disabled]="!workSpace.value.phone_no" (click)="sendOtp()">Send OTP</ion-button>
                 </ion-buttons>
-              </ion-item>
+              </ion-item> -->
 
               <ion-item  class="ion-text-center" [disabled]="isVerifyOtp" *ngIf="isOtpSent"> <!--*ngIf="isOtpSent"-->
                 <ng-otp-input  (onInputChange)="changeNgOtp($event)" [config]="{length:4, allowNumbersOnly:true}"></ng-otp-input>

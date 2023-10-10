@@ -1,19 +1,6 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Instruction</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="closeModal(null,  'false')">
-        <ion-icon name="close-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+
 <ion-content>
-  <ion-item *ngFor="let dat of inst;let i = index">
-    <ion-label>
-      <b>{{i+1}}.</b> {{dat.label}}
-    </ion-label>
-  </ion-item>
+  <img [src]="url" style="width:100%;height:50%;" onError="src = 'assets/img/safety_inst_err.jpeg'">
   <ion-item>
     <ion-checkbox slot="start" (ionChange)="changeCheckBox($event)"></ion-checkbox>
     <ion-label class="ion-text-wrap">

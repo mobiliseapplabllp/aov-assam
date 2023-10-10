@@ -6,6 +6,7 @@ import { PmAssignComponent } from './pm-assign/pm-assign.component';
 import { PmReportComponent } from './pm-report/pm-report.component';
 import { ViewReportComponent } from './view-report/view-report.component';
 import { AddResponseComponent } from './add-response/add-response.component';
+import { PtwUploadComponent } from './ptw-upload/ptw-upload.component';
 
 const routes: Routes = [
   {
@@ -27,6 +28,10 @@ const routes: Routes = [
   {
     path: 'add-response',
     component: AddResponseComponent
+  },
+  {
+    path: 'upload-ptw',
+    component: PtwUploadComponent
   }
 ];
 

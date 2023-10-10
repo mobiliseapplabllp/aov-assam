@@ -7,7 +7,6 @@ import { environment } from 'src/environments/environment';
 import { SiteDetailComponent } from '../site-detail/site-detail.component';
 import { TicketHistoryComponent } from '../ticket-history/ticket-history.component';
 import { TicketTypeComponent } from '../ticket-type/ticket-type.component';
-
 @Component({
   selector: 'app-complaint-cards',
   templateUrl: './complaint-cards.component.html',
@@ -35,11 +34,7 @@ export class ComplaintCardsComponent  implements OnInit {
     private navCtrl: NavController
   ) { }
 
-  ngOnInit() {
-    console.log(this.ticketType);
-    console.log(this.data);
-
-  }
+  ngOnInit() { }
 
   isHidden(data: any) {
     data.hide = !data.hide;
@@ -66,32 +61,30 @@ export class ComplaintCardsComponent  implements OnInit {
 
   async work_now() {
     this.presentLoading().then(preLoad => {
-      this.httpComplaint.checkTicketConfirm(this.data.tkts_id).subscribe(data => {
-        this.dismissLoading();
-        if (data.status) {
-          this.openTicketWork();
-        } else {
-          this.openTicketTypeModal();
+      this.httpComplaint.checkTicketConfirm(this.data.tkts_id).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.openTicketWork();
+          } else {
+            this.openTicketTypeModal();
+          }
+        },
+        error:() => {
+          this.dismissLoading();
+          this.common.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissLoading();
         }
-      }, err => {
-        this.dismissLoading();
-        this.common.presentToast(environment.errMsg, 'danger');
       });
     });
-
-    // if(!this.data.ext_asset_id && this.data.complaint_type_cfrm==0){
-    //   this.openTicketTypeModal();
-    // }else{
-    //   this.openTicketWork();
-    // }
   }
 
   async openTicketTypeModal() {
-    console.log(this.data);
     const modal = await this.modalCtrl.create({
       component: TicketTypeComponent,
       cssClass: 'my-modal',
-      componentProps: { requestedData: this.data.tkts_id, allData:  this.data }
+      componentProps: { allData:  this.data }
     });
     modal.onWillDismiss().then(disModal => {
       console.log(disModal);
@@ -110,24 +103,6 @@ export class ComplaintCardsComponent  implements OnInit {
     });
   }
 
-  // async openWorkDetailModal() {
-  //   const modal = await this.modalCtrl.create({
-  //     component: WorkdetailsComponent,
-  //     cssClass: 'my-modal',
-  //     componentProps: { ticketId: this.data.ticket_id, phone: this.data.customer_mobile,
-  //       resolveable: this.data.resolveable, resolveablemsg: this.data.resolveable_msg, data: this.data }
-  //   });
-  //   modal.onWillDismiss().then(disModal => {
-  //     console.log(disModal);
-  //     if (disModal.data == null ) {
-
-  //     } else {
-  //       this.greetEvent.emit(this.data);
-  //     }
-  //   });
-  //   modal.present();
-  // }
-
   fsr(efsr: any) {
     this.presentLoading().then(preLoad => {
       this.httpComplaint.getEfsr(efsr).subscribe(data => {
@@ -142,7 +117,6 @@ export class ComplaintCardsComponent  implements OnInit {
         this.common.presentToast(environment.errMsg, 'danger');
       });
     })
-
   }
 
   downLoadEfsr(data: any, spareCount: number) {

@@ -15,10 +15,13 @@ export class AttendanceService {
 
   punchInOutAction(data: any) {
     return new Promise(resolve => {
-      this.http.post(environment.url + 'shared/save-engineer-attendance', data).subscribe(dat => {
-        resolve(dat);
-      }, err => {
-        resolve(false);
+      this.http.post(environment.url + 'shared/save-engineer-attendance', data).subscribe({
+        next:(data) => {
+          resolve(data);
+        },
+        error:() => {
+          resolve(false);
+        }
       });
     });
   }

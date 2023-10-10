@@ -22,11 +22,13 @@ export class IndentsService {
 
   getPartCode() {
     return new Promise(resolve => {
-      this.https.get(environment.url + 'get_item_master.php').subscribe(data => {
-        console.log(data);
-        resolve(data);
-      }, err => {
-        resolve(false);
+      this.https.get(environment.url + 'get_item_master.php').subscribe({
+        next:(data) => {
+          resolve(data)
+        },
+        error:() => {
+          resolve(false);
+        }
       });
     });
   }

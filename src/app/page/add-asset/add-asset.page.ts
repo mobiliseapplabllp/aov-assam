@@ -69,8 +69,7 @@ export class AddAssetPage implements OnInit {
     private modalController: ModalController,
     private httpCommon: CommonService,
     private loadingController: LoadingController,
-    private router: Router
-    ) {
+    private router: Router) {
     this.addAsset = this.formbuilder.group({
       faciity_type: ['', Validators.required],
       site_id_description:[''],
@@ -339,15 +338,19 @@ export class AddAssetPage implements OnInit {
         this.addAsset.get('site_id_description')?.setValue(disModal.data.pc_desc);
         this.addAsset.get('site_id')?.setValue(disModal.data.pc_id);
         this.presentLoading().then(preLoad => {
-          this.httpAsset.getBlock(disModal.data.pc_id).subscribe(data => {
-            console.log(data);
-            this.dismissloading();
-            if (data.status) {
-              this.myBlocks = data.data;
+          this.httpAsset.getBlock(disModal.data.pc_id).subscribe({
+            next:(data) => {
+              if (data.status) {
+                this.myBlocks = data.data;
+              }
+            },
+            error:() => {
+              this.dismissloading();
+              this.httpCommon.presentToast(environment.errMsg + ' Block Err', 'danger');
+            },
+            complete:() => {
+              this.dismissloading();
             }
-          }, err => {
-            this.dismissloading();
-            this.httpCommon.presentToast(environment.errMsg + ' Block Err', 'danger');
           });
         })
 
@@ -427,32 +430,41 @@ export class AddAssetPage implements OnInit {
   changeBlock(ev: any) {
     console.log(ev.target.value);
     this.presentLoading().then(preLoad => {
-      this.httpAsset.getBuildingList(ev.target.value).subscribe(data => {
-        console.log(data);
-        this.dismissloading();
-        if (data.status) {
-          this.myBuildingArr = data.data;
-          this.addAsset.get('bldg_id')?.setValue('');
-          this.addAsset.get('floor_id')?.setValue('');
+      this.httpAsset.getBuildingList(ev.target.value).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.myBuildingArr = data.data;
+            this.addAsset.get('bldg_id')?.setValue('');
+            this.addAsset.get('floor_id')?.setValue('');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
       });
     })
   }
 
   changeBuilding(ev: any) {
     this.presentLoading().then(preLoad => {
-      this.httpAsset.getFloorList(ev.target.value).subscribe(data => {
-        this.dismissloading();
-        if (data.status) {
-          this.myFloor = data.data;
-          this.addAsset.get('floor_id')?.setValue('');
+      this.httpAsset.getFloorList(ev.target.value).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.myFloor = data.data;
+            this.addAsset.get('floor_id')?.setValue('');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
       });
     })
   }
@@ -681,22 +693,27 @@ export class AddAssetPage implements OnInit {
       this.formData.delete('y_cor');
       this.formData.append('x_cor', this.coordinate.x)
       this.formData.append('y_cor', this.coordinate.y)
-      this.pendingApi = this.httpAsset.submitAsset(this.formData).subscribe(data => {
-        this.dismissloading();
-        this.pendingApi = null;
-        this.clrTime();
-        console.log(data);
-        if (data.status) {
-          this.httpCommon.presentToast(data.msg, 'success');
-          this.formData = new FormData();
-          this.clearField();
-        } else {
-          this.httpCommon.presentToast(data.msg, 'warning');
+      this.pendingApi = this.httpAsset.submitAsset(this.formData).subscribe({
+        next:(data) => {
+          this.pendingApi = null;
+          this.clrTime();
+          console.log(data);
+          if (data.status) {
+            this.httpCommon.presentToast(data.msg, 'success');
+            this.formData = new FormData();
+            this.clearField();
+          } else {
+            this.httpCommon.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.pendingApi = null;
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.pendingApi = null;
-        this.dismissloading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
       });
     })
   }
@@ -727,16 +744,20 @@ export class AddAssetPage implements OnInit {
       return;
     }
     this.presentLoading().then(preLoad => {
-      this.httpAsset.getAssetParentId(this.addAsset.value.parent_asset_id).subscribe(data => {
-        this.dismissloading();
-        console.log(data);
-        if (data.status) {
-          this.parentAssetObj = data.data;
-        } else {
-          alert(data.msg);
+      this.httpAsset.getAssetParentId(this.addAsset.value.parent_asset_id).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.parentAssetObj = data.data;
+          } else {
+            alert(data.msg);
+          }
+        },
+        error:() => {
+          this.dismissloading();
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
       });
     })
 

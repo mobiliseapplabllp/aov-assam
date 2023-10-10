@@ -93,20 +93,21 @@
               <ion-text color="primary">Manufacturer</ion-text><br>
               <ion-text>{{dat.mnfctrer_desc}}</ion-text>
             </ion-col>
+
           </ion-row>
           <ion-row>
             <ion-col size="4">
               <ion-button class="ion-text-capitalize" color="secondary" size="small" expand="block" (click)="pmAssign(dat)"> Assign </ion-button>
             </ion-col>
             <ion-col size="4">
-              <ion-button class="ion-text-capitalize" size="small" color="danger" *ngIf="!dat.ptw_attach" expand="block" (click)="dat.showPtw = !dat.showPtw" >Upload PTW</ion-button>
+              <ion-button class="ion-text-capitalize" size="small" color="danger" *ngIf="!dat.ptw_attach" expand="block" (click)="uploadPtw(dat)" >Upload PTW</ion-button>
               <ion-button class="ion-text-capitalize" size="small" color="medium" *ngIf="dat.ptw_attach" expand="block" (click)="viewAttachment(dat.ptw_attach)" >PTW Img</ion-button>
             </ion-col>
             <ion-col size="4">
               <ion-button class="ion-text-capitalize" color="tertiary" size="small" expand="block" (click)="openFillReport(dat)" *ngIf="dat.ptw_attach">Fill Checklist  </ion-button>
             </ion-col>
           </ion-row>
-          <ion-row *ngIf="dat.showPtw">
+          <!-- <ion-row *ngIf="dat.showPtw">
             <ion-col>
               <ion-button size="small" fill="outline" (click)="presentActionSheet(dat)">Photo</ion-button><br>
               {{dat.imgname_tmp}}
@@ -119,7 +120,7 @@
              <input name="uploadDocument" type="file" id="choose-file3"
                 accept=".jpg,.jpeg,.pdf,doc,docx,application/msword,.png" style="display: none;" (change)="changeFile($event, dat)" />
             </ion-col>
-          </ion-row>
+          </ion-row> -->
         </ion-card-content>
       </ion-card>
       <ion-infinite-scroll [hidden]="currentPage > lastPage" *ngIf="openPm.length > 0"  threshold="100px" (ionInfinite)="loadData($event, 1)">

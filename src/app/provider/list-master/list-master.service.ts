@@ -15,13 +15,15 @@ export class ListMasterService {
 
   getMenuDetail() {
     return new Promise(resolve => {
-      this.https.get(environment.url + 'setups/app-menu/get_mobile_app_mnu').subscribe(data => {
-        console.log(data);
-        this.data = data;
-        this.myMenuTemp.next(this.data.data[0].submenu);
-        resolve(data);
-      }, err => {
-        resolve(false);
+      this.https.get(environment.url + 'setups/app-menu/get_mobile_app_mnu').subscribe({
+        next:(data) => {
+          this.data = data;
+          this.myMenuTemp.next(this.data.data[0].submenu);
+          resolve(data);
+        },
+        error:() => {
+          resolve(false);
+        }
       });
     });
   }

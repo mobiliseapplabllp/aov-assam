@@ -14,11 +14,13 @@ export class MyAssetGetService {
 
   getAssetMasterData(lastdatetime: any) {
     return new Promise(resolve => {
-      // tslint:disable-next-line: deprecation
-      this.https.get(environment.url + 'assets/reporting/assetMasterData?systemDateTime=' + lastdatetime).subscribe(data => {
-        resolve(data);
-      }, err => {
-        resolve(false);
+      this.https.get(environment.url + 'assets/reporting/assetMasterData?systemDateTime=' + lastdatetime).subscribe({
+        next:(data) => {
+          resolve(data);
+        },
+        error:() => {
+          resolve(false);
+        }
       });
     });
   }

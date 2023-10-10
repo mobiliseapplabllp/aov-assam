@@ -4,7 +4,6 @@ import { LoadingController, ModalController, NavParams } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { ComplaintService } from 'src/app/provider/complaint/complaint.service';
 import { environment } from 'src/environments/environment';
-
 @Component({
   selector: 'app-ticket-type',
   templateUrl: './ticket-type.component.html',
@@ -35,20 +34,13 @@ export class TicketTypeComponent  implements OnInit {
     private httpCommon: CommonService,
     private modalCtrl: ModalController,
     private loadingController: LoadingController,
-    public navParam: NavParams,
-  ) {
-    this.ticket = this.navParam.get('requestedData');
+    public navParam: NavParams) {
       this.allData = this.navParam.get('allData');
-      console.log(this.locations);
-      // console.log(this.allData);
-      // console.log('--------');
-      // *ngIf="((issueType == 2) || (issueType == 1 && isBarcode == 0))"
+      this.ticket = this.allData.tkts_id;
       if ((this.allData.tkts_issue_id == 2) || this.allData.tkts_issue_id == 1 && !this.allData.ext_asset_id) {
         this.isShowBuilding = true;
-        // this.getBuilding(this.allData.pc_id);
       }
       this.getBuilding(this.allData.pc_id);
-      console.log(this.ticket);
       this.getRequestType(this.allData.tkts_issue_id);
   }
 
@@ -58,20 +50,23 @@ export class TicketTypeComponent  implements OnInit {
   }
 
   getRequestType(id: any) {
-    this.httpComplaint.getRequestType(id).subscribe(data => {
-      console.log(data);
-      this.dismissloading();
-      if (data.status) {
+    this.httpComplaint.getRequestType(id).subscribe({
+      next:(data) => {
+        if (data.status) {
         this.requestType = data.data;
-        setTimeout(() => {
-          this.ticketForm.get('req_type_id')?.setValue(this.allData.req_type_id);
-        }, 100);
-      } else {
-        this.httpCommon.presentToast(data.msg, 'danger');
+          setTimeout(() => {
+            this.ticketForm.get('req_type_id')?.setValue(this.allData.req_type_id);
+          }, 100);
+        } else {
+          this.httpCommon.presentToast(data.msg, 'danger');
+        }
+      },
+      error:() => {
+        this.httpCommon.presentToast(environment.errMsg, 'danger');
+      },
+      complete:() => {
+
       }
-    }, err => {
-      this.dismissloading();
-      this.httpCommon.presentToast(environment.errMsg, 'danger');
     });
   }
 
@@ -112,16 +107,9 @@ export class TicketTypeComponent  implements OnInit {
     this.barcodeList = [];
     if (ev.target.value == 0) {
       this.isShowBuilding = true;
-      // this.presentLoading().then(preLoad => {
-      //   setTimeout(() => {
-      //     this.getBuilding(this.allData.pc_id);
-      //   }, 1500);
-      // })
       setTimeout(() => {
         if (this.locations.length > 0) {
           this.ticketForm.get('bldg_id')?.setValue(this.locations[0].building_id)
-          // this.ticketForm.get('floor_id')?.setValue(this.locations[0].floor_id);
-          // this.ticketForm.get('loc_code')?.setValue(this.locations[0].id)
         }
       }, 100);
     }
@@ -262,17 +250,22 @@ export class TicketTypeComponent  implements OnInit {
 
   getQueryCat() {
     this.presentLoading().then(preLoad => {
-      this.httpComplaint.getQueryCategory(this.ticketForm.value.issue_type).subscribe(data => {
-        this.dismissloading();
-        if (data.status) {
-          this.query = data.data;
-          setTimeout(() => {
-            this.ticketForm.get('category')?.setValue(this.allData.cat_id);
-          }, 100)
+      this.httpComplaint.getQueryCategory(this.ticketForm.value.issue_type).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.query = data.data;
+            setTimeout(() => {
+              this.ticketForm.get('category')?.setValue(this.allData.cat_id);
+            }, 100)
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
       });
     })
   }
@@ -284,18 +277,22 @@ export class TicketTypeComponent  implements OnInit {
     this.ticketForm.get('subcat1_id')?.setValue('');
     this.ticketForm.get('subcat2_id')?.setValue('');
     this.presentLoading().then(preLoad => {
-      this.httpComplaint.getQuerySubCat1(ev.target.value).subscribe(data => {
-        console.log(data);
-        this.dismissloading();
-        if (data.status) {
-          this.subCategory = data.data;
-          setTimeout(() => {
-            this.ticketForm.get('subcat1_id')?.setValue(this.allData.subcat1_id);
-          }, 100)
+      this.httpComplaint.getQuerySubCat1(ev.target.value).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.subCategory = data.data;
+            setTimeout(() => {
+              this.ticketForm.get('subcat1_id')?.setValue(this.allData.subcat1_id);
+            }, 100)
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
       });
     })
   }
@@ -306,45 +303,53 @@ export class TicketTypeComponent  implements OnInit {
     }
     this.ticketForm.get('subcat2_id')?.setValue('');
     this.presentLoading().then(preLoad => {
-      this.httpComplaint.getQuerySubCat2(ev.target.value).subscribe(data => {
-        this.dismissloading();
-        if (data.status) {
-          this.subCategory2 = data.data;
-          setTimeout(() => {
-            this.ticketForm.get('subcat2_id')?.setValue(this.allData.subcat2_id);
-          }, 100)
+      this.httpComplaint.getQuerySubCat2(ev.target.value).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.subCategory2 = data.data;
+            setTimeout(() => {
+              this.ticketForm.get('subcat2_id')?.setValue(this.allData.subcat2_id);
+            }, 100)
+          }
+        },
+        error:() => {
+          this.dismissloading();
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
-      })
+      });
     })
   }
 
   searchClientId() {
     this.presentLoading().then(preLoad => {
-      this.httpComplaint.getClientIdBarcode(this.ticketForm.value.barcode).subscribe(data => {
-        this.dismissloading();
-        if (data.status === false) {
-          this.httpCommon.presentToast(data.msg, 'warning');
-        } else {
-          this.barcodeList = data.data;
-          if (this.allData.ext_asset_id) {
-            let obj, asset_id;
-            obj = this.barcodeList.filter((val: any) => val.ext_asset_id === this.allData.ext_asset_id);
-            console.log(obj);
-            if (obj.length > 0) {
-              asset_id = obj[0].asset_id;
-              console.log(asset_id);
-              this.ticketForm.get('barcode_id')?.setValue(asset_id);
+      this.httpComplaint.getClientIdBarcode(this.ticketForm.value.barcode).subscribe({
+        next:(data) => {
+          if (data.status === false) {
+            this.httpCommon.presentToast(data.msg, 'warning');
+          } else {
+            this.barcodeList = data.data;
+            if (this.allData.ext_asset_id) {
+              let obj, asset_id;
+              obj = this.barcodeList.filter((val: any) => val.ext_asset_id === this.allData.ext_asset_id);
+              console.log(obj);
+              if (obj.length > 0) {
+                asset_id = obj[0].asset_id;
+                console.log(asset_id);
+                this.ticketForm.get('barcode_id')?.setValue(asset_id);
+              }
             }
           }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
       });
-
     });
     console.log(this.ticketForm.value.barcode);
 
@@ -356,31 +361,39 @@ export class TicketTypeComponent  implements OnInit {
   saveData() {
     console.log(this.ticketForm.value);
     this.presentLoading().then(preLoad => {
-      this.httpComplaint.complaintTypeConfirm(this.ticketForm.value).subscribe(data => {
-        console.log(data);
-        this.dismissloading();
-        if (data.status) {
-          this.httpCommon.presentToast(data.msg, 'success');
-          this.dismiss(data, true);
-        } else {
-          this.httpCommon.presentToast(data.msg, 'warning');
+      this.httpComplaint.complaintTypeConfirm(this.ticketForm.value).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.httpCommon.presentToast(data.msg, 'success');
+            this.dismiss(data, true);
+          } else {
+            this.httpCommon.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
       });
     })
   }
 
   getPriority() {
-    this.httpComplaint.getTicketPriority(this.ticket).subscribe(data => {
-      console.log(data);
-      if (data.status) {
-        this.ticketPriority = data.data;
-      }
+    this.httpComplaint.getTicketPriority(this.ticket).subscribe({
+      next:(data) => {
+        if (data.status) {
+          this.ticketPriority = data.data;
+        }
+      },
+      error:() => {
+        this.httpCommon.presentToast(environment.errMsg, 'danger');
+      },
+      complete:() => {
 
-    }, err => {
-      this.httpCommon.presentToast(environment.errMsg, 'danger');
+      }
     })
   }
 
@@ -413,57 +426,6 @@ export class TicketTypeComponent  implements OnInit {
     //   });
     // }
   }
-
-  // submit() {
-  //   if (this.ticketType === 'asset') {
-  //     if (!this.barcode) {
-  //         alert('Enter Barcode no');
-  //     } else {
-  //       if (this.barcode === 123) {
-  //         this.modalCtrl.dismiss(null);
-  //         this.router.navigate(['add-asset'], {
-  //           queryParams: {
-  //             data: JSON.stringify(this.paramsData),
-  //           }
-  //         });
-  //       } else {
-  //         Swal.fire('Verified', 'Alread Added ', 'success').then(res => {
-  //           this.modalCtrl.dismiss(true);
-  //         });
-  //       }
-  //     }
-  //   } else if (this.ticketType === 'service') {
-  //     this.modalCtrl.dismiss(true);
-  //   } else {
-  //     alert('Please Select Ticket Type');
-  //   }
-  // }
-
-  // add_asset() {
-  //   this.modalCtrl.dismiss(null);
-  //   this.router.navigate(['add-asset'], {
-  //     queryParams: {
-  //       data: JSON.stringify(this.paramsData),
-  //     }
-  //   });
-  // }
-
-  // async presentToast(msg) {
-  //   const toast = await this.toastController.create({
-  //     message: msg,
-  //     duration: 3000
-  //   });
-  //   toast.present();
-  // }
-
-  // openScanner() {
-  //   this.barcodeScanner.scan().then(barcodeData => {
-  //     console.log('Barcode data', barcodeData);
-  //     this.barcode = barcodeData.text;
-  //   }).catch(err => {
-  //     console.log('Error', err);
-  //   });
-  // }
 
   async presentLoading() {
     this.dismissloading();

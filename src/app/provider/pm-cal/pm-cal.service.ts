@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-
 @Injectable({
   providedIn: 'root'
 })
@@ -111,10 +110,13 @@ export class PmCalService {
       postdata.append('status', remarks.status);
       postdata.append('remark', remarks.remark);
       postdata.append('img', img);
-      this.https.post(url, postdata).subscribe(data => {
-        resolve(data);
-      }, err => {
-        resolve(false);
+      this.https.post(url, postdata).subscribe({
+        next:(data) => {
+          resolve(data);
+        },
+        error:() => {
+          resolve(false);
+        }
       });
     });
   }
@@ -191,10 +193,13 @@ export class PmCalService {
       let postdata = new FormData();
       postdata.append('loggedin_user', emp_id);
       postdata.append('work_order_id', workorder);
-      this.https.post(url, postdata).subscribe(dat => {
-        resolve(dat);
-      }, err => {
-        resolve(false);
+      this.https.post(url, postdata).subscribe({
+        next:(data) => {
+          resolve(data);
+        },
+        error:() => {
+          resolve(false);
+        }
       });
     });
   }

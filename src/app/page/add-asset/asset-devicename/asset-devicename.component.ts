@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, ModalController } from '@ionic/angular';
 import { MyAssetGetService } from 'src/app/provider/my-asset-get/my-asset-get.service';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-asset-devicename',
@@ -26,16 +25,20 @@ export class AssetDevicenameComponent  implements OnInit {
 
   getDeviceName() {
     this.presentLoading().then(preLaod => {
-      this.httpAsset.getDeviceName(this.grp_id).subscribe(data => {
-        this.dismissloading();
-        if (data.status) {
-          this.myDeviceName = data.data;
-          this.myDeviceNameCopy = data.data
+      this.httpAsset.getDeviceName(this.grp_id).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.myDeviceName = data.data;
+            this.myDeviceNameCopy = data.data
+          }
+        },
+        error:() => {
+          this.dismissloading();
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        alert(environment.errMsg);
-        this.dismissloading();
-      })
+      });
     })
 
   }
