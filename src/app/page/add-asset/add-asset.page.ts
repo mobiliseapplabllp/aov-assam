@@ -23,6 +23,7 @@ export class AddAssetPage implements OnInit {
   myBlocks: any = [];
   myBuildingArr: any = [];
   myFloor: any = [];
+  myLocation: any = [];
   myDepartment: any = [];
   mySubDepartment: any = [];
   myDeviceGroup: any = [];
@@ -77,6 +78,7 @@ export class AddAssetPage implements OnInit {
       block_id: [''],
       bldg_id: [''],
       floor_id: [''],
+      loc_id: [''],
       dept_id: [''],
       dept_id_desc: [''],
       sub_dept_id:[''],
@@ -404,7 +406,11 @@ export class AddAssetPage implements OnInit {
       if (disModal.role) {
         this.addAsset.get('subgrp_id')?.setValue(disModal.data.value);
         this.addAsset.get('subgrp_id_desc')?.setValue(disModal.data.label);
-        this.addAsset.get('subgrp_class')?.setValue(disModal.data.subgrp_class);
+        setTimeout(() => {
+          console.log(disModal.data.subgrp_class);
+          this.addAsset.get('subgrp_class')?.setValue(disModal.data.subgrp_class);
+        }, 100)
+
       }
     });
     return await modal.present();
@@ -474,6 +480,25 @@ export class AddAssetPage implements OnInit {
     let obj = this.myFloor.filter((val: any) => val.value === ev.target.value)[0];
     this.floorImage = obj.floor_img;
     console.log(this.floorImage);
+    this.presentLoading().then(preLoad => {
+      this.httpAsset.getLocation(ev.target.value).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.myLocation = data.data;
+          } else {
+            this.httpCommon.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
+        }
+      })
+    })
+
   }
 
   changeClientId() {
@@ -646,7 +671,7 @@ export class AddAssetPage implements OnInit {
   checkWarrantyCondition() {
     if (this.addAsset.value.warranty_id === 1 || this.addAsset.value.warranty_id === 2 || this.addAsset.value.warranty_id === 3) {
       if (!this.addAsset.value.warranty_start_date || !this.addAsset.value.warranty_end_date) {
-        alert('Please Select Start Date or End Date');
+        alert('Please select start date or end date under warranty information');
       } else {
         return true;
       }
@@ -700,6 +725,7 @@ export class AddAssetPage implements OnInit {
           console.log(data);
           if (data.status) {
             this.httpCommon.presentToast(data.msg, 'success');
+            this.parentAssetObj = { };
             this.formData = new FormData();
             this.clearField();
           } else {

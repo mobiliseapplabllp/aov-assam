@@ -64,15 +64,17 @@ export class PmCalPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.getPm(this.lastSegment);
     let bar = this.common.getBarcode();
     if (bar) {
-      console.log('Your Barcode is ' + bar);
       if (this.selectedBarcode.ext_asset_id == bar ) {
+        this.common.setBarcode('');
         this.openPage(this.selectedBarcode);
+      } else {
+        this.common.presentToastWithOk(this.selectedBarcode.ext_asset_id + ' not Matched with ' + bar, 'warning');
       }
-      this.common.setBarcode('');
+      return;
     }
+    this.getPm(this.lastSegment);
   }
 
   ionViewDidLeave() {
@@ -83,29 +85,58 @@ export class PmCalPage implements OnInit {
     this.refreshField();
     this.currentPage = 1;
     this.presentLoading().then(() => {
-      this.httpPms.getPm(stage_id, this.currentPage).subscribe(dat => {
-        this.dismissloading();
-        if (dat.status) {
-          this.pmCal = dat.data.data;
-          this.lastPage = dat.data.last_page;
-          this.currentPage = this.currentPage + 1;
-          if (stage_id == 1) {
-            this.openPm = this.pmCal.filter((val: any) => val.stage_id === 1);
-            this.openPmCopy = this.pmCal.filter((val: any) => val.stage_id === 1);
-          } else if (stage_id == 2) {
-            this.actionPm = this.pmCal.filter((val: any) => val.stage_id === 2);
-            this.actionPmCopy = this.pmCal.filter((val: any) => val.stage_id === 2);
-          } else if (stage_id == 3) {
-            this.closePm = this.pmCal.filter((val: any) => val.stage_id == 3)
-            this.closePmCopy = this.pmCal.filter((val: any) => val.stage_id == 3)
+      this.httpPms.getPm(stage_id, this.currentPage).subscribe({
+        next:(dat) => {
+          if (dat.status) {
+            this.pmCal = dat.data.data;
+            this.lastPage = dat.data.last_page;
+            this.currentPage = this.currentPage + 1;
+            if (stage_id == 1) {
+              this.openPm = this.pmCal.filter((val: any) => val.stage_id === 1);
+              this.openPmCopy = this.pmCal.filter((val: any) => val.stage_id === 1);
+            } else if (stage_id == 2) {
+              this.actionPm = this.pmCal.filter((val: any) => val.stage_id === 2);
+              this.actionPmCopy = this.pmCal.filter((val: any) => val.stage_id === 2);
+            } else if (stage_id == 3) {
+              this.closePm = this.pmCal.filter((val: any) => val.stage_id == 3)
+              this.closePmCopy = this.pmCal.filter((val: any) => val.stage_id == 3)
+            }
+          } else {
+            this.pmCal = [];
           }
-        } else {
-          this.pmCal = [];
+        },
+        error:() => {
+          this.dismissloading();
+          this.common.presentToast(environment.errMsg, 'warning');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.common.presentToast(environment.errMsg, 'warning');
-      });
+      }
+      //   dat => {
+      //   this.dismissloading();
+      //   if (dat.status) {
+      //     this.pmCal = dat.data.data;
+      //     this.lastPage = dat.data.last_page;
+      //     this.currentPage = this.currentPage + 1;
+      //     if (stage_id == 1) {
+      //       this.openPm = this.pmCal.filter((val: any) => val.stage_id === 1);
+      //       this.openPmCopy = this.pmCal.filter((val: any) => val.stage_id === 1);
+      //     } else if (stage_id == 2) {
+      //       this.actionPm = this.pmCal.filter((val: any) => val.stage_id === 2);
+      //       this.actionPmCopy = this.pmCal.filter((val: any) => val.stage_id === 2);
+      //     } else if (stage_id == 3) {
+      //       this.closePm = this.pmCal.filter((val: any) => val.stage_id == 3)
+      //       this.closePmCopy = this.pmCal.filter((val: any) => val.stage_id == 3)
+      //     }
+      //   } else {
+      //     this.pmCal = [];
+      //   }
+      // }, err => {
+      //   this.dismissloading();
+      //   this.common.presentToast(environment.errMsg, 'warning');
+      // }
+      );
     });
   }
 
@@ -174,7 +205,6 @@ export class PmCalPage implements OnInit {
   openFillReport(data: any) {
     if (this.platform.is('capacitor')) {
       if (data.ext_asset_id) {
-        this.common.presentToast('Please Scan QR Code', 'warning');
         this.openBarcode(data)
       } else {
         this.openPage(data);

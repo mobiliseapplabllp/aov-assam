@@ -69,11 +69,13 @@
           <h2><b>{{dat.schedule_unique_id}}</b></h2>
           <p>{{dat.chk_cat_name}}</p>
           <p>{{dat.location_desc}}</p>
+          <p>{{dat.barcode}}</p>
         </ion-label>
         <ion-label slot="end" class="ion-text-right">
           {{dat.schedule_date | date: 'dd-MMM-yyyy'}}<br>
           {{dat.schedule_time}}<br>
-          <b>{{dat.schedule_status}}</b>
+          <b>{{dat.schedule_status}}</b><br>
+          {{dat.device_name}}
         </ion-label>
       </ion-item>
     </div>

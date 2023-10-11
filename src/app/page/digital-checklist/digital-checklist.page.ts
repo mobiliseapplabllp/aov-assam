@@ -52,10 +52,11 @@ export class DigitalChecklistPage implements OnInit {
       } else {
         let temp, temp1;
         temp = bar;
-        temp1 = temp.split('qr=');
+        temp1 = temp.split('/');
+        console.log(temp1);
         const obj = {
           sch_id: this.qrType,
-          enc_barcode: temp1[1],
+          enc_barcode: temp1[5],
         }
         this.verifyBarcode(obj);
         return;
@@ -146,42 +147,12 @@ export class DigitalChecklistPage implements OnInit {
   }
 
   openFillReport(data: any) {
-    // this.qrType = data.schedule_id;
-    // this.router.navigateByUrl('/barcode');
-    // return;
-    if (!data.barcode) {
+
+    if (!data.barcode || data.schedule_status === 'attended') {
       this.router.navigateByUrl('/digital-checklist/fill-report/' + data.schedule_id + '/' + this.isOnBehalf);
     } else {
       this.qrType = data.schedule_id;
       this.router.navigateByUrl('/barcode');
-      // if (this.platform.is('capacitor')) {
-      //   this.barcodeScanner.scan().then(barcodeData => {
-      //     let temp, temp1;
-      //     temp = barcodeData.text;
-      //     temp1 = temp.split('qr=');
-      //     const obj = {
-      //       sch_id: data.schedule_id,
-      //       enc_barcode: temp1[1],
-      //     }
-      //     this.verifyBarcode(obj);
-      //   }, err => {
-      //     let msg = JSON.stringify(err);
-      //     if (msg == 'Illegal access') {
-      //       this.common.presentToast('You Need to allow the Permission', 'warning');
-      //     } else {
-      //       this.common.presentToast(JSON.stringify(err), 'warning');
-      //     }
-      //   })
-      // } else {
-      //   let temp, temp1;
-      //   temp = 'https://ifmsuat.mobilisepro.com/#/complaint-qr-code/eyJpdiI6Ik1USXpORFUyTnpnNU1UQXhNVEV5TVE9PSIsInZhbHVlIjoiLytUMkk0L3BURGFyUmxJck9VR2F4Zz09IiwibWFjIjoiZDVlYjg4MjVlZjRkZDMxMzI5MDgyYzhhMWM5NmE1NDkzZmY0ZGJlMDAwMDc2OTA2MzQ4MTdmNTMzYzkxZjI4MSJ9?qr=eyJpdiI6Ik1USXpORFUyTnpnNU1UQXhNVEV5TVE9PSIsInZhbHVlIjoicmtzNUxERVlRTzlYcGYyNXNRN0N6eVp5cjZhS0sxMDJYSlNHRS9mU2RkRT0iLCJtYWMiOiJjNDRjMmQwMDIxOTMxNWMxNmMwOGRjMjhmYzJhZjhiN2EzNGFkMTk1MDU3MWU3MTgyNzZlYTU2ZDQwZjM4ZThjIn0';
-      //   temp1 = temp.split('qr=');
-      //   const obj = {
-      //     sch_id: data.schedule_id,
-      //     enc_barcode: temp1[1],
-      //   }
-      //   this.verifyBarcode(obj);
-      // }
     }
   }
 
@@ -223,24 +194,5 @@ export class DigitalChecklistPage implements OnInit {
     this.allChecklist = [];
     this.qrType = 'otherbarcode';
     this.router.navigateByUrl('/barcode');
-    // if (this.platform.is('capacitor')) {
-    //   // this.barcodeScanner.scan().then(barcodeData => {
-    //   //   let temp, temp1;
-    //   //   temp = barcodeData.text;
-    //   //   temp1 = temp.split('/');
-    //   //   this.scanBarcode = temp1[5];
-    //   //   this.getScheduleUsingBarcode(this.scanBarcode);
-    //   // }, err => {
-    //   //   let msg = JSON.stringify(err);
-    //   //   if (msg == 'Illegal access') {
-    //   //     this.common.presentToast('You Need to allow the Permission', 'warning');
-    //   //   } else {
-    //   //     this.common.presentToast(JSON.stringify(err), 'warning');
-    //   //   }
-    //   // })
-    // } else {
-    //   this.scanBarcode = 5
-    //   this.getScheduleUsingBarcode(this.scanBarcode);
-    // }
   }
 }

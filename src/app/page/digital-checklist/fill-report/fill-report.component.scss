@@ -1,15 +1,19 @@
 .critical {
-  border-right:4px solid var(--ion-color-danger);
+  border-right:4px solid var(--ion-color-danger) !important;
 }
 
 .noncritical {
-  border-right:4px solid var(--ion-color-success);
+  border-right:4px solid var(--ion-color-success) !important;
 }
 
 .fullborder {
-  border:3px solid var(--ion-color-danger);
+  border:3px solid var(--ion-color-danger) !important;
 }
 
 .redBorder {
-  border:2px solid var(--ion-color-danger);
+  border:2px solid var(--ion-color-danger) !important;
+}
+
+ion-text {
+  font-weight: 550;
 }

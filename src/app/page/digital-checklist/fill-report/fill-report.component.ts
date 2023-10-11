@@ -92,6 +92,8 @@ export class FillReportComponent  implements OnInit {
                   } else {
                     el.rspns = el.response.rspns;
                   }
+                } else {
+                  el.response = {}
                 }
               })
             });
@@ -149,7 +151,7 @@ export class FillReportComponent  implements OnInit {
           if (data.status) {
             this.common.presentToast(data.msg, 'success');
             const obj = val.options.filter((val: any) => val.optn_id === ev.target.value)[0];
-            console.clear();
+            val.response.optn_id = val.rspns;
             val.isRemarkMandatory = obj.is_rmrk_mandatory;
             val.isDocMandatory = obj.is_doc_mandatory;
           } else if(data.status == false) {

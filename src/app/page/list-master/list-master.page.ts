@@ -108,30 +108,6 @@ export class ListMasterPage implements OnInit {
     SpeechRecognition.removeAllListeners();
   }
 
-  // async openCamera() {
-  //   console.log('my site');
-  //   const modal = await this.modalCtrl.create({
-  //     component: CameraComponent,
-  //     componentProps: {  }
-  //   });
-  //   modal.onWillDismiss().then((disModal: any) => {
-  //     console.log(disModal);
-  //     if (disModal.role) {
-  //       const binaryString = atob(disModal.data.split(',')[1]);
-  //       const blob = new Blob([binaryString], { type: 'image/png' });
-  //       console.log(blob);
-  //     }
-  //   });
-  //   modal.present();
-  // }
-
-  ionViewDidEnter() {
-    // let bar = this.common.getBarcode();
-    // if (bar) {
-    //   console.log('Your Barcode is ' + bar);
-    //   this.common.setBarcode('');
-    // }
-  }
 
   ionViewWillLeave() {
     this.dismissloading();
@@ -152,38 +128,6 @@ export class ListMasterPage implements OnInit {
     console.log(this.userData);
   }
 
-  getPmsCount() {
-    this.listMaster.getPmsCount().subscribe(data => {
-      console.log(data);
-      if (data.status) {
-        // this.categorySummary = data.data
-      }
-    });
-  }
-
-  getPmsActionableCount() {
-    this.listMaster.getPmsAcionableCount().subscribe(data => {
-      console.log(data);
-    });
-  }
-
-  getPmsResponsibleCount() {
-    this.listMaster.getPmsResponsibleCount().subscribe(data => {
-      console.log(data);
-      if (data.status) {
-        // this.responslibity = data.data;
-      }
-    });
-  }
-
-  getCompalitSummary() {
-    this.listMaster.getComplaintSummary().subscribe(data => {
-      console.log(data);
-      if (data.status) {
-        // this.compalintSummay = data.data;
-      }
-    });
-  }
 
   getMenuDetail() {
     this.presentLoading().then(preLoad => {
@@ -192,6 +136,7 @@ export class ListMasterPage implements OnInit {
         this.result = data;
         if (this.result.status == true) {
           this.myMenu = this.result.data[0].submenu;
+          localStorage.setItem('home_menu', JSON.stringify(this.myMenu));
         }
       }, err => {
         this.dismissloading();
@@ -219,9 +164,4 @@ export class ListMasterPage implements OnInit {
     this.router.navigateByUrl(data.link);
     return;
   }
-
-  openPageTest(url: any) {
-    this.router.navigateByUrl(url);
-  }
-
 }

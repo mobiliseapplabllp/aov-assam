@@ -53,18 +53,15 @@
         </ion-col>
       </ion-row>
     </ion-card>
-    <!-- <ion-item >
-      <ion-label class="ion-text-wrap">
-        <h2><b>PC Name:</b> {{cc_desc}}</h2>
-        <h2><b>Location:</b> {{pc_location}}</h2>
-        <h2><b>Checklist Id:</b> {{checkListUniqeId}}</h2>
-        <h2><b>Checklist:</b> {{dat.chk_cat_name}}</h2>
-        <h2><b>Schedule Date:</b> {{arr.schedule_date}}</h2>
-      </ion-label>
-    </ion-item> -->
     <div *ngIf="dat.isResponseShow" class="ion-no-padding">
-      <ion-card *ngFor="let val of dat.qus; let i = index" [ngClass]="{critical: val.critical_desc === 'Critical', noncritical: val.critical_desc === 'Non Critical', fullborder: val.isNotFill === true}">
-        <ion-row >
+      <div style="margin:10px;padding-top:5px ;border:1px solid black;border-radius: 10px;" *ngFor="let val of dat.qus; let i = index" [ngClass]="{critical: val.critical_desc === 'Critical', noncritical: val.critical_desc === 'Non Critical', fullborder: val.isNotFill === true}">
+        <ion-item>
+          <ion-avatar class="center">
+            <b>{{i+1}}</b>
+          </ion-avatar>
+          <ion-label class="ion-text-wrap" [innerHTML]="val.q_desc"></ion-label>
+        </ion-item>
+        <!-- <ion-row >
           <ion-col size="1" class="center">
             <div style="height:20px;width:20px;font-size: small;border-radius: 50%;background-color:var(--ion-color-primary);color:var(--ion-color-light)" class="center">{{i+1}}</div>
           </ion-col>
@@ -73,7 +70,7 @@
               <ion-label class="ion-text-wrap" [innerHTML]="val.q_desc"></ion-label>
             </ion-item>
           </ion-col>
-        </ion-row>
+        </ion-row> -->
         <ion-row>
           <ion-col size="12" class="ion-no-padding" >
             <ion-radio-group  [(ngModel)]="val.rspns" (ionChange)="changeResponseAction(val, $event)">
@@ -94,7 +91,7 @@
         <ion-row>
           <ion-col size="6" class="ion-no-padding" >
             <div [hidden]="schedule_status === 2 || schedule_status === 'attended'" >
-              <ion-button size="small" [color]="!val.imagename ? 'primary': 'success'" [fill]="!val.imagename ? 'outline' : 'solid' " (click)="presentActionSheet(val)" [ngClass]="{redBorder: val.isRemarkMandatory === 1 &&  !val.imagename}">
+              <ion-button size="small" [color]="!val.imagename ? 'primary': 'success'" [fill]="!val.imagename ? 'outline' : 'solid' " (click)="presentActionSheet(val)" [ngClass]="{redBorder: val.isDocMandatory === 1 &&  !val.imagename}">
                 IMG
                 <ion-icon name="attach-outline" slot="end" *ngIf="!val.imagename"></ion-icon>
                 <ion-icon name="checkmark-done-outline" slot="end" *ngIf="val.imagename"></ion-icon>
@@ -107,7 +104,7 @@
             </ion-button>
           </ion-col>
         </ion-row>
-      </ion-card>
+      </div>
     </div>
   </div>
   <ion-item [ngClass]="{fullborder: remarkErr && !remark}">

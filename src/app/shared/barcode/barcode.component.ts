@@ -24,12 +24,12 @@ export class BarcodeComponent  implements OnInit {
     if (this.platform.is('capacitor')) {
       this.startScan();
     } else {
-      let random = 'https://ifmsuat.mobilisepro.com/#/complaint-qr-code/eyJpdiI6Ik1USXpORFUyTnpnNU1UQXhNVEV5TVE9PSIsInZhbHVlIjoiUVI2TzdJdWlwQStTcjhyN3Zocmxudz09IiwibWFjIjoiMDFiZmRlMWRmNDdmOWQ4N2M3MzEzZGFmOGYzYmU3YmFkNmRlNjlhMWM2YTIyNjYzNTU2N2I3NjRmYmFjZjZlOSJ9';
+      let random = 'https://ifmsuat.mobilisepro.com/#/complaint-qr-code/eyJpdiI6Ik1USXpORFUyTnpnNU1UQXhNVEV5TVE9PSIsInZhbHVlIjoiaUtuZUdvTnpReTliK1l3QjhSMWZYZz09IiwibWFjIjoiODc0ODU1YzIyZWNhOWU1MTY1NDI1Mjk1MzA4ZGMyZjgwODdjODM3MGRjM2E2ZjY4OGM2MDFkYjlmMjM2ODMyOCJ9';
       this.barcodeNo = random;
-      // setTimeout(() => {
-      //   this.common.setBarcode(this.barcodeNo);
-      //   this.navCtrl.pop();
-      // }, 1000);
+      setTimeout(() => {
+        this.common.setBarcode(this.barcodeNo);
+        this.navCtrl.pop();
+      }, 1000);
     }
   }
 

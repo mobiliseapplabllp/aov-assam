@@ -75,15 +75,14 @@ export class PmReportComponent  implements OnInit {
                 el.rspns = el.response.optn_id;
                 if (el.rspns) {
                   const obj = el.options.filter((val: any) => val.optn_id === el.rspns)[0];
-                  if (obj.is_correct == 0 && obj.optn_value !== '3') { // make red border if modal answer mismatch
-                    el.showColor = true;
-                  } else {
-                    el.showColor = false;
-                  }
+                  el.is_doc_mandatory = obj.is_doc_mandatory;
+                  el.is_rmrk_mandatory = obj.is_rmrk_mandatory;
                 }
               } else {
                 el.rspns = el.response.rspns;
               }
+            } else {
+              el.response = {}
             }
           });
         });
@@ -232,6 +231,9 @@ export class PmReportComponent  implements OnInit {
   }
 
   changeOptionResponse(data: any, ev: any) {
+    if (!data.rspns) {
+      return;
+    }
     console.log(data);
     if (data.response && data.rspns == data.response.optn_id) {
       console.log('already saved');
@@ -246,24 +248,28 @@ export class PmReportComponent  implements OnInit {
       rspns_source: environment.source
     }
     this.presentLoading('Please Wait!').then(preLoad => {
-      this.httpPmCal.scheduleResponseAction(obj).subscribe(dat => {
-        this.dismissloading();
-        if (dat.status) {
-          this.httpCommon.presentToast(dat.msg, 'success');
-          data.response.optn_id = data.rspns;
-          const obj = data.options.filter((val: any) => val.optn_id === ev.target.value)[0];
-          if (obj.is_correct == 0 && obj.optn_value !== '3') {
-            data.showColor = true;
+      this.httpPmCal.scheduleResponseAction(obj).subscribe({
+        next:(dat) =>{
+          if (dat.status) {
+            this.httpCommon.presentToast(dat.msg, 'success');
+            data.response.optn_id = data.rspns;
+            const obj = data.options.filter((val: any) => val.optn_id === ev.target.value)[0];
+            data.is_doc_mandatory = obj.is_doc_mandatory;
+            data.is_rmrk_mandatory = obj.is_rmrk_mandatory;
           } else {
-            data.showColor = false;
+            data.rspns = '';
+            this.httpCommon.presentToast(dat.msg, 'warning');
           }
-        } else {
-          this.httpCommon.presentToast(dat.msg, 'warning');
+        },
+        error:() => {
+          data.rspns = '';
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
-      })
+      });
     });
   }
 
@@ -275,17 +281,21 @@ export class PmReportComponent  implements OnInit {
       rspns_source: environment.source
     };
     this.presentLoading('Please Wait!!').then(preLoad => {
-      this.httpPmCal.scheduleResponseActionRem(obj1).subscribe(dat => {
-        this.dismissloading();
-        console.log(dat);
-        if (dat.status) {
-          this.httpCommon.presentToast(dat.msg, 'success');
-        } else {
-          this.httpCommon.presentToast(dat.msg, 'warning');
+      this.httpPmCal.scheduleResponseActionRem(obj1).subscribe({
+        next:(dat) => {
+          if (dat.status) {
+            this.httpCommon.presentToast(dat.msg, 'success');
+          } else {
+            this.httpCommon.presentToast(dat.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'warning');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.httpCommon.presentToast(environment.errMsg, 'warning');
       });
     });
   }
@@ -336,6 +346,7 @@ export class PmReportComponent  implements OnInit {
       wo_id: this.requestedData.wo_id,
       source: environment.source
     };
+    console.log(this.myCategory);
     for (let i = 0; i < this.myCategory.length; i++) {
       if (this.myCategory[i].is_applicable != 3) {
         for (let j = 0; j < this.myCategory[i].qus.length; j++) {
@@ -352,6 +363,7 @@ export class PmReportComponent  implements OnInit {
         }
       }
     }
+
     this.presentLoading('Saving Data').then(preLoad => {
       this.httpPmCal.finalSubmitCheckList(obj).subscribe(data => {
         this.dismissloading();
