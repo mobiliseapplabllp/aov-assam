@@ -17,13 +17,13 @@
   <!-- <ion-button (click)="listen()">Listen</ion-button>
   <ion-button (click)="removeListen()">Remove Listen</ion-button>
   <ion-button (click)="permission()">Permission</ion-button> -->
-  <ion-row>
+  <ion-row *ngIf="isInternet">
     <ion-col class="ion-text-center" (click)="speak()">
       <ion-text color="primary"><b>Working Summary</b></ion-text>
     </ion-col>
   </ion-row>
 
-  <ion-slides [options]="slideOptsOne" pager="true" class="custom_slide">
+  <ion-slides *ngIf="isInternet" [options]="slideOptsOne" pager="true" class="custom_slide">
     <ion-slide >
       <ion-row >
         <ion-col size="5" class="left">
@@ -229,7 +229,8 @@
     <ion-row>
       <ion-col *ngFor="let dat of myMenu" size="4" size-sm="4" size-md="3" size-xl="2" (click)="openPage(dat)">
         <ion-card  style="margin: 0;background-color:white;border:1px solid black" mode="ios">
-          <ion-img [src]="dat.icon_path" ></ion-img>
+          <ion-img [src]="dat.icon_path" *ngIf="isInternet"></ion-img>
+          <ion-img src="assets/imgs/leave_approval.svg" *ngIf="!isInternet"></ion-img>
           <ion-row>
             <ion-col class="ion-text-center">
               <span style="color:white; background-color:black;border-radius:6px;padding:2px"><b>{{dat.smnu_desc}}</b></span>

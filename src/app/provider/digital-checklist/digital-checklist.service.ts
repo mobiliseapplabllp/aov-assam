@@ -12,6 +12,10 @@ export class DigitalChecklistService {
     private http: HttpClient
   ) { }
 
+  getOfflineCheckListFromServer(): Observable<any> {
+    return this.http.get('assets/data/offline_checklist.json');
+  }
+
   getSchedule(): Observable<any> {
     return this.http.get(this.baseurl + 'digicheck/get_scheduled_calender?limit=10&page=1');
   }

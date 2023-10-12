@@ -444,4 +444,18 @@ export class FillReportComponent  implements OnInit {
     });
     modal.present();
   }
+
+  speak(msg: string) {
+    const speak = async () => {
+      await TextToSpeech.speak({
+        text: msg,
+        lang: 'en',
+        rate: 1.0,
+        pitch: 1.0,
+        volume: 1.0,
+        category: 'ambient',
+      });
+    };
+    speak();
+  }
 }

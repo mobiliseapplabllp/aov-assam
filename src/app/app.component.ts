@@ -19,7 +19,7 @@ export class AppComponent {
     private listMaster: ListMasterService,
     private platform: Platform) {
       this.platform.ready().then(res => {
-        // this.initApp();
+        this.initApp();
         this.getUserData();
       })
   }

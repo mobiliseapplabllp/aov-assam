@@ -4,9 +4,15 @@
       <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-title>Digital Checklist</ion-title>
-    <ion-button id="chklist-date" fill="clear" slot="end" color="light" class="ion-text-capitalize" [hidden]="scanBarcode">
-      <ion-icon name="calendar-outline" slot="end"></ion-icon>
-    </ion-button>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" color="light" (click)="openPage('/digital-checklist-offline')">
+        <ion-icon name="cloud-upload-outline"></ion-icon>
+      </ion-button>
+      <ion-button id="chklist-date" fill="clear" color="light" class="ion-text-capitalize" [hidden]="scanBarcode">
+        <ion-icon name="calendar-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
     <ion-popover trigger="chklist-date" >
       <ng-template>
         <ion-datetime #popoverDatetime max="2099" presentation="date" size="cover" (ionChange)="changeDateComponent($event)"></ion-datetime>

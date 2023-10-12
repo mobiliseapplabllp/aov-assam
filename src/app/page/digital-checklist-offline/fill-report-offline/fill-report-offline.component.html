@@ -1,0 +1,69 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Fill Report Offline</ion-title>
+    <ion-buttons slot="end" *ngIf="isInternet">
+      <ion-button (click)="uploadToServer()">Save Online</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+   <div *ngFor="let val of allData.qus; let i = index" #a>
+    <ion-card  [ngClass]="{critical: val.critical_desc === 'Critical', noncritical: val.critical_desc === 'Non Critical', fullborder: val.isNotFill === true && !val.rspns}">
+      <ion-row >
+        <ion-col size="1" class="center">
+          <div style="height:20px;width:20px;font-size: small;border-radius: 50%;background-color:var(--ion-color-primary);color:var(--ion-color-light)" class="center">{{i+1}}</div>
+        </ion-col>
+        <ion-col>
+          <ion-item>
+            <ion-label class="ion-text-wrap" [innerHTML]="val.q_desc"></ion-label>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12" class="ion-no-padding" >
+          <ion-radio-group  [(ngModel)]="val.rspns" (ionChange)="changeResponseAction(val, $event)">
+            <ion-row>
+              <ion-col size="4" *ngFor="let opt of val.options">
+                <ion-item lines="none">
+                  <ion-label>{{opt.optn_desc}}</ion-label>
+                  <ion-radio slot="start" [value]="opt.optn_id" style="margin-right:3px"></ion-radio>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ion-radio-group>
+        </ion-col>
+      </ion-row>
+      <ion-item [ngClass]="{redBorder: val.isRemarkMandatory === 1 && !val.remark }">
+        <ion-input type="text" [(ngModel)]="val.remark" [disabled]="!val.rspns" placeholder="Enter Remark" ></ion-input>
+      </ion-item>
+      <ion-row>
+        <ion-col size="6" class="ion-no-padding" >
+          <ion-button size="small" [color]="!val.attachment2 ? 'primary': 'success'" [fill]="!val.attachment2 ? 'outline' : 'solid' " (click)="presentActionSheet(val)" [disabled]="!val.rspns" [ngClass]="{redBorder: val.isRemarkMandatory === 1 &&  !val.attachment2}">
+            IMG
+            <ion-icon name="attach-outline" slot="end" *ngIf="!val.attachment2"></ion-icon>
+            <ion-icon name="checkmark-done-outline" slot="end" *ngIf="val.attachment2"></ion-icon>
+          </ion-button>
+        </ion-col>
+        <ion-col size="6" class="ion-text-right" *ngIf="val.attachment">
+          <ion-button color="danger" (click)="viewDocs(val.attachment)" fill="clear">
+            <ion-icon name="attach-outline"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-card>
+  </div>
+
+  <ion-item>
+    <ion-label position="floating">Remark</ion-label>
+    <ion-input type="text" [(ngModel)]="allData.remark"></ion-input>
+  </ion-item>
+
+  <ion-button (click)="openSign()" [fill]="signatureBase64 ? 'solid':'outline'">Signature <ion-icon name="checkmark-done-outline" slot="end" *ngIf="signatureBase64"></ion-icon></ion-button>
+  <ion-button expand="block" (click)="offlineSaveAction()" fill="outline">Save Checklist Offline</ion-button>
+  <!-- <ion-button expand="block" (click)="saveToServer()" *ngIf="offlineSave" fill="solid">Save to Server</ion-button> -->
+
+
+</ion-content>

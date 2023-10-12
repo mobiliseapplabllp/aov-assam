@@ -16,6 +16,10 @@
 	<string>Need Library Access Permission</string>
   <key>NSPhotoLibraryAddUsageDescription</key>
   <string>Need Photo Library Access Permission</string>
+  <key>NSSpeechRecognitionUsageDescription</key>
+  <string>Need allow Speaker to speak checklist question or PMS question</string>
+  <key>NSMicrophoneUsageDescription</key>
+  <string>Need allow Mic to Listen checklist question or PMS question</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>

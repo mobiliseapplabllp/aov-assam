@@ -4,8 +4,6 @@ import { Router } from '@angular/router';
 import { LoadingController, MenuController, ModalController, Platform } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { LoginService } from 'src/app/provider/login/login.service';
-import { BarcodeComponent } from 'src/app/shared/barcode/barcode.component';
-import { CameraComponent } from 'src/app/shared/camera/camera.component';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -44,17 +42,13 @@ export class LoginPage implements OnInit {
     this.common.setBarcode('');
   }
 
+
   ionViewDidEnter() {
     console.log('login');
     if (this.platform.is('android')) {
       this.isAndroid = true;
     }
     this.menu.enable(false);
-    // let bar = this.common.getBarcode();
-    // if (bar) {
-    //   console.log('Your Barcode is ' + bar);
-    //   this.common.setBarcode('');
-    // }
     if (localStorage.getItem('loginvalue')) {
       const isLogin = localStorage.getItem('loginvalue');
       console.log(isLogin);
@@ -67,24 +61,27 @@ export class LoginPage implements OnInit {
     } else {
       console.log('not data');
     }
-
-
-    // this.storage.get('loginvalue').then(res => {
-    //   this.isLogin = res;
-    //   if (this.isLogin != null) {
-    //     this.login.userid = this.isLogin.userid;
-    //     this.login.password = this.isLogin.password;
-    //   }
-    //  });
   }
   ionViewDidLeave() {
-    // this.common.setBarcode('');
     this.menu.enable(true);
   }
 
   changePass(pass: any) {
     console.log(pass);
     console.log(pass.target.value);
+  }
+
+
+  async checkInternet() {
+    this.common.checkInternet().then(res => {
+      console.log(res);
+      if (res) {
+        this.onLogin();
+      } else {
+        this.common.presentToast('You are in Offline Mode', 'danger');
+        this.router.navigateByUrl('/list-master', { replaceUrl: true });
+      }
+    });
   }
 
   onLogin() {
@@ -101,8 +98,6 @@ export class LoginPage implements OnInit {
         if (this.userValue.status === false ) {
           this.common.presentToast(this.userValue.msg, 'warning');
         } else  if (this.userValue.status === true) {
-          // this.storage.set('loginvalue', this.loginForms.value);
-          // this.storage.set('userInfo', this.userValue.extra);
           localStorage.setItem('userInfo', JSON.stringify(this.userValue.extra));
           localStorage.setItem('loginvalue', JSON.stringify(this.loginForms.value));
           localStorage.setItem('token1', this.userValue.token);
@@ -133,25 +128,5 @@ export class LoginPage implements OnInit {
   openPage(url: any) {
     this.router.navigateByUrl(url);
   }
-
-  async openCamera() {
-    // document.querySelector('body')?.classList.add('scanner-active');
-    // const modal = await this.modalCtrl.create({
-    //   component: BarcodeComponent,
-    //   componentProps: {  }
-    // });
-    // modal.onWillDismiss().then(disModal => {
-    //   console.log(disModal);
-    //   document.querySelector('body')?.classList.remove('scanner-active');
-    //   alert(JSON.stringify(disModal));
-    //   if (disModal.role) {
-    //     const binaryString = atob(disModal.data.split(',')[1]);
-    //     const blob = new Blob([binaryString], { type: 'image/png' });
-    //     console.log(blob);
-    //   }
-    // });
-    // modal.present();
-  }
-
 
 }

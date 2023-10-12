@@ -4,10 +4,8 @@ import { LoadingController, ModalController, ToastController } from '@ionic/angu
 import { CommonService } from 'src/app/provider/common/common.service';
 import { ListMasterService } from 'src/app/provider/list-master/list-master.service';
 import { LoginService } from 'src/app/provider/login/login.service';
-// import { CameraComponent } from 'src/app/shared/camera/camera.component';
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import { SpeechRecognition } from "@capacitor-community/speech-recognition";
-
 
 @Component({
   selector: 'app-list-master',
@@ -26,9 +24,6 @@ export class ListMasterPage implements OnInit {
   ];
   userData: any = [];
   result: any = [];
-  // categorySummary: any = [];
-  // responslibity: any = [];
-  // compalintSummay: any = [];
   userName!: string;
   breakdown: any = {};
   pr: any = {};
@@ -37,7 +32,8 @@ export class ListMasterPage implements OnInit {
     initialSlide: 0,
     slidesPerView: 1,
     autoplay: true,
-   };
+  };
+  isInternet!: boolean
   constructor(
     private listMaster: ListMasterService,
     private toastController: ToastController,
@@ -51,9 +47,29 @@ export class ListMasterPage implements OnInit {
       this.userData = JSON.parse(user);
       this.userName = this.userData.user_name
     }
+  }
 
-    this.getMenuDetail();
-    this.getDashboard();
+  ngOnInit() {
+    this.common.checkInternet().then(res => {
+      if (res) {
+        this.isInternet = true;
+        this.common.setBarcode('');
+        this.userData = this.loginPro.getLoginUserValue();
+        this.getMenuDetail();
+        this.getDashboard();
+      } else {
+        let menu, MENU_TEMP = localStorage.getItem('home_menu');
+        if (MENU_TEMP) {
+          this.myMenu = JSON.parse(MENU_TEMP);
+          this.isInternet = false;
+          console.log(menu);
+        } else {
+          this.common.presentToastWithOk('Menu Icon Not Saved in your Local DB, please connect with internet to save menu in Local DB', 'warning');
+        }
+      }
+    })
+
+    console.log(this.userData);
   }
 
   getDashboard() {
@@ -71,7 +87,7 @@ export class ListMasterPage implements OnInit {
     const speak = async () => {
       await TextToSpeech.speak({
         text: 'This is a sample text.',
-        lang: 'en-US',
+        lang: 'en',
         rate: 1.0,
         pitch: 1.0,
         volume: 1.0,
@@ -121,14 +137,6 @@ export class ListMasterPage implements OnInit {
     toast.present();
   }
 
-
-  ngOnInit() {
-    this.common.setBarcode('');
-    this.userData = this.loginPro.getLoginUserValue();
-    console.log(this.userData);
-  }
-
-
   getMenuDetail() {
     this.presentLoading().then(preLoad => {
       this.listMaster.getMenuDetail().then(data => {
@@ -153,15 +161,30 @@ export class ListMasterPage implements OnInit {
   }
 
   async dismissloading() {
-    this.loading.dismiss();
+    if (this.loading) {
+      this.loading.dismiss();
+    }
   }
 
+
   openPage(data: any) {
-    if (data.link == 'not') {
-      this.common.presentToast('Not activated yet', 'warning' );
-      return;
-    }
-    this.router.navigateByUrl(data.link);
-    return;
+    this.common.checkInternet().then(res => {
+      if (res) {
+        if (data.link == 'not') {
+          this.common.presentToast('Not activated yet', 'warning' );
+          return;
+        }
+        this.router.navigateByUrl(data.link);
+        return;
+      } else {
+        console.log(data);
+        if (data.smnu_id == 403) {
+          this.router.navigateByUrl('/digital-checklist-offline');
+        } else {
+          this.common.presentToast(data.smnu_desc + ' Not Working on Offline Mode.', 'warning')
+        }
+      }
+    })
+
   }
 }

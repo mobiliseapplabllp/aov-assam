@@ -84,21 +84,6 @@ export class PmCalService {
   uploadPtw(formdata: any): Observable<any> {
     return this.https.post(environment.url + 'pmscal/uploadPTW', formdata);
   }
-  // assignPmCal(teamMem, scheduleID, empID) {
-  //   return new Promise(resolve => {
-  //     const url = environment.url + 'assign_pm_cal.php';
-  //     const postdata = new FormData();
-  //     postdata.append('team_member', teamMem);
-  //     postdata.append('schedule_id', scheduleID);
-  //     postdata.append('emp_id', empID);
-  //     this.https.post(url, postdata).subscribe(data => {
-  //       resolve(data);
-  //     }, err => {
-  //       alert(JSON.stringify(err));
-  //       resolve(false);
-  //     });
-  //   });
-  // }
 
   resolvePmCal(remarks: any, ticketInfo: any, empID: any, img: any, completionDate: any) {
     return new Promise(resolve => {
@@ -152,27 +137,6 @@ export class PmCalService {
   finalSubmitCheckList(formData: any): Observable<any> {
     return this.https.post(environment.url + 'pmscal/schedule/update_schedule_status', formData);
   }
-
-
-
-
-  // savePmsQuestion(data, wo, emp_id, questionAttachment) {
-  //   return new Promise(resolve=>{
-  //     var url = environment.url + "/pmsSaveQuestion.php";
-  //     let postdata = new FormData();
-  //     postdata.append('workorderid', wo);
-  //     postdata.append('loggedin_user', emp_id);
-  //     postdata.append('data',JSON.stringify(data));
-  //     postdata.append('attachment',questionAttachment);
-  //     // postdata.append('data', data);
-  //     this.https.post(url,postdata).subscribe(data=>{
-  //       resolve(data);
-  //     },err=>{
-  //       console.log(err);
-  //       resolve(false);
-  //     })
-  //   })
-  // }
 
   getOtherCategory() : Observable<any> {
     return this.https.get(environment.url + 'otherCategory.php')

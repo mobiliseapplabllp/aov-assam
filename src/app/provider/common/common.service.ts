@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ToastController } from '@ionic/angular';
-import { BehaviorSubject } from 'rxjs';
-
+import { Network } from '@capacitor/network';
+import { stat } from 'fs';
 @Injectable({
   providedIn: 'root'
 })
@@ -19,8 +19,6 @@ export class CommonService {
   getBarcode() {
     return this.barcode;
   }
-
-
 
   async presentToast(msg: any, clr: any) {
     const toast = await this.toastController.create({
@@ -56,11 +54,18 @@ export class CommonService {
     brecked = url.split('.');
     let ext;
     ext = brecked[brecked.length - 1];
-    // window.open(url, '_blank', 'location=no,zoom=yes');
     if (ext === 'pdf') {
       window.open(url, '_system', 'location=no,zoom=yes');
     } else {
       window.open(url, '_blank', 'location=no,zoom=yes');
     }
+  }
+
+  async checkInternet() {
+    return new Promise(async resolve => {
+      const status = await Network.getStatus();
+      console.log('Network status:', status.connected);
+      resolve(status.connected);
+    });
   }
 }

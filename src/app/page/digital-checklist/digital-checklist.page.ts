@@ -86,10 +86,34 @@ export class DigitalChecklistPage implements OnInit {
           } else {
             this.common.presentToast(data.msg, 'warning');
           }
+          let todayDate = moment().format('YYYY-MM-DD'), lastCheckListDate = localStorage.getItem('lastCheckListDate');
+          if (lastCheckListDate != todayDate) {
+            localStorage.setItem('lastCheckListDate', '');
+            localStorage.setItem('checkListData', '');
+            this.getOfflineCheckListFromServer();
+          }
         },
         error:() => {
           this.dismissloading();
           this.common.presentToast(environment.errMsg, 'danger')
+        },
+        complete:() => {
+          this.dismissloading();
+        }
+      })
+    })
+  }
+
+  getOfflineCheckListFromServer() {
+    this.presentLoading('Checklist save in offline. it may take time').then(preLoad => {
+      this.httpDigital.getOfflineCheckListFromServer().subscribe({
+        next:(data: any) => {
+          localStorage.setItem('lastCheckListDate', moment().format('YYYY-MM-DD'));
+          localStorage.setItem('checkListData', JSON.stringify(data));
+        },
+        error:() => {
+          this.dismissloading();
+          this.common.presentToast(environment.errMsg + ' In Saving Checklist Offline Mode', 'danger');
         },
         complete:() => {
           this.dismissloading();
@@ -125,10 +149,16 @@ export class DigitalChecklistPage implements OnInit {
   }
 
 
-  async presentLoading() {
+  async presentLoading(msg?: any) {
+    let message;
+    if(msg) {
+      message = msg
+    } else {
+      message = 'Please Wait.';
+    }
     this.loading = await this.loadingController.create({
       cssClass: 'my-custom-class',
-      message: 'Please wait...',
+      message: message,
     });
     await this.loading.present();
   }

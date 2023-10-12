@@ -80,17 +80,18 @@
       </section>
     </div>
 
-    <div *ngIf="dat.isResponseShow" style="border-radius: 10px;">
-      <div style="margin:10px;border:1px solid black;border-radius: 10px;" *ngFor="let val of dat.qus; let i = index" [ngClass]="{critical: val.critical_desc === 'Critical', noncritical: val.critical_desc === 'Non Critical', fullborder: val.isNotFill === true && !val.rspns}">
-        <ion-item color="none">
-          <ion-avatar slot="start" class="center">
+    <div *ngIf="dat.isResponseShow" class="ion-no-padding">
+      <div style="margin:10px;padding:5px 0px ;border:1px solid black;border-radius: 10px;" *ngFor="let val of dat.qus; let i = index" [ngClass]="{critical: val.critical_desc === 'Critical', noncritical: val.critical_desc === 'Non Critical', fullborder: val.isNotFill === true && !val.rspns}">
+        <ion-item class="ion-text-wrap">
+          <ion-avatar class="center">
             <b>{{i+1}}</b>
           </ion-avatar>
-          <ion-label class="ion-text-wrap"> {{val.q_desc}} <div *ngIf="val.is_rmrk_mandatory"><ion-text color="primary">{{val.critical_desc}}</ion-text> (<ion-text color="primary">{{val.scope_desc}}</ion-text>)</div>   </ion-label>
+          <ion-label style="word-wrap: break-word !important;" [innerHTML]="val.q_desc"></ion-label>
         </ion-item>
         <ion-item *ngIf="val.is_rmrk_mandatory">
-          <ion-label>
-            <b>Requirement:</b> {{val.requirement}}
+          <ion-label class="ion-text-wrap">
+            <b>Requirement:</b> {{val.requirement}}<br>
+            <ion-text color="primary">{{val.critical_desc}}</ion-text> (<ion-text color="primary">{{val.scope_desc}}</ion-text>)
           </ion-label>
           <ion-text slot="end" *ngIf="val.sla !== 0 ">
             {{val.sla}}: Days
