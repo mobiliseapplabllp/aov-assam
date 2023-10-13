@@ -86,12 +86,12 @@ export class DigitalChecklistPage implements OnInit {
           } else {
             this.common.presentToast(data.msg, 'warning');
           }
-          let todayDate = moment().format('YYYY-MM-DD'), lastCheckListDate = localStorage.getItem('lastCheckListDate');
-          if (lastCheckListDate != todayDate) {
-            localStorage.setItem('lastCheckListDate', '');
-            localStorage.setItem('checkListData', '');
-            this.getOfflineCheckListFromServer();
-          }
+          // let todayDate = moment().format('YYYY-MM-DD'), lastCheckListDate = localStorage.getItem('lastCheckListDate');
+          // if (lastCheckListDate != todayDate) {
+          //   localStorage.setItem('lastCheckListDate', '');
+          //   localStorage.setItem('checkListData', '');
+          //   this.getOfflineCheckListFromServer();
+          // }
         },
         error:() => {
           this.dismissloading();

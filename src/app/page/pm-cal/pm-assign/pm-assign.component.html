@@ -9,7 +9,17 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-card>
+
+  <ion-item *ngFor="let dat of allTeamMember;let i = index">
+    <ion-avatar class="center">{{i+1}}</ion-avatar>
+    <ion-label class="ion-text-wrap">
+      {{dat.label}}
+    </ion-label>
+    <ion-button slot="end" color="primary" (click)="submit(dat)">
+      Assign
+    </ion-button>
+  </ion-item>
+  <!-- <ion-card>
     <ion-item>
       <ion-label position="floating">Select Employee <ion-text color="danger"> *</ion-text> </ion-label>
       <ion-select interface="action-sheet" [(ngModel)]="user_id" mode="ios">
@@ -21,7 +31,7 @@
         <ion-button shape="round" (click)="submit()" [disabled]="!user_id">Submit</ion-button>
       </ion-col>
     </ion-row>
-  </ion-card>
+  </ion-card> -->
 
 
 </ion-content>

@@ -54,8 +54,7 @@ export class AssetDepartmentComponent  implements OnInit {
   }
 
   async presentLoading() {
-    this.loading = await this.loadingController.create({
-      cssClass: 'my-custom-class',
+    this.loading = await this.loadingController.create({      cssClass: 'my-custom-class',
       message: 'Please wait...'
     });
     await this.loading.present();

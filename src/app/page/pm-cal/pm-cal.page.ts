@@ -168,7 +168,7 @@ export class PmCalPage implements OnInit {
   async pmAssign(dat: any) {
     const modal = await this.modalCtrl.create({
       component: PmAssignComponent,
-      cssClass: 'my-modal2',
+      cssClass: 'my-modal',
       componentProps: { data: dat }
     });
     modal.onWillDismiss().then(disModal => {

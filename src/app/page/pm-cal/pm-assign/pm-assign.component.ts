@@ -59,9 +59,9 @@ export class PmAssignComponent  implements OnInit {
     this.modalCtrl.dismiss(data, status);
   }
 
-  submit() {
+  submit(dat: any) {
     const obj = {
-      user_id: this.user_id,
+      user_id: dat.value,
       workorderData: this.work_order,
       source: environment.source
     }

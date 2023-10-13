@@ -44,11 +44,13 @@ export class AddResponseComponent  implements OnInit {
 
   initializeForm() {
     this.addResponse = this.formbuilder.group({
+      wo_id: [this.requestedData.wo_id],
       rspns_id: [this.requestedData.rspns_id],
       q_id: [this.requestedData.q_id],
       corrective_action: ['', Validators.required],
       rspns_date: ['' , Validators.required],
       remark: ['', Validators.required],
+      source: [environment.source]
     });
   }
 
@@ -61,24 +63,44 @@ export class AddResponseComponent  implements OnInit {
       this.httpCommon.presentToast('Attachment is Required', 'warning');
       return;
     }
+    let date = this.addResponse.value.rspns_date;
+    this.addResponse.get('rspns_date')?.setValue(moment(date).format('YYYY-MM-DD'));
     for (let key in this.addResponse.value) {
       this.formData.delete(key);
       this.formData.append(key, this.addResponse.value[key]);
     }
     this.presentLoading().then(preLoad => {
-      this.httpPms.updateUserAction(this.formData).subscribe(dat => {
-        console.log(dat);
-        this.dismissloading();
-        if (dat.status) {
-          this.httpCommon.presentToast(dat.msg, 'success');
-          this.close(null, true)
-        } else {
-          this.httpCommon.presentToast(dat.msg, 'warning');
+      this.httpPms.updateUserAction(this.formData).subscribe({
+        next:(dat) => {
+          if (dat.status) {
+            this.httpCommon.presentToast(dat.msg, 'success');
+            this.close(null, true)
+          } else {
+            this.httpCommon.presentToast(dat.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
-      });
+      }
+      //   dat => {
+      //   console.log(dat);
+      //   this.dismissloading();
+      //   if (dat.status) {
+      //     this.httpCommon.presentToast(dat.msg, 'success');
+      //     this.close(null, true)
+      //   } else {
+      //     this.httpCommon.presentToast(dat.msg, 'warning');
+      //   }
+      // }, err => {
+      //   this.dismissloading();
+      //   this.httpCommon.presentToast(environment.errMsg, 'danger');
+      // }
+      );
     });
 
   }

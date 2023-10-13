@@ -6,7 +6,6 @@ import { LoginService } from 'src/app/provider/login/login.service';
 import { PmCalService } from 'src/app/provider/pm-cal/pm-cal.service';
 import { environment } from 'src/environments/environment';
 import { Camera, CameraResultType } from '@capacitor/camera';
-
 @Component({
   selector: 'app-pm-report',
   templateUrl: './pm-report.component.html',
@@ -55,40 +54,45 @@ export class PmReportComponent  implements OnInit {
       this.requestedData = JSON.parse(res['data']);
       this.pageName = this.requestedData.reportName;
       console.log(this.requestedData);
-      this.getAsset();
+      // this.getAsset();
       this.getScheduleQuestion();
     });
   }
 
   getScheduleQuestion() {
     this.presentLoading('Please Wait').then(preLoad => {
-      this.httpPmCal.getScheduleQuestion(this.requestedData.wo_id).subscribe(data => {
-        this.dismissloading();
-        this.myCategory = data.data.categories;
-        this.myCategory.forEach((element: any) => {
-          element.isResponseShow = false;
-          element.qus.forEach((el: any) => {
-            if(el.response) {
-              el.remark = el.response.remark;
-              el.attachment = el.response.attachment1;
-              if(el.q_type == '226') {
-                el.rspns = el.response.optn_id;
-                if (el.rspns) {
-                  const obj = el.options.filter((val: any) => val.optn_id === el.rspns)[0];
-                  el.is_doc_mandatory = obj.is_doc_mandatory;
-                  el.is_rmrk_mandatory = obj.is_rmrk_mandatory;
+      this.httpPmCal.getScheduleQuestion(this.requestedData.wo_id).subscribe({
+        next:(data) => {
+          this.myCategory = data.data.categories;
+          this.myCategory.forEach((element: any) => {
+            element.isResponseShow = false;
+            element.qus.forEach((el: any) => {
+              if(el.response) {
+                el.remark = el.response.remark;
+                el.attachment = el.response.attachment1;
+                if(el.q_type == '226') {
+                  el.rspns = el.response.optn_id;
+                  if (el.rspns) {
+                    const obj = el.options.filter((val: any) => val.optn_id === el.rspns)[0];
+                    el.is_doc_mandatory = obj.is_doc_mandatory;
+                    el.is_rmrk_mandatory = obj.is_rmrk_mandatory;
+                  }
+                } else {
+                  el.rspns = el.response.rspns;
                 }
               } else {
-                el.rspns = el.response.rspns;
+                el.response = {}
               }
-            } else {
-              el.response = {}
-            }
+            });
           });
-        });
-      }, err => {
-        this.dismissloading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
+        }
       });
     });
   }
@@ -218,7 +222,6 @@ export class PmReportComponent  implements OnInit {
     }
   }
 
-
   scroll(indexFound: any) {
     setTimeout(() => {
       const userToScrollOn = this.itemlist.toArray();
@@ -256,6 +259,8 @@ export class PmReportComponent  implements OnInit {
             const obj = data.options.filter((val: any) => val.optn_id === ev.target.value)[0];
             data.is_doc_mandatory = obj.is_doc_mandatory;
             data.is_rmrk_mandatory = obj.is_rmrk_mandatory;
+            data.is_correct = obj.is_correct;
+            data.isNotFill = false;
           } else {
             data.rspns = '';
             this.httpCommon.presentToast(dat.msg, 'warning');
@@ -285,6 +290,7 @@ export class PmReportComponent  implements OnInit {
         next:(dat) => {
           if (dat.status) {
             this.httpCommon.presentToast(dat.msg, 'success');
+            data.isNotFill = false;
           } else {
             this.httpCommon.presentToast(dat.msg, 'warning');
           }
@@ -323,19 +329,23 @@ export class PmReportComponent  implements OnInit {
     formData.append('attachment2', blob, random);
     data.imagename = '';
     this.presentLoading('Please Wait!!!').then(preLoad => {
-      this.httpPmCal.scheduleResponseActionDoc(formData).subscribe(dat => {
-        console.log(dat);
-        this.dismissloading();
-        if (dat.status) {
-          data.imagename = 'Uploaded';
-          this.httpCommon.presentToast(dat.msg, 'success');
-        } else {
-          this.httpCommon.presentToast(dat.msg, 'warning');
+      this.httpPmCal.scheduleResponseActionDoc(formData).subscribe({
+        next:(dat) => {
+          if (dat.status) {
+            data.imagename = 'Uploaded';
+            data.isNotFill = false;
+            this.httpCommon.presentToast(dat.msg, 'success');
+          } else {
+            this.httpCommon.presentToast(dat.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
-        alert(JSON.stringify(err));
       });
     });
   }
@@ -365,22 +375,27 @@ export class PmReportComponent  implements OnInit {
     }
 
     this.presentLoading('Saving Data').then(preLoad => {
-      this.httpPmCal.finalSubmitCheckList(obj).subscribe(data => {
-        this.dismissloading();
-        if (data.status) {
-          this.httpCommon.presentToast(data.msg, 'success');
-          this.navCtrl.pop();
-        } else {
-          this.httpCommon.presentToastWithOk(data.msg, 'warning');
-          if (data.cat_head && data.cat_ques) {
-            this.scrollCategory(data);
+      this.httpPmCal.finalSubmitCheckList(obj).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.httpCommon.presentToast(data.msg, 'success');
+            this.navCtrl.pop();
           } else {
-            console.log('cat not found');
+            this.httpCommon.presentToastWithOk(data.msg, 'warning');
+            if (data.cat_head && data.cat_ques) {
+              this.scrollCategory(data);
+            } else {
+              console.log('cat not found');
+            }
           }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        alert(JSON.stringify(err));
       });
     });
   }

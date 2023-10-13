@@ -10,6 +10,7 @@ import { AssetDevicenameComponent } from './asset-devicename/asset-devicename.co
 import { AssetManufacturerComponent } from './asset-manufacturer/asset-manufacturer.component';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { Router } from '@angular/router';
+import * as moment from 'moment';
 @Component({
   selector: 'app-add-asset',
   templateUrl: './add-asset.page.html',
@@ -701,10 +702,18 @@ export class AddAssetPage implements OnInit {
   }
 
   submitAsset() {
-    let prefix_barcode, barcode, fullbarcode;
+    let prefix_barcode, barcode, fullbarcode, pur_date, install_date, warranty_start_date, warranty_end_date;
+    pur_date = this.addAsset.value.pur_date;
+    install_date = this.addAsset.value.install_date,
+    warranty_start_date = this.addAsset.value.warranty_start_date,
+    warranty_end_date = this.addAsset.value.warranty_end_date,
     prefix_barcode = this.addAsset.value.ext_asset_id_pre;
     barcode = this.addAsset.value.input_asset_id;
     fullbarcode = prefix_barcode + barcode;
+    this.addAsset.get('pur_date')?.setValue(moment(pur_date).format('YYYY-MM-DD'));
+    this.addAsset.get('install_date')?.setValue(moment(install_date).format('YYYY-MM-DD'));
+    this.addAsset.get('warranty_start_date')?.setValue(moment(warranty_start_date).format('YYYY-MM-DD'));
+    this.addAsset.get('warranty_end_date')?.setValue(moment(warranty_end_date).format('YYYY-MM-DD'));
     this.addAsset.get('ext_asset_id')?.setValue(fullbarcode);
     this.stopRequest();
     this.presentLoading().then(preLoad => {
