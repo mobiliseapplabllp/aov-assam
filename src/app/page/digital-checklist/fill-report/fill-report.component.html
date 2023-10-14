@@ -55,7 +55,7 @@
     </ion-card>
     <div *ngIf="dat.isResponseShow" class="ion-no-padding">
       <div style="margin:10px;padding:5px 0px ;border:1px solid black;border-radius: 10px;" *ngFor="let val of dat.qus; let i = index" [ngClass]="{critical: val.critical_desc === 'Critical', noncritical: val.critical_desc === 'Non Critical', fullborder: val.isNotFill === true}">
-        <ion-item (click)="speak(val.q_desc)">
+        <ion-item>
           <ion-avatar class="center">
             <b>{{i+1}}</b>
           </ion-avatar>

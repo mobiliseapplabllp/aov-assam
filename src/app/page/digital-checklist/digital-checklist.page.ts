@@ -42,9 +42,9 @@ export class DigitalChecklistPage implements OnInit {
   ionViewDidEnter() {
     let bar = this.common.getBarcode();
     if (bar) {
+      this.common.setBarcode('');
       if (this.qrType == 'otherbarcode') {
         console.log('Your Barcode is ' + bar);
-        this.common.setBarcode('');
         let temp, temp1;
         temp = bar;
         temp1 = temp.split('/');
@@ -57,6 +57,7 @@ export class DigitalChecklistPage implements OnInit {
         const obj = {
           sch_id: this.qrType,
           enc_barcode: temp1[5],
+          type: 'checklist',
         }
         this.verifyBarcode(obj);
         return;

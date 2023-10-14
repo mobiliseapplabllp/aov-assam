@@ -8,6 +8,7 @@ import { environment } from 'src/environments/environment';
 import { PmAssignComponent } from './pm-assign/pm-assign.component';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { PtwUploadComponent } from './ptw-upload/ptw-upload.component';
+import { DigitalChecklistService } from 'src/app/provider/digital-checklist/digital-checklist.service';
 @Component({
   selector: 'app-pm-cal',
   templateUrl: './pm-cal.page.html',
@@ -56,7 +57,8 @@ export class PmCalPage implements OnInit {
     private common: CommonService,
     private modalCtrl: ModalController,
     private router: Router,
-    private platform: Platform
+    private platform: Platform,
+    private httpDigital: DigitalChecklistService,
   ) { }
 
   ngOnInit() {
@@ -66,15 +68,45 @@ export class PmCalPage implements OnInit {
   ionViewDidEnter() {
     let bar = this.common.getBarcode();
     if (bar) {
-      if (this.selectedBarcode.ext_asset_id == bar ) {
-        this.common.setBarcode('');
-        this.openPage(this.selectedBarcode);
-      } else {
-        this.common.presentToastWithOk(this.selectedBarcode.ext_asset_id + ' not Matched with ' + bar, 'warning');
+      let temp, temp1;
+      temp = bar;
+      temp1 = temp.split('/');
+      const obj = {
+        sch_id: '',
+        wo_id: this.selectedBarcode.wo_id,
+        enc_barcode: temp1[5],
+        type: 'pms',
       }
+      this.verifyBarcode(obj);
+      // if (this.selectedBarcode.ext_asset_id == bar ) {
+      //   this.common.setBarcode('');
+      //   this.openPage(this.selectedBarcode);
+      // } else {
+      //   this.common.presentToastWithOk(this.selectedBarcode.ext_asset_id + ' Not Matched with ' + bar, 'warning');
+      // }
       return;
     }
     this.getPm(this.lastSegment);
+  }
+
+  verifyBarcode(obj: any){
+    this.presentLoading().then(preLoad => {
+      this.httpDigital.verifyAssetByQr(obj).subscribe({
+        next:(dat: any) => {
+          if (dat.status) {
+            this.common.setBarcode('');
+            this.openPage(this.selectedBarcode);
+          } else {
+            this.common.presentToast(dat.msg, 'warning');
+          }
+        }, error:() => {
+          this.dismissloading();
+          this.common.presentToast(environment.errMsg, 'danger');
+        }, complete:() => {
+          this.dismissloading();
+        }
+      })
+    })
   }
 
   ionViewDidLeave() {
@@ -103,6 +135,7 @@ export class PmCalPage implements OnInit {
             }
           } else {
             this.pmCal = [];
+            this.common.presentToast(dat.msg, 'warning');
           }
         },
         error:() => {
@@ -203,12 +236,8 @@ export class PmCalPage implements OnInit {
   }
 
   openFillReport(data: any) {
-    if (this.platform.is('capacitor')) {
-      if (data.ext_asset_id) {
-        this.openBarcode(data)
-      } else {
-        this.openPage(data);
-      }
+    if (data.ext_asset_id) {
+      this.openBarcode(data)
     } else {
       this.openPage(data);
     }
