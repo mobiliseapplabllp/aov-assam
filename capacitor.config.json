@@ -1,6 +1,6 @@
 {
-	"appId": "io.ionic.starter",
-	"appName": "ifms-sodexo",
+	"appId": "com.socampuseng.mbl",
+	"appName": "SoCampus Service",
 	"webDir": "www",
 	"bundledWebRuntime": false
 }
