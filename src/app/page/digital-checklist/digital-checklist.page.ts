@@ -63,6 +63,9 @@ export class DigitalChecklistPage implements OnInit {
         return;
       }
     }
+    if (this.segmentStatus == 'attended') {
+      return;
+    }
     if (!this.scanBarcode) {
       this.getSchedule(this.selectedDate);
     } else {

@@ -6,7 +6,6 @@ import { ListMasterService } from 'src/app/provider/list-master/list-master.serv
 import { LoginService } from 'src/app/provider/login/login.service';
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import { SpeechRecognition } from "@capacitor-community/speech-recognition";
-
 @Component({
   selector: 'app-list-master',
   templateUrl: './list-master.page.html',
@@ -33,7 +32,7 @@ export class ListMasterPage implements OnInit {
     slidesPerView: 1,
     autoplay: true,
   };
-  isInternet!: boolean
+  isInternet!: boolean;
   constructor(
     private listMaster: ListMasterService,
     private toastController: ToastController,
