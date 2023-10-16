@@ -9,7 +9,6 @@ import { SignaturePad } from 'angular2-signaturepad';
 })
 export class SignatureComponent  implements OnInit {
   @ViewChild(SignaturePad, { static: true }) signaturePad!: SignaturePad;
-  // tslint:disable-next-line: ban-types
   public signaturePadOptions: Object = {
     minWidth: 2,
     canvasWidth: 800,

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, ModalController } from '@ionic/angular';
+import { CommonService } from 'src/app/provider/common/common.service';
 import { MyAssetGetService } from 'src/app/provider/my-asset-get/my-asset-get.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-asset-manufacturer',
@@ -14,12 +16,12 @@ export class AssetManufacturerComponent  implements OnInit {
   constructor(
     private modalCtrl: ModalController,
     private httpAsset: MyAssetGetService,
-    private loadingController: LoadingController) { }
+    private loadingController: LoadingController,
+    private common: CommonService) { }
 
   ngOnInit() {
     this.getManufacturer();
   }
-
 
   ionViewDidLeave() {
     this.dismissloading();
@@ -31,18 +33,24 @@ export class AssetManufacturerComponent  implements OnInit {
 
   getManufacturer() {
     this.presentLoading().then(preLod => {
-      this.httpAsset.getManufacturer().subscribe(data => {
-        console.log(data);
-        this.dismissloading();
-        if (data.status) {
-          this.manufacturer = data.data;
-          this.manufacturerCopy = data.data;
+      this.httpAsset.getManufacturer().subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.manufacturer = data.data;
+            this.manufacturerCopy = data.data;
+          } else {
+            this.common.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.common.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
       });
-    })
-
+    });
   }
 
   async presentLoading() {

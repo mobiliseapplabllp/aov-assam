@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, ModalController } from '@ionic/angular';
 import { ComplaintService } from 'src/app/provider/complaint/complaint.service';
-
 @Component({
   selector: 'app-query-sub-cat2',
   templateUrl: './query-sub-cat2.component.html',
@@ -72,5 +71,4 @@ export class QuerySubCat2Component  implements OnInit {
       });
     }
   }
-
 }

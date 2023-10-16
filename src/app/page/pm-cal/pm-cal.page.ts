@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoadingController, ModalController, Platform } from '@ionic/angular';
+import { LoadingController, ModalController } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { PmCalService } from 'src/app/provider/pm-cal/pm-cal.service';
 import { CostCenterComponent } from 'src/app/shared/cost-center/cost-center.component';
@@ -25,7 +25,6 @@ export class PmCalPage implements OnInit {
   pmCalBoolean!: boolean;
   pmCalResBoolean!: boolean;
   counter = 0;
-  // baseUrl = APP_CONFIG.url1;
   userInfo: any = [];
   userName!: string;
   openPm: any = [];
@@ -35,8 +34,6 @@ export class PmCalPage implements OnInit {
   closePm: any = [];
   closePmCopy: any = [];
   lastSegment = 1;
-  // latitude;
-  // longitude;
   lastPage: any;
   currentPage = 1;
   myWorkOrder: any = [];
@@ -57,7 +54,6 @@ export class PmCalPage implements OnInit {
     private common: CommonService,
     private modalCtrl: ModalController,
     private router: Router,
-    private platform: Platform,
     private httpDigital: DigitalChecklistService,
   ) { }
 
@@ -78,12 +74,6 @@ export class PmCalPage implements OnInit {
         type: 'pms',
       }
       this.verifyBarcode(obj);
-      // if (this.selectedBarcode.ext_asset_id == bar ) {
-      //   this.common.setBarcode('');
-      //   this.openPage(this.selectedBarcode);
-      // } else {
-      //   this.common.presentToastWithOk(this.selectedBarcode.ext_asset_id + ' Not Matched with ' + bar, 'warning');
-      // }
       return;
     }
     this.getPm(this.lastSegment);
@@ -145,31 +135,7 @@ export class PmCalPage implements OnInit {
         complete:() => {
           this.dismissloading();
         }
-      }
-      //   dat => {
-      //   this.dismissloading();
-      //   if (dat.status) {
-      //     this.pmCal = dat.data.data;
-      //     this.lastPage = dat.data.last_page;
-      //     this.currentPage = this.currentPage + 1;
-      //     if (stage_id == 1) {
-      //       this.openPm = this.pmCal.filter((val: any) => val.stage_id === 1);
-      //       this.openPmCopy = this.pmCal.filter((val: any) => val.stage_id === 1);
-      //     } else if (stage_id == 2) {
-      //       this.actionPm = this.pmCal.filter((val: any) => val.stage_id === 2);
-      //       this.actionPmCopy = this.pmCal.filter((val: any) => val.stage_id === 2);
-      //     } else if (stage_id == 3) {
-      //       this.closePm = this.pmCal.filter((val: any) => val.stage_id == 3)
-      //       this.closePmCopy = this.pmCal.filter((val: any) => val.stage_id == 3)
-      //     }
-      //   } else {
-      //     this.pmCal = [];
-      //   }
-      // }, err => {
-      //   this.dismissloading();
-      //   this.common.presentToast(environment.errMsg, 'warning');
-      // }
-      );
+      });
     });
   }
 
@@ -213,10 +179,6 @@ export class PmCalPage implements OnInit {
             this.openPm = this.openPm.filter((val: any) => val.wo_id !== data[i].wo_id);
           }
         });
-        // this.PmAssignComponent.assignPmCal.subscribe(data => {
-        //   console.log(data);
-        // });
-        // this.getPm(this.lastSegment);
       }
     });
     modal.present();
@@ -228,11 +190,6 @@ export class PmCalPage implements OnInit {
 
   viewAttachment(url: string) {
     this.common.openDoc(url);
-    // if (!url) {
-    //   Swal.fire('Info', 'Attachment Not Available', 'info');
-    // } else {
-    //   window.open(url, '_system', 'location=no,zoom=yes');
-    // }
   }
 
   openFillReport(data: any) {
@@ -246,22 +203,6 @@ export class PmCalPage implements OnInit {
   openBarcode(data: any) {
     this.selectedBarcode = data;
     this.router.navigateByUrl('/barcode');
-    // this.openPage(data);
-    // this.barcodeScanner.scan().then((barcodeData: any) => {
-    //   console.log('Barcode data', barcodeData);
-    //   if (data.ext_asset_id == barcodeData.text) {
-    //     this.openPage(data);
-    //   } else {
-    //     this.common.presentToastWithOk(data.ext_asset_id + ' Not Match With Barcode ' + barcodeData.text , 'warning');
-    //   }
-    // }, (err: any) => {
-    //   let msg = JSON.stringify(err);
-    //   if (msg == 'Illegal access') {
-    //     this.common.presentToast('You Need to allow the Permission', 'warning');
-    //   } else {
-    //     this.common.presentToast(JSON.stringify(err), 'warning');
-    //   }
-    // })
   }
 
   openPage(data: any) {
@@ -339,7 +280,6 @@ export class PmCalPage implements OnInit {
     });
   }
 
-
   async presentLoading() {
     this.loading = await this.loadingController.create({
       cssClass: 'my-custom-class',
@@ -367,13 +307,8 @@ export class PmCalPage implements OnInit {
       this.getPm(this.lastSegment);
     } else if (ev.target.value == 'mywo') {
       console.log('mywo');
-      // this.getMyWo();
     }
   }
-
-  // presentActionSheet(val: any) {
-
-  // }
 
   async presentActionSheet(data: any) {
     const takePicture = async () => {
@@ -444,33 +379,38 @@ export class PmCalPage implements OnInit {
   }
 
   loadData(event: any, stage_id: any) {
-    this.httpPms.getPm(stage_id, this.currentPage).subscribe(dat => {
-      event.target.complete();
-      if (dat.status) {
-        this.pmCal = dat.data.data;
-        this.currentPage = this.currentPage + 1;
-        if (stage_id == 1) {
-          let obj;
-          obj = this.pmCal.filter((val: any) => val.stage_id === 1);
-          this.openPm = [...this.openPm, ...obj];
-          this.openPmCopy = [...this.openPmCopy, ...obj];
-        } else if (stage_id == 2) {
-          let obj;
-          obj = this.pmCal.filter((val: any) => val.stage_id === 2);
-          this.actionPm = [...this.actionPm, ...obj];
-          this.actionPmCopy = [...this.actionPmCopy, ...obj];
-        } else if (stage_id == 3) {
-          let obj;
-          obj = this.pmCal.filter((val: any) => val.stage_id === 3);
-          this.closePm = [...this.closePm, ...obj];
-          this.closePmCopy = [...this.closePmCopy, ...obj];
+    this.httpPms.getPm(stage_id, this.currentPage).subscribe({
+      next:(dat) => {
+        if (dat.status) {
+          this.pmCal = dat.data.data;
+          this.currentPage = this.currentPage + 1;
+          if (stage_id == 1) {
+            let obj;
+            obj = this.pmCal.filter((val: any) => val.stage_id === 1);
+            this.openPm = [...this.openPm, ...obj];
+            this.openPmCopy = [...this.openPmCopy, ...obj];
+          } else if (stage_id == 2) {
+            let obj;
+            obj = this.pmCal.filter((val: any) => val.stage_id === 2);
+            this.actionPm = [...this.actionPm, ...obj];
+            this.actionPmCopy = [...this.actionPmCopy, ...obj];
+          } else if (stage_id == 3) {
+            let obj;
+            obj = this.pmCal.filter((val: any) => val.stage_id === 3);
+            this.closePm = [...this.closePm, ...obj];
+            this.closePmCopy = [...this.closePmCopy, ...obj];
+          }
+        } else {
+          this.common.presentToast(dat.msg, 'warning');
         }
-      } else {
-        this.common.presentToast(dat.msg, 'warning');
+      },
+      error:() => {
+        event.target.complete();
+        this.common.presentToast(environment.errMsg, 'danger');
+      },
+      complete:() => {
+        event.target.complete();
       }
-    }, err => {
-      event.target.complete();
-      this.common.presentToast(environment.errMsg, 'danger');
     });
   }
 

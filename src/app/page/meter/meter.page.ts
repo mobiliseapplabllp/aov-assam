@@ -1,11 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AddReadingComponent } from './add-reading/add-reading.component';
-import { ModalController, ActionSheetController, LoadingController } from '@ionic/angular';
+import { ModalController, LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
-// import { CommonService } from '../../providers/common/common.service';
-// import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
-// import { File, FileEntry } from '@ionic-native/file/ngx';
-// import { MeterService } from '../../providers/meter/meter.service';
 import { environment } from '../../../environments/environment';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
@@ -23,9 +19,6 @@ export class MeterPage implements OnInit {
     private modalCtrl: ModalController,
     private router: Router,
     private common: CommonService,
-    public actionSheetController: ActionSheetController,
-    // private camera: Camera,
-    // private file: File,
     private loadingController: LoadingController,
     private httpMeter: MeterService
   ) { }
@@ -36,15 +29,19 @@ export class MeterPage implements OnInit {
 
   getPendingWo() {
     this.presentLoading().then(preLoad => {
-      this.httpMeter.getPendingWo().subscribe(data => {
-        console.log(data);
-        this.dismissloading();
-        if (data.status) {
-          this.meterInfo = data.data;
+      this.httpMeter.getPendingWo().subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.meterInfo = data.data;
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.common.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.common.presentToast(environment.errMsg, 'danger');
       });
     })
   }
@@ -126,21 +123,25 @@ export class MeterPage implements OnInit {
       this.formData.append(key, obj[key]);
     }
     this.presentLoading().then(preLoad => {
-      this.httpMeter.updateReading(this.formData).subscribe(data => {
-        console.log(data);
-        this.dismissloading();
-        if (data.status) {
-          this.common.presentToast(data.msg, 'success');
-          dat.isRemove = true
-          setTimeout(() => {
-            this.meterInfo = this.meterInfo.filter((val: any) => val.wo_id !== obj.wo_id);
-          }, 500);
-        } else {
-          this.common.presentToast(data.msg, 'warning');
+      this.httpMeter.updateReading(this.formData).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.common.presentToast(data.msg, 'success');
+            dat.isRemove = true
+            setTimeout(() => {
+              this.meterInfo = this.meterInfo.filter((val: any) => val.wo_id !== obj.wo_id);
+            }, 500);
+          } else {
+            this.common.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.common.presentToast(environment.errMsg, 'danger');
+          this.dismissloading();
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.common.presentToast(environment.errMsg, 'danger');
-        this.dismissloading();
       });
     })
   }
@@ -203,88 +204,6 @@ export class MeterPage implements OnInit {
         }, 500)
       })
   }
-
-  // async presentActionSheet(data, type) {
-  //   const actionSheet = await this.actionSheetController.create({
-  //     header: 'Choose Option  ',
-  //     cssClass: 'my-custom-class',
-  //     buttons: [{
-  //       text: 'Camera',
-  //       role: 'destructive',
-  //       icon: 'camera-outline',
-  //       handler: () => {
-  //         console.log('Delete clicked');
-  //         this.chosePhotoOption(this.camera.PictureSourceType.CAMERA, data, type);
-  //       }
-  //     }, {
-  //       text: 'Gallery',
-  //       icon: 'image-outline',
-  //       handler: () => {
-  //         console.log('Share clicked');
-  //         this.chosePhotoOption(this.camera.PictureSourceType.PHOTOLIBRARY, data, type);
-  //       }
-  //     }]
-  //   });
-  //   await actionSheet.present();
-  // }
-
-  // chosePhotoOption(src, data, type) {
-  //   const options: CameraOptions = {
-  //     quality: 70,
-  //     sourceType: src,
-  //     destinationType: this.camera.DestinationType.FILE_URI,
-  //     encodingType: this.camera.EncodingType.JPEG,
-  //     mediaType: this.camera.MediaType.PICTURE,
-  //     correctOrientation: true
-  //   };
-  //   this.camera.getPicture(options).then((imageData) => {
-  //     this.file.resolveLocalFilesystemUrl(imageData).then((entry: FileEntry) => {
-  //       entry.file(file => {
-  //         console.log(file);
-  //         this.read(file, data, type);
-  //       });
-  //     }, err => {
-  //       alert(JSON.stringify(err) + 'File Not Supported');
-  //     });
-  //   }, (err) => {
-  //     alert(JSON.stringify(err) + src);
-  //   });
-  // }
-
-  // read(file, data, type) {
-  //   let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg'
-  //   const reader = new FileReader();
-  //   reader.readAsArrayBuffer(file);
-  //   reader.onload = () => {
-  //     const blob = new Blob([reader.result], {
-  //       type: file.type
-  //     });
-  //     if (type == 'consumption') {
-  //       this.formData.delete('img1');
-  //       this.formData.append('img1', blob, random);
-  //       data.isConsumptionImg = true;
-  //       for (var i = 0; i < this.meterInfo.length;i++) {
-  //         if (data.wo_id !== this.meterInfo[i].wo_id) {
-  //           this.meterInfo[i].isConsumptionImg = false;
-  //         }
-  //       }
-  //     } else if (type == 'generate_reading') {
-  //       this.formData.delete('img2');
-  //       this.formData.append('img2', blob, random);
-  //       data.isGenerationImg = true;
-  //       for (var i = 0; i < this.meterInfo.length;i++) {
-  //         if (data.wo_id !== this.meterInfo[i].wo_id) {
-  //           this.meterInfo[i].isGenerationImg = false;
-  //         }
-  //       }
-  //     }
-  //     this.presentLoading().then(preLoad => {
-  //       setTimeout(() => {
-  //         this.dismissloading();
-  //       }, 500)
-  //     })
-  //   };
-  // }
 
   async presentLoading() {
     this.loading = await this.loadingController.create({

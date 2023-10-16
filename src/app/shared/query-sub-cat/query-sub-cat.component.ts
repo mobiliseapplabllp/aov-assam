@@ -3,7 +3,6 @@ import { LoadingController, ModalController } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { ComplaintService } from 'src/app/provider/complaint/complaint.service';
 import { environment } from 'src/environments/environment';
-
 @Component({
   selector: 'app-query-sub-cat',
   templateUrl: './query-sub-cat.component.html',
@@ -38,16 +37,20 @@ export class QuerySubCatComponent  implements OnInit {
 
   getQuerySubCat() {
     this.presentLoading().then(preLoad => {
-      this.httpComp.getQuerySubCat1(this.qry_id).subscribe(data => {
-        this.dismissloading();
-        console.log(data);
-        if (data.status) {
-          this.allSubCat1 = data.data;
-          this.allSubCat1Copy = data.data;
+      this.httpComp.getQuerySubCat1(this.qry_id).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.allSubCat1 = data.data;
+            this.allSubCat1Copy = data.data;
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.common.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.common.presentToast(environment.errMsg, 'danger');
       });
     });
   }
@@ -77,6 +80,4 @@ export class QuerySubCatComponent  implements OnInit {
       });
     }
   }
-
-
 }

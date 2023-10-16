@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { Network } from '@capacitor/network';
-import { stat } from 'fs';
 @Injectable({
   providedIn: 'root'
 })

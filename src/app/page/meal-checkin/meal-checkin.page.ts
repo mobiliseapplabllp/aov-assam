@@ -7,7 +7,6 @@ import { CommonService } from 'src/app/provider/common/common.service';
 import { ComplaintService } from 'src/app/provider/complaint/complaint.service';
 import { MealCheckinService } from 'src/app/provider/meal-checkin/meal-checkin.service';
 import { environment } from 'src/environments/environment';
-
 @Component({
   selector: 'app-meal-checkin',
   templateUrl: './meal-checkin.page.html',
@@ -55,53 +54,78 @@ export class MealCheckinPage implements OnInit {
 
   getPcCode() {
     this.presentLoading().then(preLoad => {
-      this.httpComplaint.getCostCenter().subscribe(data => {
-        this.dismissloading();
-        if (data.status) {
-          this.allRoName = data.data
-        } else {
-          this.common.presentToast(data.msg, 'warning');
+      this.httpComplaint.getCostCenter().subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.allRoName = data.data
+          } else {
+            this.common.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.common.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.common.presentToast(environment.errMsg, 'danger');
-        this.dismissloading();
       });
     })
   }
 
   changeRo(ev: any) {
     this.presentLoading().then(preLoad => {
-      this.httpMeal.getFoodYou(ev.target.value).subscribe(data => {
-        this.dismissloading();
-        if (data.status) {
-          this.allLocation = data.data
-        } else {
-          this.common.presentToast(data.msg, 'warning');
+      this.httpMeal.getFoodYou(ev.target.value).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.allLocation = data.data
+          } else {
+            this.common.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.common.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.common.presentToast(environment.errMsg, 'danger');
-      })
+      });
     })
   }
 
   changeLocation(ev: any) {
     console.log(ev.target.value);
-    this.httpMeal.mealLocation(8, ev.target.value).subscribe(data => {
-      if (data.status) {
-        this.allRoaster = data.data;
-      } else {
-        this.common.presentToast(data.msg, 'warning');
+    this.httpMeal.mealLocation(8, ev.target.value).subscribe({
+      next:(data) => {
+        if (data.status) {
+          this.allRoaster = data.data;
+        } else {
+          this.common.presentToast(data.msg, 'warning');
+        }
+      },
+      error:() => {
+        this.dismissloading();
+        this.common.presentToast(environment.errMsg, 'danger');
+      },
+      complete:() => {
+        this.dismissloading();
       }
-    }, err => {
-      this.common.presentToast(environment.errMsg, 'danger');
-    });
+    }
+    //   data => {
+    //   if (data.status) {
+    //     this.allRoaster = data.data;
+    //   } else {
+    //     this.common.presentToast(data.msg, 'warning');
+    //   }
+    // }, err => {
+    //   this.common.presentToast(environment.errMsg, 'danger');
+    // }
+    );
   }
 
   changeRoster(ev: any) {
-    console.log(ev.target.value);
     this.itemList = this.allRoaster.filter((val: any) => val.meal_type_id === ev.target.value)[0];
-
   }
 
   async presentLoading() {

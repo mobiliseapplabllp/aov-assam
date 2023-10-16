@@ -12,14 +12,6 @@
 
 <ion-content>
   <ion-searchbar (ionChange)="search($event)" debounce="1000"></ion-searchbar>
-  <!-- <ion-list>
-    <ion-item *ngFor="let dat of allCostCenter" (click)="closeModal(dat, true)" class="ion-text-wrap">
-      {{dat.label}}
-    </ion-item>
-  </ion-list>
-  <div style="height:100px;width:100%;background-color:red">
-    virtual scroll
-  </div> -->
 
   <ion-virtual-scroll [items]="allCostCenter" approxItemHeight="320px">
     <ion-item *virtualItem="let item; let itemBounds = bounds;" (click)="closeModal(item, true)">

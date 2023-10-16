@@ -42,7 +42,6 @@ export class AppComponent {
     this.listMaster.getData().subscribe((val: any) => {
       this.myMenu = val;
     });
-
   }
 
   reset() {

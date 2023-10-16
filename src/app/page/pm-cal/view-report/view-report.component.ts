@@ -5,7 +5,6 @@ import { CommonService } from 'src/app/provider/common/common.service';
 import { PmCalService } from 'src/app/provider/pm-cal/pm-cal.service';
 import { environment } from 'src/environments/environment';
 import { AddResponseComponent } from '../add-response/add-response.component';
-
 @Component({
   selector: 'app-view-report',
   templateUrl: './view-report.component.html',

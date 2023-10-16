@@ -1,8 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-// import { IndentsService } from 'src/app/provider/indents/indents.service';
-// import { IndentsService } from '../../providers/indents/indents.service';
-// import { CommonService } from '../../providers/common/common.service';
 import { environment } from '../../../environments/environment';
 import { LoadingController } from '@ionic/angular';
 import { IndentsService } from 'src/app/provider/indents/indents.service';
@@ -23,7 +20,6 @@ export class IndentsPage implements OnInit {
     private httpIndent: IndentsService,
     private common: CommonService,
     private loadingController: LoadingController) {
-
   }
 
   ngOnInit() {
@@ -32,18 +28,22 @@ export class IndentsPage implements OnInit {
 
   getMyIndent() {
     this.presentLoading().then(preLoad => {
-      this.httpIndent.getMyIndent(this.page, this.status).subscribe(data => {
-        console.log(data);
-        this.dismissloading();
-        if (data.status) {
-          this.indentView = [...this.indentView, ...data.data.data];
-          this.page = this.page + 1;
-        } else {
-          this.common.presentToast(data.msg, 'warning');
+      this.httpIndent.getMyIndent(this.page, this.status).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.indentView = [...this.indentView, ...data.data.data];
+            this.page = this.page + 1;
+          } else {
+            this.common.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.common.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.common.presentToast(environment.errMsg, 'danger');
       });
     })
   }

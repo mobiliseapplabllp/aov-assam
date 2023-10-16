@@ -3,7 +3,6 @@ import { LoadingController, ModalController } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { PmCalService } from 'src/app/provider/pm-cal/pm-cal.service';
 import { environment } from 'src/environments/environment';
-
 @Component({
   selector: 'app-pm-assign',
   templateUrl: './pm-assign.component.html',
@@ -32,27 +31,29 @@ export class PmAssignComponent  implements OnInit {
         this.work_order.push(this.data);
       }
     }
-    console.log(this.work_order);
-
     this.getAllEmp();
   }
 
 
   getAllEmp() {
     this.presentLoading().then(preLoad => {
-      this.httpPms.getAllEmployee().subscribe(data => {
-        this.dismissloading();
-        if (data.status) {
-          this.allTeamMember = data.data;
-        } else {
-          this.common.presentToast(data.msg, 'warning');
+      this.httpPms.getAllEmployee().subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.allTeamMember = data.data;
+          } else {
+            this.common.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.common.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.common.presentToast(environment.errMsg, 'danger');
       });
     });
-
   }
 
   closeModal(data: any, status: any) {
@@ -67,20 +68,23 @@ export class PmAssignComponent  implements OnInit {
     }
     console.log(obj);
     this.presentLoading().then(preLoad => {
-      this.httpPms.assignPm(obj).subscribe(data => {
-        this.dismissloading();
-        console.log(data);
-        if (data.status) {
-          this.common.presentToast(data.msg, 'success');
-          // this.assignPmCal.next(this.work_order);
-          this.httpPms.setData(this.work_order);
-          this.closeModal(null, true);
-        } else {
-          this.common.presentToast(data.msg, 'warning');
+      this.httpPms.assignPm(obj).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.common.presentToast(data.msg, 'success');
+            this.httpPms.setData(this.work_order);
+            this.closeModal(null, true);
+          } else {
+            this.common.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.common.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.common.presentToast(environment.errMsg, 'danger');
       });
     });
   }
@@ -98,5 +102,4 @@ export class PmAssignComponent  implements OnInit {
       this.loading.dismiss();
     }
   }
-
 }

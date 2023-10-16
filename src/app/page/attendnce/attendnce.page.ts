@@ -91,23 +91,28 @@ export class AttendncePage implements OnInit {
 
   checkAttendance(pc_id: any) {
     this.presentLoading().then(() => {
-      this.httpAttendance.checkTodayAttendance(pc_id).subscribe(data => {
-        this.dismissloading();
-        this.checkLastAttendanceStatus = true;
-        if (data.status) {
-          if (data.data.att_type === 1) {
-            this.att_id = data.data.id;
-            this.attendanceStatus = true
-          } else  {
-            this.attendanceStatus = false
+      this.httpAttendance.checkTodayAttendance(pc_id).subscribe({
+        next:(data) => {
+          this.checkLastAttendanceStatus = true;
+          if (data.status) {
+            if (data.data.att_type === 1) {
+              this.att_id = data.data.id;
+              this.attendanceStatus = true
+            } else  {
+              this.attendanceStatus = false
+            }
+          } else {
+            this.attendanceStatus = false;
           }
-        } else {
-          this.attendanceStatus = false;
+        },
+        error:() => {
+          this.checkLastAttendanceStatus = true;
+          this.dismissloading();
+          this.common.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.checkLastAttendanceStatus = true;
-        this.dismissloading();
-        this.common.presentToast(environment.errMsg, 'danger');
       });
     });
   }

@@ -5,7 +5,6 @@ import { LoadingController, MenuController, ModalController, Platform } from '@i
 import { CommonService } from 'src/app/provider/common/common.service';
 import { LoginService } from 'src/app/provider/login/login.service';
 import { environment } from 'src/environments/environment';
-
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
@@ -106,8 +105,6 @@ export class LoginPage implements OnInit {
           this.router.navigateByUrl('/list-master', { replaceUrl: true });
         }
       }
-    } , err => {
-      console.log(err);
     });
   }
 

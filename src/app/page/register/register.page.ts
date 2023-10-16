@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from 'src/app/provider/common/common.service';
-
 @Component({
   selector: 'app-register',
   templateUrl: './register.page.html',

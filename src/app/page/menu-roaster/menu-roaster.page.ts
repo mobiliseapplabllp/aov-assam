@@ -26,7 +26,6 @@ export class MenuRoasterPage implements OnInit {
     private httpCommon: CommonService,
     private loadingController: LoadingController,
     private httpMeal: MealCheckinService
-
   ) { }
 
   ngOnInit() {
@@ -45,16 +44,20 @@ export class MenuRoasterPage implements OnInit {
 
   getPcCode() {
     this.presentLoading().then(preLoad => {
-      this.httpComplaint.getCostCenter().subscribe(data => {
-        this.dismissloading();
-        if (data.status) {
-          this.allRoName = data.data
-        } else {
-          this.httpCommon.presentToast(data.msg, 'warning');
+      this.httpComplaint.getCostCenter().subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.allRoName = data.data
+          } else {
+            this.httpCommon.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
-        this.dismissloading();
       });
     })
   }
@@ -64,17 +67,22 @@ export class MenuRoasterPage implements OnInit {
       return;
     }
     this.presentLoading().then(preLoad => {
-      this.httpMeal.getPcLocation(ev.target.value).subscribe(data => {
-        this.dismissloading();
-        if (data.status) {
-          this.location = data.data;
-        } else {
-          this.httpCommon.presentToast(data.msg, 'warning');
+      this.httpMeal.getPcLocation(ev.target.value).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.location = data.data;
+          } else {
+            this.httpCommon.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+          this.dismissloading();
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
-        this.dismissloading();
-      })
+      });
 
       this.httpMeal.getMealType(ev.target.value).subscribe(data => {
         if (data.status) {
@@ -83,9 +91,7 @@ export class MenuRoasterPage implements OnInit {
           this.httpCommon.presentToast(data.msg, 'warning');
         }
       })
-
     });
-
   }
 
   async presentLoading() {
@@ -110,20 +116,23 @@ export class MenuRoasterPage implements OnInit {
 
   search() {
     this.presentLoading().then(preLoad => {
-      this.httpMeal.getRoaster(this.menuRoaster.value).subscribe(data => {
-        this.dismissloading();
-        console.log(data);
-        if (data.status) {
-          this.roasterArr = data.data.res;
-        } else {
-          this.httpCommon.presentToast(data.msg, 'warning');
+      this.httpMeal.getRoaster(this.menuRoaster.value).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.roasterArr = data.data.res;
+          } else {
+            this.httpCommon.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
       });
-    })
-
+    });
   }
 
 }

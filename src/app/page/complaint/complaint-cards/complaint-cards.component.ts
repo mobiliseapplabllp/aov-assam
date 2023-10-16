@@ -105,16 +105,20 @@ export class ComplaintCardsComponent  implements OnInit {
 
   fsr(efsr: any) {
     this.presentLoading().then(preLoad => {
-      this.httpComplaint.getEfsr(efsr).subscribe(data => {
-        console.log(data);
-        this.dismissLoading();
-        if (data.status) {
-          let spareCount = data.data.reqIndent.length;
-          this.downLoadEfsr(data.data, parseInt(spareCount, 10) + 1);
+      this.httpComplaint.getEfsr(efsr).subscribe({
+        next:(data) => {
+          if (data.status) {
+            let spareCount = data.data.reqIndent.length;
+            this.downLoadEfsr(data.data, parseInt(spareCount, 10) + 1);
+          }
+        },
+        error:() => {
+          this.dismissLoading();
+          this.common.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissLoading();
         }
-      }, err => {
-        this.dismissLoading();
-        this.common.presentToast(environment.errMsg, 'danger');
       });
     })
   }

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CameraPreview } from '@capacitor-community/camera-preview';
 import { ModalController } from '@ionic/angular';
-
 @Component({
   selector: 'app-camera',
   templateUrl: './camera.component.html',
@@ -43,6 +42,4 @@ export class CameraComponent  implements OnInit {
     await CameraPreview.stop();
     this.modal.dismiss(data, status)
   }
-
-
 }

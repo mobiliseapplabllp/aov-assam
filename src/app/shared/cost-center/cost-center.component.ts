@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, ModalController } from '@ionic/angular';
 import { ComplaintService } from 'src/app/provider/complaint/complaint.service';
-
 @Component({
   selector: 'app-cost-center',
   templateUrl: './cost-center.component.html',

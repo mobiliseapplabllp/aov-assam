@@ -113,45 +113,46 @@ export class TicketWorkComponent  implements OnInit {
 
   getSpecificTicket(ticket_id: any) {
     this.presentLoading().then(preLoad => {
-      this.httpComplaint.getSpecificTicket(ticket_id).subscribe(data => {
-        console.log(data);
-        this.dismissLoading();
-        if (data.status) {
-          this.arr = data.data;
-          // this.hasWip = data.data.hasWIP;
-          // this.ptwApproved = data.data.ptwApproved;
-          this.isPriority = data.can_priority;
-          this.isPtwMandatory = data.ptw_mandatory;
-          this.ticketPriority = data.priority_list;
-          // this.selectPriority = data.data.tkt_priority_id;
-          this.formData.delete('ptwApproved');
-          this.formData.append('ptwApproved', data.data.ptwApproved);
-          this.formData.delete('pc_id');
-          this.formData.append('pc_id', data.data.pc_id);
-          if (this.arr.hasWIP == 1 && data.data.ptwApproved == 0 && data.ptwPending == true ) {
-            this.isFormDisabled = true;
-          } else {
-            this.isFormDisabled = false;
-          }
-          if (this.isPtwMandatory) {
-            if ((this.arr.hasWIP == 0 || this.arr.ptwApproved == 0)) {
-              this.ticketStages = this.ticketStages.filter((val: any) => val.stage_id != 4);
-              console.log(this.ticketStages);
+      this.httpComplaint.getSpecificTicket(ticket_id).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.arr = data.data;
+            this.isPriority = data.can_priority;
+            this.isPtwMandatory = data.ptw_mandatory;
+            this.ticketPriority = data.priority_list;
+            this.formData.delete('ptwApproved');
+            this.formData.append('ptwApproved', data.data.ptwApproved);
+            this.formData.delete('pc_id');
+            this.formData.append('pc_id', data.data.pc_id);
+            if (this.arr.hasWIP == 1 && data.data.ptwApproved == 0 && data.ptwPending == true ) {
+              this.isFormDisabled = true;
+            } else {
+              this.isFormDisabled = false;
+            }
+            if (this.isPtwMandatory) {
+              if ((this.arr.hasWIP == 0 || this.arr.ptwApproved == 0)) {
+                this.ticketStages = this.ticketStages.filter((val: any) => val.stage_id != 4);
+                console.log(this.ticketStages);
+              }
+            } else {
+              if ((this.arr.hasWIP == 0)) {
+                this.ticketStages = this.ticketStages.filter((val: any) => val.stage_id != 4);
+              }
+            }
+            if (data.data.assets) {
+              this.assetInfo = data.data.assets;
             }
           } else {
-            if ((this.arr.hasWIP == 0)) {
-              this.ticketStages = this.ticketStages.filter((val: any) => val.stage_id != 4);
-            }
+            this.httpCommon.presentToast(data.msg, 'warning');
           }
-          if (data.data.assets) {
-            this.assetInfo = data.data.assets;
-          }
-        } else {
-          this.httpCommon.presentToast(data.msg, 'warning');
+        },
+        error:() => {
+          this.dismissLoading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissLoading();
         }
-      }, err => {
-        this.dismissLoading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
       });
     });
   }
@@ -185,35 +186,44 @@ export class TicketWorkComponent  implements OnInit {
       ticket_id: this.ticket_id,
     }
     this.presentLoading().then(preLoad => {
-      this.httpComplaint.changePriority(obj).subscribe(data => {
-        this.dismissLoading();
-        if (data.status) {
-          this.httpCommon.presentToast(data.msg, 'success');
-          this.arr.attend_time = data.data.attend_time;
-          this.arr.resolve_time = data.data.resolve_time;
-          // this.changePriorityObj = data.data;
-        } else {
-          this.httpCommon.presentToast(data.msg, 'warning');
+      this.httpComplaint.changePriority(obj).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.httpCommon.presentToast(data.msg, 'success');
+            this.arr.attend_time = data.data.attend_time;
+            this.arr.resolve_time = data.data.resolve_time;
+          } else {
+            this.httpCommon.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissLoading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissLoading();
         }
-      }, err => {
-        this.dismissLoading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
       });
     });
 
   }
 
   getPriority() {
-    this.httpComplaint.getTicketPriority(this.ticket_id).subscribe(data => {
-      console.log(data);
-      if (data.status) {
-        this.ticketPriority = data.data;
-      } else {
-        this.httpCommon.presentToast(data.msg, 'warning');
+    this.httpComplaint.getTicketPriority(this.ticket_id).subscribe({
+      next:(data) => {
+        if (data.status) {
+          this.ticketPriority = data.data;
+        } else {
+          this.httpCommon.presentToast(data.msg, 'warning');
+        }
+      },
+      error:() => {
+        this.httpCommon.presentToast(environment.errMsg, 'danger');
+      },
+      complete:() => {
+        this.dismissLoading();
       }
-    }, err => {
-      this.httpCommon.presentToast(environment.errMsg, 'danger');
-    })
+    });
   }
 
   getTicketStages() {
@@ -301,21 +311,24 @@ export class TicketWorkComponent  implements OnInit {
     }
 
     this.presentLoading().then(preLoad => {
-      this.httpComplaint.submitTicketTransaction(this.formData).subscribe(data => {
-        console.log(data);
-        this.dismissLoading();
-        if (data.status) {
-          this.httpCommon.presentToast(data.msg, 'success');
-          this.navCtrl.pop();
-        } else {
-          this.httpCommon.presentToast(data.msg, 'warning');
+      this.httpComplaint.submitTicketTransaction(this.formData).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.httpCommon.presentToast(data.msg, 'success');
+            this.navCtrl.pop();
+          } else {
+            this.httpCommon.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissLoading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissLoading();
         }
-      }, err => {
-        this.dismissLoading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
       });
     })
-
   }
 
   async assignTicket() {
@@ -420,11 +433,6 @@ export class TicketWorkComponent  implements OnInit {
 
 
   sendOtp() {
-    // console.log (this.workSpace.value.phone_no.length);
-    // if (this.workSpace.value.phone_no.length != 10) {
-    //   this.httpCommon.presentToast('Mobile No Should be 10 Digit', 'warning');
-    //   return;
-    // }
     const obj = {
       phone_no: this.mobile,
       ticket_id: this.ticket_id
@@ -470,7 +478,6 @@ export class TicketWorkComponent  implements OnInit {
   }
 
   createIndent() {
-    // this.router.navigateByUrl('/create-indent');
     this.router.navigate(['/create-indent'], {
       queryParams: {
         data: JSON.stringify(this.requestedData),

@@ -50,19 +50,23 @@ export class AssignTicketComponent  implements OnInit {
       ticketId: this.ticket_id
     }
     this.presentLoading().then(preLoad => {
-      this.httpComplaint.assignedTicket(obj).subscribe(data => {
-        this.dismissLoading();
-        if (data.status) {
-          this.httpCommon.presentToast(data.msg, 'success');
-          this.close(null, true);
-        } else {
-          this.httpCommon.presentToast(data.msg, 'warning');
+      this.httpComplaint.assignedTicket(obj).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.httpCommon.presentToast(data.msg, 'success');
+            this.close(null, true);
+          } else {
+            this.httpCommon.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissLoading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissLoading();
         }
-      }, err => {
-        this.dismissLoading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
       });
-
     })
 
     console.log(obj);
@@ -81,7 +85,4 @@ export class AssignTicketComponent  implements OnInit {
       this.loading.dismiss();
     }
   }
-
-
-
 }

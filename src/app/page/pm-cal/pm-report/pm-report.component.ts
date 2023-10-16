@@ -53,8 +53,6 @@ export class PmReportComponent  implements OnInit {
     this.activeroute.queryParams.subscribe((res) => {
       this.requestedData = JSON.parse(res['data']);
       this.pageName = this.requestedData.reportName;
-      console.log(this.requestedData);
-      // this.getAsset();
       this.getScheduleQuestion();
     });
   }
@@ -134,19 +132,24 @@ export class PmReportComponent  implements OnInit {
       wo_id: this.requestedData.wo_id,
     };
     this.presentLoading('Please Wait.').then(preLoad => {
-      this.httpPmCal.checkListCategoryStatus(obj).subscribe(dat => {
-        this.dismissloading();
-        if (dat.status) {
-          data.isAssestShow = false;
-          data.isResponseShow = false;
-          data.is_applicable = 3;
-          this.httpCommon.presentToast(dat.msg, 'success');
-        } else {
-          this.httpCommon.presentToast(dat.msg, 'warning');
+      this.httpPmCal.checkListCategoryStatus(obj).subscribe({
+        next:(dat) => {
+          if (dat.status) {
+            data.isAssestShow = false;
+            data.isResponseShow = false;
+            data.is_applicable = 3;
+            this.httpCommon.presentToast(dat.msg, 'success');
+          } else {
+            this.httpCommon.presentToast(dat.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
       });
     });
   }
@@ -166,28 +169,31 @@ export class PmReportComponent  implements OnInit {
     };
 
     this.presentLoading('Please Wait..').then(preLoad => {
-      this.httpPmCal.checkListCategoryStatus(obj).subscribe(dat => {
-        console.log(dat);
-        this.dismissloading();
-        if (dat.status) {
-          data.isAssestShow = true;
-          data.isResponseShow = true;
-          data.is_applicable = 1;
-          this.httpCommon.presentToast(dat.msg, 'success');
-          for (let i = 0; i < this.myCategory.length; i++) {
-            if (i !== ind) {
-              this.myCategory[i].isView = false;
+      this.httpPmCal.checkListCategoryStatus(obj).subscribe({
+        next:(dat) => {
+          if (dat.status) {
+            data.isAssestShow = true;
+            data.isResponseShow = true;
+            data.is_applicable = 1;
+            this.httpCommon.presentToast(dat.msg, 'success');
+            for (let i = 0; i < this.myCategory.length; i++) {
+              if (i !== ind) {
+                this.myCategory[i].isView = false;
+              }
             }
+            this.scroll(ind);
+          } else {
+            this.httpCommon.presentToast(dat.msg, 'warning');
           }
-          this.scroll(ind);
-        } else {
-          this.httpCommon.presentToast(dat.msg, 'warning');
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-
-      }, err => {
-        this.dismissloading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
-      })
+      });
     });
   }
 

@@ -3,7 +3,6 @@ import { LoadingController, ModalController } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { ComplaintService } from 'src/app/provider/complaint/complaint.service';
 import { environment } from 'src/environments/environment';
-
 @Component({
   selector: 'app-query-cat',
   templateUrl: './query-cat.component.html',
@@ -32,17 +31,21 @@ export class QueryCatComponent  implements OnInit {
 
   getQueryCagegory() {
     this.presentLoading().then(preLoad => {
-      this.httpComp.getQueryCategoryTicket(this.issue_id, this.pc_id).subscribe(data => {
-        this.dismissloading();
-        console.log(data);
-        if (data.status) {
-          this.allQueryCat = data.data;
-          this.allQueryCatCopy = data.data
+      this.httpComp.getQueryCategoryTicket(this.issue_id, this.pc_id).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.allQueryCat = data.data;
+            this.allQueryCatCopy = data.data
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
-      })
+      });
     })
   }
 
@@ -69,5 +72,4 @@ export class QueryCatComponent  implements OnInit {
       });
     }
   }
-
 }

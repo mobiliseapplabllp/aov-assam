@@ -1,12 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import * as moment from 'moment';
-// import { MeterService } from '../../../providers/meter/meter.service';
-// import { CommonService } from '../../../providers/common/common.service';
 import { environment } from '../../../../environments/environment';
 import { IonDatetime, LoadingController } from '@ionic/angular';
 import { MeterService } from 'src/app/provider/meter/meter.service';
 import { CommonService } from 'src/app/provider/common/common.service';
-
 @Component({
   selector: 'app-history',
   templateUrl: './history.component.html',
@@ -30,20 +27,23 @@ export class HistoryComponent implements OnInit {
 
   getMeterWoHistory(date: any) {
     this.presentLoading().then(preLoad => {
-      this.httpMeter.getMeterWoHistory(date).subscribe(data => {
-        console.log(data);
-        this.dismissloading();
-        if (data.status) {
-          this.history = data.data;
-        } else {
-          this.common.presentToast(data.msg, 'warning');
+      this.httpMeter.getMeterWoHistory(date).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.history = data.data;
+          } else {
+            this.common.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.common.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.common.presentToast(environment.errMsg, 'danger');
       });
-    })
-
+    });
   }
 
   changeDate(action: any) {

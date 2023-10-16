@@ -1,12 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { LoadingController, ModalController, Platform, ActionSheetController, NavController } from '@ionic/angular';
-// import { AssetPlantComponent } from '../../../components/asset-plant/asset-plant.component';
+import { LoadingController, ModalController, NavController } from '@ionic/angular';
 import { environment } from '../../../../environments/environment';
-// import { CommonService } from '../../../providers/common/common.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-// import { MeterService } from '../../../providers/meter/meter.service';
-// import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
-// import { File, FileEntry } from '@ionic-native/file/ngx';
 import { MyAssetGetService } from 'src/app/provider/my-asset-get/my-asset-get.service';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { MeterService } from 'src/app/provider/meter/meter.service';
@@ -28,7 +23,6 @@ export class AddMeterComponent implements OnInit {
   public addAsset!: FormGroup;
   meterType: any = [];
   uomMeter: any = [];
-  // isCordova!: boolean;
   formData = new FormData();
   img1!: string;
   img2!: string;
@@ -40,10 +34,6 @@ export class AddMeterComponent implements OnInit {
     private httpCommon: CommonService,
     private formbuilder: FormBuilder,
     private httpMeter: MeterService,
-    private platform: Platform,
-    // private camera: Camera,
-    private actionSheetController: ActionSheetController,
-    // private file: File,
     private navCtrl: NavController
   ) { }
 
@@ -114,15 +104,19 @@ export class AddMeterComponent implements OnInit {
         this.addAsset.get('site_id_description')?.setValue(disModal.data.pc_desc);
         this.addAsset.get('site_id')?.setValue(disModal.data.pc_id);
         this.presentLoading().then(preLoad => {
-          this.httpAsset.getBlock(disModal.data.pc_id).subscribe(data => {
-            console.log(data);
-            this.dismissloading();
-            if (data.status) {
-              this.myBlocks = data.data;
+          this.httpAsset.getBlock(disModal.data.pc_id).subscribe({
+            next:(data) => {
+              if (data.status) {
+                this.myBlocks = data.data;
+              }
+            },
+            error:() => {
+              this.dismissloading();
+              this.httpCommon.presentToast(environment.errMsg + ' Block Err', 'danger');
+            },
+            complete:() => {
+              this.dismissloading();
             }
-          }, err => {
-            this.dismissloading();
-            this.httpCommon.presentToast(environment.errMsg + ' Block Err', 'danger');
           });
         })
       } else {
@@ -156,49 +150,63 @@ export class AddMeterComponent implements OnInit {
   changeBlock(ev: any) {
     console.log(ev.target.value);
     this.presentLoading().then(preLoad => {
-      this.httpAsset.getBuildingList(ev.target.value).subscribe(data => {
-        console.log(data);
-        this.dismissloading();
-        if (data.status) {
-          this.myBuildingArr = data.data;
-          this.addAsset.get('bldg_id')?.setValue('');
-          this.addAsset.get('floor_id')?.setValue('');
+      this.httpAsset.getBuildingList(ev.target.value).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.myBuildingArr = data.data;
+            this.addAsset.get('bldg_id')?.setValue('');
+            this.addAsset.get('floor_id')?.setValue('');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
       });
     })
   }
 
   changeBuilding(ev: any) {
     this.presentLoading().then(preLoad => {
-      this.httpAsset.getFloorList(ev.target.value).subscribe(data => {
-        this.dismissloading();
-        if (data.status) {
-          this.myFloor = data.data;
-          this.addAsset.get('floor_id')?.setValue('');
+      this.httpAsset.getFloorList(ev.target.value).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.myFloor = data.data;
+            this.addAsset.get('floor_id')?.setValue('');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
       });
     })
   }
 
   changeFloor(ev: any) {
     this.presentLoading().then(preLoad => {
-      this.httpAsset.getLocation(ev.target.value).subscribe(data => {
-        this.dismissloading();
-        console.log(data);
-        if (data.status) {
-          this.myLocation = data.data;
-        } else {
-          this.httpCommon.presentToast(data.msg, 'warning');
+      this.httpAsset.getLocation(ev.target.value).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.myLocation = data.data;
+          } else {
+            this.httpCommon.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-      })
+      });
     })
   }
 
@@ -235,18 +243,22 @@ export class AddMeterComponent implements OnInit {
       this.formData.append(key, this.addAsset.value[key]);
     }
     this.presentLoading().then(preLoad => {
-      this.httpMeter.addMeter(this.formData).subscribe(data => {
-        console.log(data);
-        this.dismissloading();
-        if (data.status) {
-          this.httpCommon.presentToast(data.msg, 'success');
-          this.navCtrl.pop();
-        } else {
-          this.httpCommon.presentToast(data.msg, 'warning');
+      this.httpMeter.addMeter(this.formData).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.httpCommon.presentToast(data.msg, 'success');
+            this.navCtrl.pop();
+          } else {
+            this.httpCommon.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
       });
     })
   }
@@ -285,104 +297,6 @@ export class AddMeterComponent implements OnInit {
     });
   }
 
-  // async presentActionSheet(imageno) {
-  //   const actionSheet = await this.actionSheetController.create({
-  //     header: 'Choose option',
-  //     cssClass: 'my-custom-class',
-  //     buttons: [{
-  //       text: 'Camera',
-  //       icon: 'camera-outline',
-  //       handler: () => {
-  //         this.photoOption(this.camera.PictureSourceType.CAMERA, imageno);
-  //       }
-  //     }, {
-  //       text: 'Gallery',
-  //       icon: 'albums-outline',
-  //       handler: () => {
-  //         this.photoOption(this.camera.PictureSourceType.PHOTOLIBRARY, imageno);
-  //       }
-  //     }]
-  //   });
-  //   await actionSheet.present();
-  // }
-
-  // photoOption(src, imageno) {
-  //   const options: CameraOptions = {
-  //     quality: 70,
-  //     destinationType: this.camera.DestinationType.FILE_URI,
-  //     encodingType: this.camera.EncodingType.JPEG,
-  //     mediaType: this.camera.MediaType.PICTURE,
-  //     sourceType: src,
-  //     correctOrientation: true
-  //   };
-
-  //   this.camera.getPicture(options).then((imageData) => {
-  //     this.convertImageToFile(imageData, imageno);
-  //   }, (err) => {
-  //     alert(JSON.stringify(err));
-  //   });
-  // }
-
-  // convertImageToFile(imageData, imageno) {
-  //   this.file.resolveLocalFilesystemUrl(imageData).then((entry: FileEntry) => {
-  //     entry.file(file => {
-  //       console.log(file);
-  //       if (imageno === 1) {
-  //         this.img1 = file.size + '.jpg';
-  //       } else if (imageno === 2) {
-  //         this.img2 = file.size + '.jpg';
-  //       } else if (imageno === 3) {
-  //         this.img3 = file.size + '.jpg';
-  //       }
-  //       setTimeout(() => {
-  //         this.read(file, imageno);
-  //       }, 500);
-  //     });
-  //   }, err => {
-  //     alert(JSON.stringify(err) + 'File Not Supported');
-  //   });
-  // }
-
-  // read(file, imageno) {
-  //   let random;
-  //   random = Math.floor(Math.random() * 90000) + 10000;
-  //   const reader = new FileReader();
-  //   reader.readAsArrayBuffer(file);
-  //   reader.onload = () => {
-  //     const blob = new Blob([reader.result], {
-  //       type: file.type
-  //     });
-  //     if (imageno === 1) {
-  //       this.formData.delete('photo1');
-  //       this.formData.append('photo1', blob, random + '.jpg');
-  //       this.presentLoading().then(preLoad => {
-  //         this.dismissloading();
-  //         return;
-  //       });
-  //       return;
-  //     }
-  //     if (imageno === 2) {
-  //       this.formData.delete('photo2');
-  //       this.formData.append('photo2', blob, random + '.jpg');
-  //       this.presentLoading().then(preLoad => {
-  //         this.dismissloading();
-  //         return;
-  //       });
-  //       return;
-  //     }
-  //     if (imageno === 3) {
-  //       this.formData.delete('photo3');
-  //       this.formData.append('photo3', blob, random + '.jpg');
-  //       this.presentLoading().then(preLoad => {
-  //         this.dismissloading();
-  //         return;
-  //       });
-  //       return;
-  //     }
-  //   };
-  // }
-
-
   changePhoto(event: any, index: any): void {
     let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg'
     if (event.target.files.length > 0) {
@@ -400,5 +314,4 @@ export class AddMeterComponent implements OnInit {
       console.log(file);
     }
   }
-
 }

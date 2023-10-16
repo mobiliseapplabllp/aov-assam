@@ -1,10 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-// import { CommonService } from '../../../providers/common/common.service';
-// import { IndentsService } from '../../../providers/indents/indents.service';
 import { LoadingController } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { IndentsService } from 'src/app/provider/indents/indents.service';
-
 @Component({
   selector: 'app-indent-card',
   templateUrl: './indent-card.component.html',

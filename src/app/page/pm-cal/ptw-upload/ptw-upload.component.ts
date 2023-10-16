@@ -4,7 +4,6 @@ import { Camera, CameraResultType } from '@capacitor/camera';
 import { environment } from 'src/environments/environment';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { PmCalService } from 'src/app/provider/pm-cal/pm-cal.service';
-
 @Component({
   selector: 'app-ptw-upload',
   templateUrl: './ptw-upload.component.html',

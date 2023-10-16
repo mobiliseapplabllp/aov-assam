@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { BarcodeScanner, SupportedFormat } from '@capacitor-community/barcode-scanner';
 import { ModalController, NavController, Platform } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
-
 @Component({
   selector: 'app-barcode',
   templateUrl: './barcode.component.html',
@@ -16,9 +15,7 @@ export class BarcodeComponent  implements OnInit {
     private common: CommonService
   ) { }
 
-  ngOnInit() {
-
-  }
+  ngOnInit() { }
 
   ionViewDidEnter() {
     if (this.platform.is('capacitor')) {
@@ -68,6 +65,4 @@ export class BarcodeComponent  implements OnInit {
     this.stopScan();
     this.navCtrl.pop();
   }
-
-
 }

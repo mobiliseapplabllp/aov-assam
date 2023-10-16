@@ -4,7 +4,6 @@ import { LoadingController } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { ManualsService } from 'src/app/provider/manuals/manuals.service';
 import { environment } from 'src/environments/environment';
-
 @Component({
   selector: 'app-manuals',
   templateUrl: './manuals.page.html',
@@ -56,16 +55,21 @@ export class ManualsPage implements OnInit {
 
   getManuals() {
     this.presentLoading().then(preLoad => {
-      this.httpManual.getManualMaster(this.manuals.value).subscribe(data => {
-        this.dismissloading();
-        console.log(data);
-        if (data.status) {
-          this.manualsList = data.data.data;
-        } else {
-          this.common.presentToast(data.msg, 'warning');
+      this.httpManual.getManualMaster(this.manuals.value).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.manualsList = data.data.data;
+          } else {
+            this.common.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.common.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.common.presentToast(environment.errMsg, 'danger');
       });
     })
   }
@@ -73,25 +77,28 @@ export class ManualsPage implements OnInit {
   searchHns() {
     this.hnsArr = [];
     this.presentLoading().then(preLoad => {
-      this.httpManual.getHns(this.hns.value).subscribe(data => {
-        this.dismissloading();
-        console.log(data);
-        if (data.status) {
-          this.hnsArr = data.data.data
-        } else {
-          alert(data.msg);
+      this.httpManual.getHns(this.hns.value).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.hnsArr = data.data.data
+          } else {
+            alert(data.msg);
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.common.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        alert('Internal Server Error');
-      })
+      });
     })
   }
 
   openDoc(url: string) {
     this.common.openDoc(url);
   }
-
 
   async presentLoading() {
     this.loading = await this.loadingController.create({

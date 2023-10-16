@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-
 @Injectable({
   providedIn: 'root'
 })
@@ -37,14 +36,14 @@ export class MealCheckinService {
 
   getRoaster(forms: any): Observable<any> {
     let param = new HttpParams();
-      for (const key in forms) {
-        if (forms[key] !== '' && forms[key] !== undefined && forms[key] !== null) {
-          param = param.append(key, forms[key]);
-        }
+    for (const key in forms) {
+      if (forms[key] !== '' && forms[key] !== undefined && forms[key] !== null) {
+        param = param.append(key, forms[key]);
       }
-      param = param.append('limit', '20');
-      param = param.append('page', '1');
-      return this.https.get(environment.url + 'meal/roaster/list' , {params: param});
+    }
+    param = param.append('limit', '20');
+    param = param.append('page', '1');
+    return this.https.get(environment.url + 'meal/roaster/list' , {params: param});
   }
 
 }

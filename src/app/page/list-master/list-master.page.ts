@@ -66,9 +66,7 @@ export class ListMasterPage implements OnInit {
           this.common.presentToastWithOk('Menu Icon Not Saved in your Local DB, please connect with internet to save menu in Local DB', 'warning');
         }
       }
-    })
-
-    console.log(this.userData);
+    });
   }
 
   getDashboard() {
@@ -164,7 +162,6 @@ export class ListMasterPage implements OnInit {
       this.loading.dismiss();
     }
   }
-
 
   openPage(data: any) {
     this.common.checkInternet().then(res => {

@@ -45,7 +45,6 @@ export class FillReportComponent  implements OnInit {
     this.on_behalf = this.activeRoute.snapshot.paramMap.get('behalf');
     console.log(this.activeRoute.snapshot.paramMap.get('behalf'));
     console.log(this.schedule_id);
-    // console.log(this.offlineId.filter(val => val === this.schedule_id));
     let check = this.offlineId.filter((val: any) => val === this.schedule_id);
     if(check.length > 0) {
       this.isAlreadySaved = true
@@ -273,97 +272,6 @@ export class FillReportComponent  implements OnInit {
     });
   }
 
-
-  // async presentActionSheet(val) {
-  //   if (!this.platform.is('cordova')) {
-  //     val.imagename = 'abc.jpg';
-  //     return;
-  //   }
-  //   const actionSheet = await this.actionSheetController.create({
-  //     header: 'Choose option',
-  //     cssClass: 'my-custom-class',
-  //     buttons: [{
-  //       text: 'Camera',
-  //       icon: 'camera-outline',
-  //       handler: () => {
-  //         this.photoOption(this.camera.PictureSourceType.CAMERA, val);
-  //       }
-  //     }, {
-  //       text: 'Gallery',
-  //       icon: 'albums-outline',
-  //       handler: () => {
-  //         this.photoOption(this.camera.PictureSourceType.PHOTOLIBRARY, val);
-  //       }
-  //     }]
-  //   });
-  //   await actionSheet.present();
-  // }
-
-  // photoOption(src, val) {
-  //   const options: CameraOptions = {
-  //     quality: 60,
-  //     destinationType: this.camera.DestinationType.FILE_URI,
-  //     encodingType: this.camera.EncodingType.JPEG,
-  //     mediaType: this.camera.MediaType.PICTURE,
-  //     sourceType: src,
-  //     correctOrientation: true
-  //   };
-
-  //   this.camera.getPicture(options).then((imageData) => {
-  //     this.convertImageToFile(imageData, val);
-  //   }, (err) => {
-  //     alert(JSON.stringify(err));
-  //   });
-  // }
-
-  // convertImageToFile(imageData, val) {
-  //   this.file.resolveLocalFilesystemUrl(imageData).then((entry: FileEntry) => {
-  //     entry.file(file => {
-  //       console.log(file);
-  //       val.imagename = file.size + '.jpg';
-  //       setTimeout(() => {
-  //         this.read(file, val);
-  //       }, 500);
-  //     });
-  //   }, err => {
-  //     alert(JSON.stringify(err) + 'File Not Supported');
-  //   });
-  // }
-
-  // read(file, val) {
-  //   let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg'
-  //   const reader = new FileReader();
-  //   reader.readAsArrayBuffer(file);
-  //   reader.onload = () => {
-  //     const blob = new Blob([reader.result], {
-  //       type: file.type,
-  //     });
-
-  //     let formData = new FormData();
-  //     formData.append('wo_id', this.schedule_id);
-  //     formData.append('q_id',  val.q_id);
-  //     formData.append('rspns_source', environment.source);
-  //     formData.append('attachment2', blob, random);
-  //     formData.append('on_behalf', this.on_behalf);
-  //     val.imagename = '';
-  //     this.presentLoading().then(preLoad => {
-  //       this.httpDigital.scheduleDocAction(formData).subscribe(data => {
-  //         console.log(data);
-  //         this.dismissloading();
-  //         if (data.status) {
-  //           val.imagename = 'Uploaded';
-  //           this.common.presentToast(data.msg, 'success');
-  //         } else {
-  //           this.common.presentToast(data.msg, 'warning');
-  //         }
-  //       }, err => {
-  //         this.dismissloading();
-  //         this.common.presentToast(environment.errMsg, 'danger');
-  //       });
-  //     });
-  //   };
-  // }
-
   finalSubmit() {
     this.remarkErr = false;
     if (!this.remark) {
@@ -399,22 +307,27 @@ export class FillReportComponent  implements OnInit {
       }
     }
     this.presentLoading().then(preLoad => {
-      this.httpDigital.finalSubmitCheckList(obj).subscribe(data => {
-        this.dismissloading();
-        if (data.status) {
-          this.common.presentToast(data.msg, 'success');
-          this.navCtrl.pop();
-        } else {
-          this.common.presentToastWithOk(data.msg, 'warning');
-          if (data.cat_head && data.cat_ques) {
-            // this.scrollCategory(data);
+      this.httpDigital.finalSubmitCheckList(obj).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.common.presentToast(data.msg, 'success');
+            this.navCtrl.pop();
           } else {
-            console.log('cat not found');
+            this.common.presentToastWithOk(data.msg, 'warning');
+            if (data.cat_head && data.cat_ques) {
+              // this.scrollCategory(data);
+            } else {
+              console.log('cat not found');
+            }
           }
+        },
+        error:() => {
+          this.dismissloading();
+          this.common.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-        alert(JSON.stringify(err));
       });
     });
   }
