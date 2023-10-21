@@ -65,6 +65,7 @@ export class AddAssetPage implements OnInit {
   }
   pinpointStyle = {};
   floorImage!: string;
+  currentDate: any
   constructor(
     private formbuilder: FormBuilder,
     private httpAsset: MyAssetGetService,
@@ -222,6 +223,7 @@ export class AddAssetPage implements OnInit {
   }
 
   ionViewDidEnter() {
+    this.currentDate = moment().format('YYYY-MM-DD');
     let bar = this.httpCommon.getBarcode();
     if (bar) {
       console.log('Your Barcode is ' + bar);
@@ -509,17 +511,28 @@ export class AddAssetPage implements OnInit {
   }
 
   getFacilityType() {
-    this.httpAsset.getFacilityType().subscribe(data => {
-      console.log(data);
-      if (data.status) {
-        this.facilityTypeArr = data.data;
-        setTimeout(() => {
-          if (this.facilityTypeArr.length > 0) {
-            this.addAsset.get('faciity_type')?.setValue(this.facilityTypeArr[0].id);
+    this.presentLoading().then(preLoad => {
+      this.httpAsset.getFacilityType().subscribe({
+        next:(data) => {
+          if (data.status) {
+          this.facilityTypeArr = data.data;
+            setTimeout(() => {
+              if (this.facilityTypeArr.length > 0) {
+                this.addAsset.get('faciity_type')?.setValue(this.facilityTypeArr[0].id);
+              }
+            }, 100);
           }
-        }, 100);
-      }
-    });
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
+        }
+      });
+    })
+
   }
 
   changeFacility(ev: any) {
@@ -695,6 +708,11 @@ export class AddAssetPage implements OnInit {
     return
   }
 
+  changeWarranty() {
+    this.addAsset.get('warranty_start_date')?.setValue('');
+    this.addAsset.get('warranty_end_date')?.setValue('');
+  }
+
   saveAsset() {
     if (this.checkWarrantyCondition() && this.checkParentCondition()) {
       this.submitAsset();
@@ -815,7 +833,10 @@ export class AddAssetPage implements OnInit {
     this.httpCommon.setBarcode('');
   }
 
-  changeDate() {
+  changeDate(val?: string) {
+    if (val === 'from') {
+      this.addAsset.get('warranty_end_date')?.setValue('');
+    }
     this.popoverDatetime.confirm(true);
   }
 

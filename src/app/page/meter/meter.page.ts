@@ -13,6 +13,7 @@ import { MeterService } from 'src/app/provider/meter/meter.service';
 })
 export class MeterPage implements OnInit {
   meterInfo: any = [];
+  meterInfoCopy: any = [];
   loading: any;
   formData = new FormData();
   constructor(
@@ -33,6 +34,7 @@ export class MeterPage implements OnInit {
         next:(data) => {
           if (data.status) {
             this.meterInfo = data.data;
+            this.meterInfoCopy = data.data;
           }
         },
         error:() => {
@@ -130,6 +132,7 @@ export class MeterPage implements OnInit {
             dat.isRemove = true
             setTimeout(() => {
               this.meterInfo = this.meterInfo.filter((val: any) => val.wo_id !== obj.wo_id);
+              this.meterInfoCopy = this.meterInfoCopy.filter((val: any) => val.wo_id !== obj.wo_id);
             }, 500);
           } else {
             this.common.presentToast(data.msg, 'warning');
@@ -158,16 +161,21 @@ export class MeterPage implements OnInit {
 
   async presentActionSheet(val: any, data: any, type: any) {
     const takePicture = async () => {
-      const obj = {
-        quality: 80,
-        allowEditing: false,
-        source: CameraSource.Camera,
-        resultType: CameraResultType.Uri,
-      }
-      if (val == 1) {
-        obj.source = CameraSource.Prompt
+      var obj: any = {};
+      if (val === 1) {
+        obj = {
+          quality: 80,
+          allowEditing: false,
+          resultType: CameraResultType.Uri,
+        }
       } else {
-        obj.source = CameraSource.Camera
+        obj = {
+          quality: 80,
+          allowEditing: false,
+          source: CameraSource.Camera,
+          resultType: CameraResultType.Uri,
+
+        }
       }
       const image = await Camera.getPhoto(obj);
       this.readImg(image, data ,type)
@@ -224,6 +232,16 @@ export class MeterPage implements OnInit {
       queryParams: {
         data: JSON.stringify(dat),
       }
+    });
+  }
+
+  changeSearch(ev: any) {
+    this.meterInfo = this.meterInfoCopy;
+    this.meterInfo =  this.meterInfo.filter((dat: any) => {
+      if (dat.make.toLowerCase().indexOf(ev.target.value.toLowerCase())> -1) {
+        return (dat.make.toLowerCase().indexOf(ev.target.value.toLowerCase()) > -1);
+      }
+      return;
     });
   }
 }

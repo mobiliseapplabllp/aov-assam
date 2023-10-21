@@ -4,6 +4,7 @@ import { environment } from '../../../../environments/environment';
 import { IonDatetime, LoadingController } from '@ionic/angular';
 import { MeterService } from 'src/app/provider/meter/meter.service';
 import { CommonService } from 'src/app/provider/common/common.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-history',
   templateUrl: './history.component.html',
@@ -18,7 +19,8 @@ export class HistoryComponent implements OnInit {
   constructor(
     private httpMeter: MeterService,
     private common: CommonService,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -26,6 +28,7 @@ export class HistoryComponent implements OnInit {
   }
 
   getMeterWoHistory(date: any) {
+    this.history = [];
     this.presentLoading().then(preLoad => {
       this.httpMeter.getMeterWoHistory(date).subscribe({
         next:(data) => {
@@ -83,5 +86,13 @@ export class HistoryComponent implements OnInit {
 
   openDoc(url: any) {
     this.common.openDoc(url);
+  }
+
+  meterReadingHistory(dat: any) {
+    this.router.navigate(['meter/reading-history'], {
+      queryParams: {
+        data: JSON.stringify(dat),
+      }
+    });
   }
 }
