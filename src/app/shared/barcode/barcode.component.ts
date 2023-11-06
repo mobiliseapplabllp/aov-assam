@@ -36,17 +36,24 @@ export class BarcodeComponent  implements OnInit {
 
   startScan() {
     const startScan = async () => {
-      await BarcodeScanner.checkPermission({ force: true });
-      BarcodeScanner.prepare();
-      BarcodeScanner.hideBackground();
-      document.querySelector('body')?.classList.add('scanner-active');
-      const result = await BarcodeScanner.startScan({ targetedFormats: [SupportedFormat.QR_CODE] });
-      if (result.hasContent) {
-        this.barcodeNo = result.content
-        console.log(result.content);
-        this.common.setBarcode(this.barcodeNo);
-        this.stopScan();
-        this.navCtrl.pop();
+      const status = await BarcodeScanner.checkPermission({ force: true });
+      if(status.denied) {
+        const c = confirm('If you want to grant permission for using your camera, enable it in the app settings.');
+        if (c) {
+          BarcodeScanner.openAppSettings();
+        }
+      } else {
+        BarcodeScanner.prepare();
+        BarcodeScanner.hideBackground();
+        document.querySelector('body')?.classList.add('scanner-active');
+        const result = await BarcodeScanner.startScan({ targetedFormats: [SupportedFormat.QR_CODE] });
+        if (result.hasContent) {
+          this.barcodeNo = result.content
+          console.log(result.content);
+          this.common.setBarcode(this.barcodeNo);
+          this.stopScan();
+          this.navCtrl.pop();
+        }
       }
     };
     startScan();

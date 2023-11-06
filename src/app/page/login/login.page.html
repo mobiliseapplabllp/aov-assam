@@ -15,8 +15,12 @@
 
           <ion-item color="none" lines="none">
             <ion-label position="floating" color="primary">PASSWORD</ion-label>
-            <ion-input [(ngModel)]="login.password" type="password" formControlName="password" required>
-          </ion-input>
+            <ion-input [(ngModel)]="login.password" [type]="mypass ? 'password': 'text'" formControlName="password" required></ion-input>
+            <ion-buttons slot="end">
+              <ion-button (click)="mypass = !mypass" slot="icon-only">
+                <ion-icon [name]="mypass ? 'eye-outline': 'eye-off-outline'"></ion-icon>
+              </ion-button>
+            </ion-buttons>
           </ion-item>
         </ion-list>
         <ion-row>

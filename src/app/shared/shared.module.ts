@@ -11,6 +11,9 @@ import { QuerySubCatComponent } from './query-sub-cat/query-sub-cat.component';
 import { QuerySubCat2Component } from './query-sub-cat2/query-sub-cat2.component';
 import { BarcodeComponent } from './barcode/barcode.component';
 import { AssetPlantComponent } from '../page/add-asset/asset-plant/asset-plant.component';
+import { FloorComponent } from './floor/floor.component';
+import { LocationComponent } from './location/location.component';
+import { DeviceGroupComponent } from './device-group/device-group.component';
 @NgModule({
   declarations: [
     SignatureComponent,
@@ -20,7 +23,10 @@ import { AssetPlantComponent } from '../page/add-asset/asset-plant/asset-plant.c
     QuerySubCatComponent,
     QuerySubCat2Component,
     BarcodeComponent,
-    AssetPlantComponent
+    AssetPlantComponent,
+    FloorComponent,
+    LocationComponent,
+    DeviceGroupComponent
   ],
   imports: [
     CommonModule,
@@ -37,7 +43,10 @@ import { AssetPlantComponent } from '../page/add-asset/asset-plant/asset-plant.c
     QuerySubCatComponent,
     QuerySubCat2Component,
     BarcodeComponent,
-    AssetPlantComponent
+    AssetPlantComponent,
+    FloorComponent,
+    LocationComponent,
+    DeviceGroupComponent
   ]
 })
 export class SharedModule { }

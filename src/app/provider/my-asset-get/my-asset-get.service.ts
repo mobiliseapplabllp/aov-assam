@@ -24,6 +24,13 @@ export class MyAssetGetService {
     });
   }
 
+  getDecBarcode(enc_barcode: string): Observable<any> {
+    const obj = {
+      text: enc_barcode
+    }
+    return this.https.post(environment.url + 'shared/get-dectext', obj);
+  }
+
   getFacilityType(): Observable<any> {
     return this.https.get(environment.url + 'get_pc_cate');
   }
@@ -104,11 +111,11 @@ export class MyAssetGetService {
     return this.https.get('https://www.mocky.io/v2/5c245ec630000072007a5f77?mocky-delay=10000ms');
   }
 
-  getAssetParentId(id: any) : Observable<any>{
+  getAssetParentId(id: any, site_id: any) : Observable<any>{
     const obj = {
-      ext_asset_id: id
+      ext_asset_id: id,
+      site_id: site_id
     }
-
     return this.https.post(environment.url + 'assets/reporting/get_asset_parent_id_details', obj);
   }
 }

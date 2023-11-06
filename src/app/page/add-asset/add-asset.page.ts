@@ -11,6 +11,9 @@ import { AssetManufacturerComponent } from './asset-manufacturer/asset-manufactu
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
+import { FloorComponent } from 'src/app/shared/floor/floor.component';
+import { LocationComponent } from 'src/app/shared/location/location.component';
+import { DeviceGroupComponent } from 'src/app/shared/device-group/device-group.component';
 @Component({
   selector: 'app-add-asset',
   templateUrl: './add-asset.page.html',
@@ -80,7 +83,9 @@ export class AddAssetPage implements OnInit {
       block_id: [''],
       bldg_id: [''],
       floor_id: [''],
+      floor_id_desc: [''],
       loc_id: [''],
+      loc_id_desc: [''],
       dept_id: [''],
       dept_id_desc: [''],
       sub_dept_id:[''],
@@ -91,6 +96,7 @@ export class AddAssetPage implements OnInit {
       is_child_asset:['', Validators.required],
       parent_asset_id: [''],
       grp_id:['', Validators.required],
+      grp_id_desc:['', Validators.required],
       subgrp_id:['', Validators.required],
       subgrp_id_desc:['', Validators.required],
       subgrp_class:['', Validators.required],
@@ -121,11 +127,15 @@ export class AddAssetPage implements OnInit {
     });
     this.pinPointStyleFun();
     this.getFacilityType();
-    this.getDeviceGroup();
+    // this.getDeviceGroup();
     this.getOwnership();
     this.getEquipStatus();
     this.getTechnology();
     this.getWarranty();
+  }
+
+  ngOnInit() {
+    this.httpCommon.setBarcode('');
   }
 
   get input_asset_id() {
@@ -227,9 +237,50 @@ export class AddAssetPage implements OnInit {
     let bar = this.httpCommon.getBarcode();
     if (bar) {
       console.log('Your Barcode is ' + bar);
-      this.addAsset.get('input_asset_id')?.setValue(bar);
+      let temp, temp1;
+      temp = bar;
+      temp1 = temp.split('/');
       this.httpCommon.setBarcode('');
+      if (temp1.length === 6) {
+        this.getDecBarcode(temp1[5]);
+      } else {
+        this.httpCommon.presentToast('This is invalid QR Code', 'warning');
+      }
+      // this.addAsset.get('input_asset_id')?.setValue(bar);
+      // this.httpCommon.setBarcode('');
     }
+  }
+
+  getDecBarcode(enc_barcode: string) {
+    this.presentLoading().then(preLoad => {
+      this.httpAsset.getDecBarcode(enc_barcode).subscribe({
+        next:(data) => {
+          console.log(data);
+          if (data.status) {
+            let temp, firstDigit,lastDigit;
+            temp = data.data.text;
+            firstDigit = temp.slice(0, 4);
+            lastDigit = temp.slice(-6);
+            if (firstDigit === this.addAsset.value.ext_asset_id_pre) {
+              this.addAsset.get('input_asset_id')?.setValue(lastDigit);
+            } else {
+              // this.httpCommon.presentToastWithOk('Starting 4 Digit Barcode is not Matched against the selected Site. ' + this.addAsset.value.site_id_description  + ' and 4 digit barcode ' + this.addAsset.value.ext_asset_id_pre + ' and after scan barcode digit is ' + firstDigit , 'warning');
+              this.httpCommon.presentToastWithOk('Incorrect barcode!!  Starting 4 digits of the barcode does not match with the selected site ' + this.addAsset.value.site_id_description + '. The barcodes for the site begin with ' + firstDigit + '.' , 'warning');
+            }
+          } else {
+            this.httpCommon.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
+        }
+      })
+    })
+
   }
 
   ionViewDidLeave() {
@@ -237,6 +288,10 @@ export class AddAssetPage implements OnInit {
   }
 
   openScanner() {
+    if (!this.addAsset.value.site_id_description) {
+      this.httpCommon.presentToast('Please Select Site', 'warning');
+      return;
+    }
     this.router.navigateByUrl('/barcode');
     // this.barcodeScanner.scan().then(barcodeData => {
     //   console.log('Barcode data', barcodeData);
@@ -342,6 +397,14 @@ export class AddAssetPage implements OnInit {
       if (disModal.data) {
         this.addAsset.get('site_id_description')?.setValue(disModal.data.pc_desc);
         this.addAsset.get('site_id')?.setValue(disModal.data.pc_id);
+        this.addAsset.get('block_id')?.setValue('');
+        this.addAsset.get('bldg_id')?.setValue('');
+        this.addAsset.get('floor_id')?.setValue('');
+        this.addAsset.get('floor_id_desc')?.setValue('');
+        this.addAsset.get('loc_id')?.setValue('');
+        this.addAsset.get('loc_id_desc')?.setValue('');
+        this.addAsset.get('ext_asset_id_pre')?.setValue('');
+        this.addAsset.get('input_asset_id')?.setValue('');
         this.presentLoading().then(preLoad => {
           this.httpAsset.getBlock(disModal.data.pc_id).subscribe({
             next:(data) => {
@@ -384,6 +447,7 @@ export class AddAssetPage implements OnInit {
       if (disModal.role) {
         this.addAsset.get('dept_id_desc')?.setValue(disModal.data.dept_desc);
         this.addAsset.get('dept_id')?.setValue(disModal.data.dept_id);
+        this.addAsset.get('sub_dept_id')?.setValue('');
         this.changeDepartment(disModal.data.dept_id)
       }
 
@@ -438,6 +502,9 @@ export class AddAssetPage implements OnInit {
 
   changeBlock(ev: any) {
     console.log(ev.target.value);
+    if (!ev.target.value) {
+      return;
+    }
     this.presentLoading().then(preLoad => {
       this.httpAsset.getBuildingList(ev.target.value).subscribe({
         next:(data) => {
@@ -445,6 +512,10 @@ export class AddAssetPage implements OnInit {
             this.myBuildingArr = data.data;
             this.addAsset.get('bldg_id')?.setValue('');
             this.addAsset.get('floor_id')?.setValue('');
+            this.addAsset.get('floor_id_desc')?.setValue('');
+            this.addAsset.get('loc_id')?.setValue('');
+            this.addAsset.get('loc_id_desc')?.setValue('')
+
           }
         },
         error:() => {
@@ -458,51 +529,110 @@ export class AddAssetPage implements OnInit {
     })
   }
 
-  changeBuilding(ev: any) {
-    this.presentLoading().then(preLoad => {
-      this.httpAsset.getFloorList(ev.target.value).subscribe({
-        next:(data) => {
-          if (data.status) {
-            this.myFloor = data.data;
-            this.addAsset.get('floor_id')?.setValue('');
-          }
-        },
-        error:() => {
-          this.dismissloading();
-          this.httpCommon.presentToast(environment.errMsg, 'danger');
-        },
-        complete:() => {
-          this.dismissloading();
-        }
-      });
-    })
+  // changeBuilding(ev: any) {
+  //   if (!ev.target.value) {
+  //     return;
+  //   }
+  //   this.presentLoading().then(preLoad => {
+  //     this.httpAsset.getFloorList(ev.target.value).subscribe({
+  //       next:(data) => {
+  //         if (data.status) {
+  //           this.myFloor = data.data;
+  //           this.addAsset.get('floor_id')?.setValue('');
+  //           this.addAsset.get('loc_id')?.setValue('');
+  //         }
+  //       },
+  //       error:() => {
+  //         this.dismissloading();
+  //         this.httpCommon.presentToast(environment.errMsg, 'danger');
+  //       },
+  //       complete:() => {
+  //         this.dismissloading();
+  //       }
+  //     });
+  //   })
+  // }
+
+  async openFloorModal() {
+    if (!this.addAsset.value.bldg_id) {
+      this.httpCommon.presentToast('Please Select Building', 'warning');
+      return;
+    }
+    const modal = await this.modalController.create({
+      component: FloorComponent,
+      cssClass: 'my-modal',
+      componentProps : {
+        bldg_id: this.addAsset.value.bldg_id
+      }
+    });
+    modal.onWillDismiss().then(disModal => {
+      console.log(disModal);
+      if (disModal.role) {
+        this.floorImage = disModal.data.floor_img;
+        this.addAsset.get('floor_id_desc')?.setValue(disModal.data.label);
+        this.addAsset.get('floor_id')?.setValue(disModal.data.value);
+        this.addAsset.get('loc_id')?.setValue('');
+        this.addAsset.get('loc_id_desc')?.setValue('')
+      }
+
+    });
+    return await modal.present();
   }
 
-  chnageFloor(ev: any) {
-    console.log(ev.target.value);
-    let obj = this.myFloor.filter((val: any) => val.value === ev.target.value)[0];
-    this.floorImage = obj.floor_img;
-    console.log(this.floorImage);
-    this.presentLoading().then(preLoad => {
-      this.httpAsset.getLocation(ev.target.value).subscribe({
-        next:(data) => {
-          if (data.status) {
-            this.myLocation = data.data;
-          } else {
-            this.httpCommon.presentToast(data.msg, 'warning');
-          }
-        },
-        error:() => {
-          this.dismissloading();
-          this.httpCommon.presentToast(environment.errMsg, 'danger');
-        },
-        complete:() => {
-          this.dismissloading();
-        }
-      })
-    })
+  async openLocationModal() {
+    if (!this.addAsset.value.floor_id) {
+      this.httpCommon.presentToast('Please Select Floor', 'warning');
+      return;
+    }
+    const modal = await this.modalController.create({
+      component: LocationComponent,
+      cssClass: 'my-modal',
+      componentProps : {
+        floor_id: this.addAsset.value.floor_id
+      }
+    });
+    modal.onWillDismiss().then(disModal => {
+      console.log(disModal);
+      if (disModal.role) {
+        // this.floorImage = disModal.data.floor_img;
+        this.addAsset.get('loc_id_desc')?.setValue(disModal.data.label);
+        this.addAsset.get('loc_id')?.setValue(disModal.data.value);
+      }
 
+    });
+    return await modal.present();
   }
+
+
+  // chnageFloor(ev: any) {
+  //   console.log(ev.target.value);
+  //   if (!ev.target.value) {
+  //     return;
+  //   }
+  //   let obj = this.myFloor.filter((val: any) => val.value === ev.target.value)[0];
+  //   this.floorImage = obj.floor_img;
+  //   console.log(this.floorImage);
+  //   this.presentLoading().then(preLoad => {
+  //     this.httpAsset.getLocation(ev.target.value).subscribe({
+  //       next:(data) => {
+  //         if (data.status) {
+  //           this.addAsset.get('loc_id')?.setValue('');
+  //           this.myLocation = data.data;
+  //         } else {
+  //           this.httpCommon.presentToast(data.msg, 'warning');
+  //         }
+  //       },
+  //       error:() => {
+  //         this.dismissloading();
+  //         this.httpCommon.presentToast(environment.errMsg, 'danger');
+  //       },
+  //       complete:() => {
+  //         this.dismissloading();
+  //       }
+  //     })
+  //   })
+
+  // }
 
   changeClientId() {
     return /^[A-Za-z0-9]*$/.test('str');
@@ -536,13 +666,21 @@ export class AddAssetPage implements OnInit {
   }
 
   changeFacility(ev: any) {
-    console.log(ev.target.value);
-    this.httpAsset.getPlantByCategory(ev.target.value).subscribe(data => {
-      console.log(data);
-      if (data.status) {
-        this.myPlantArr = data.data
-      }
-    });
+    this.addAsset.get('site_id')?.setValue('');
+    this.addAsset.get('site_id_description')?.setValue('');
+    this.addAsset.get('block_id')?.setValue('');
+    this.addAsset.get('bldg_id')?.setValue('');
+    this.addAsset.get('floor_id')?.setValue('');
+    this.addAsset.get('floor_id_desc')?.setValue('');
+    this.addAsset.get('loc_id')?.setValue('');
+    this.addAsset.get('loc_id_desc')?.setValue('');
+    // console.log(ev.target.value);
+    // this.httpAsset.getPlantByCategory(ev.target.value).subscribe(data => {
+    //   console.log(data);
+    //   if (data.status) {
+    //     this.myPlantArr = data.data
+    //   }
+    // });
   }
 
   getBuilding() {
@@ -583,17 +721,39 @@ export class AddAssetPage implements OnInit {
         this.httpCommon.presentToast(environment.errMsg, 'danger');
       });
     })
-
   }
 
-  getDeviceGroup() {
-    this.httpAsset.getDeviceGroup().subscribe(data => {
-      console.log(data);
-      if (data.status) {
-        this.myDeviceGroup = data.data;
+  async openDeviceGroupModal() {
+    const modal = await this.modalController.create({
+      component: DeviceGroupComponent,
+      cssClass: 'my-modal',
+      componentProps : {
+        bldg_id: this.addAsset.value.bldg_id
       }
     });
+    modal.onWillDismiss().then(disModal => {
+      console.log(disModal);
+      if (disModal.role) {
+        this.floorImage = disModal.data.floor_img;
+        this.addAsset.get('grp_id_desc')?.setValue(disModal.data.label);
+        this.addAsset.get('grp_id')?.setValue(disModal.data.value);
+        this.addAsset.get('subgrp_id_desc')?.setValue('');
+        this.addAsset.get('subgrp_id')?.setValue('');
+      }
+    });
+    return await modal.present();
   }
+
+
+
+  // getDeviceGroup() {
+  //   this.httpAsset.getDeviceGroup().subscribe(data => {
+  //     console.log(data);
+  //     if (data.status) {
+  //       this.myDeviceGroup = data.data;
+  //     }
+  //   });
+  // }
 
   changeDeviceGroup(ev: any) {
     // console.log('a');
@@ -796,8 +956,22 @@ export class AddAssetPage implements OnInit {
       alert('Please Enter Asset Parent ID');
       return;
     }
+    if (!this.addAsset.value.site_id) {
+      alert('Please Select Site');
+      return;
+    }
+
+
+    let firstDigit = this.addAsset.value.parent_asset_id.slice(0, 4);
+    if (firstDigit !== this.addAsset.value.ext_asset_id_pre) {
+      this.httpCommon.presentToastWithOk('Incorrect barcode!!  Starting 4 digits of the barcode does not match with the selected site ' + this.addAsset.value.site_id_description + '. The barcodes for the site begin with ' + firstDigit + '.' , 'warning');
+      return;
+    }
+    // lastDigit = temp.slice(-6);
+
+    this.parentAssetObj = {};
     this.presentLoading().then(preLoad => {
-      this.httpAsset.getAssetParentId(this.addAsset.value.parent_asset_id).subscribe({
+      this.httpAsset.getAssetParentId(this.addAsset.value.parent_asset_id, this.addAsset.value.site_id).subscribe({
         next:(data) => {
           if (data.status) {
             this.parentAssetObj = data.data;
@@ -816,6 +990,10 @@ export class AddAssetPage implements OnInit {
 
   }
 
+  changeAssetParent() {
+    this.parentAssetObj = {};
+  }
+
   clearField() {
     this.addAsset.get('input_asset_id')?.setValue('');
     this.addAsset.get('ext_asset_id')?.setValue('');
@@ -829,9 +1007,7 @@ export class AddAssetPage implements OnInit {
     this.img4 = '';
   }
 
-  ngOnInit() {
-    this.httpCommon.setBarcode('');
-  }
+
 
   changeDate(val?: string) {
     if (val === 'from') {

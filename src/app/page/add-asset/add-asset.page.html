@@ -20,7 +20,7 @@
       <ion-card-content>
         <ion-item>
           <ion-label color="primary" position="floating">Facility type <ion-text color="danger">*</ion-text></ion-label>
-          <ion-select placeholder="Facility Type"  interface="action-sheet" mode="ios" formControlName="faciity_type" > <!-- (ionChange)="changeFacility($event)"-->
+          <ion-select placeholder="Facility Type"  interface="action-sheet" mode="ios" formControlName="faciity_type" (ionChange)="changeFacility($event)"> <!-- (ionChange)="changeFacility($event)"-->
             <ion-select-option *ngFor="let dat of facilityTypeArr" [value]="dat.id">{{dat.pc_cat_ext_id}}-{{dat.pc_cat}}</ion-select-option>
           </ion-select>
         </ion-item>
@@ -42,7 +42,7 @@
           <ion-col>
             <ion-item>
               <ion-label color="primary" position="floating">Building </ion-label>
-              <ion-select interface="action-sheet" mode="ios" formControlName="bldg_id" (ionChange)="changeBuilding($event)">
+              <ion-select interface="action-sheet" mode="ios" formControlName="bldg_id" ><!--(ionChange)="changeBuilding($event)"-->
                 <ion-select-option *ngFor="let dat of myBuildingArr" [value]="dat.value">{{dat.label}}</ion-select-option>
               </ion-select>
             </ion-item>
@@ -50,19 +50,27 @@
         </ion-row>
         <ion-row>
           <ion-col>
-            <ion-item>
+            <!-- <ion-item>
               <ion-label color="primary" position="floating">Floor</ion-label>
               <ion-select interface="action-sheet" mode="ios" formControlName="floor_id" (ionChange)="chnageFloor($event)">
                 <ion-select-option *ngFor="let dat of myFloor" [value]="dat.value"> {{dat.label}}</ion-select-option>
               </ion-select>
+            </ion-item> -->
+            <ion-item (click)="openFloorModal()">
+              <ion-label color="primary" position="floating">Floor <ion-text color="danger">*</ion-text></ion-label>
+              <ion-input type="text" formControlName="floor_id_desc" readonly></ion-input>
             </ion-item>
           </ion-col>
           <ion-col>
-            <ion-item>
+            <!-- <ion-item>
               <ion-label color="primary" position="floating">Location </ion-label>
-              <ion-select interface="action-sheet" mode="ios" formControlName="loc_id" (ionChange)="changeDepartment($event)">
+              <ion-select interface="action-sheet" mode="ios" formControlName="loc_id">
                 <ion-select-option *ngFor="let dat of myLocation" [value]="dat.value">{{dat.label}}</ion-select-option>
               </ion-select>
+            </ion-item> -->
+            <ion-item (click)="openLocationModal()">
+              <ion-label color="primary" position="floating">Location <ion-text color="danger">*</ion-text></ion-label>
+              <ion-input type="text" formControlName="loc_id_desc" readonly></ion-input>
             </ion-item>
           </ion-col>
         </ion-row>
@@ -88,26 +96,20 @@
       <ion-card-header color="primary"><b>Asset Information</b></ion-card-header>
       <ion-card-content>
         <ion-row>
-          <ion-col size="6">
+          <ion-col size="4">
             <ion-item>
               <ion-label position="floating">Prefix Barcode</ion-label>
               <ion-input type="text" formControlName="ext_asset_id_pre" readonly></ion-input>
             </ion-item>
           </ion-col>
-          <ion-col>
+          <ion-col size="8">
             <ion-item>
               <ion-label color="primary" position="floating">Asset ID <ion-text color="danger">*</ion-text></ion-label>
-              <ion-input inputmode="tel" formControlName="input_asset_id" maxlength="6"></ion-input>
+              <ion-input inputmode="tel" formControlName="input_asset_id" maxlength="6" placeholder="6 Digit Only"></ion-input>
               <ion-button slot="end" fill="outline" color="danger" (click)="openScanner()">
-                <!-- <ion-icon name="search-outline"></ion-icon> -->
                 <ion-icon name="qr-code-outline"></ion-icon>
               </ion-button>
             </ion-item>
-            <!-- <div *ngFor="let error of errorMessages.input_asset_id">
-              <ng-container *ngIf="input_asset_id.hasError(error.type) && (input_asset_id.dirty || input_asset_id.touched)" style="padding:3px">
-                <small style="color: red">{{error.message}}</small>
-              </ng-container>
-            </div> -->
           </ion-col>
         </ion-row>
         <ion-row>
@@ -133,7 +135,7 @@
           <ion-col *ngIf="addAsset.value.is_child_asset === '1'">
             <ion-item>
               <ion-label color="primary" position="floating">Asset Parent ID <ion-text color="danger">*</ion-text></ion-label>
-              <ion-input inputmode="tel" formControlName="parent_asset_id" maxlength="10"></ion-input>
+              <ion-input inputmode="tel" formControlName="parent_asset_id" maxlength="10" (ionChange)="changeAssetParent()"></ion-input>
               <ion-button slot="end" fill="outline" color="danger" (click)="searchAssetId()">
                 <ion-icon name="search-outline"></ion-icon>
               </ion-button>
@@ -172,11 +174,15 @@
         </ion-row>
         <ion-row>
           <ion-col>
-            <ion-item>
+            <!-- <ion-item>
               <ion-label color="primary" position="floating">Device Group <ion-text color="danger">*</ion-text></ion-label>
-              <ion-select interface="action-sheet" mode="ios" formControlName="grp_id" (ionChange)="changeDeviceGroup($event)">
+              <ion-select interface="action-sheet" mode="ios" formControlName="grp_id_desc" (ionChange)="changeDeviceGroup($event)">
                 <ion-select-option *ngFor="let dat of myDeviceGroup" [value]="dat.value">{{dat.label}}</ion-select-option>
               </ion-select>
+            </ion-item> -->
+            <ion-item (click)="openDeviceGroupModal()">
+              <ion-label color="primary" position="floating">Device Group <ion-text color="danger">*</ion-text></ion-label>
+              <ion-input type="text" formControlName="grp_id_desc" readonly></ion-input>
             </ion-item>
           </ion-col>
         </ion-row>
@@ -307,7 +313,7 @@
         </ion-row>
         <ion-row>
           <ion-col>
-            <ion-button size="small" color="danger" (click)="presentActionSheet(4)">Inv Image <ion-icon name="attach-outline" slot="end"></ion-icon></ion-button>
+            <ion-button size="small" [color]="img4 ? 'success': 'danger'" color="danger" (click)="presentActionSheet(4)">Inv Image <ion-icon name="attach-outline" slot="end"></ion-icon></ion-button>
             <br>
             {{img4}}
           </ion-col>
@@ -389,7 +395,7 @@
             <ion-item>
               <ion-label color="primary" position="floating">Warranty</ion-label>
               <ion-select interface="action-sheet" mode="ios" formControlName="warranty_id" (ionChange)="changeWarranty()">
-                <ion-select-option *ngFor="let dat of myWarranty" [value]="dat.id">{{dat.id}} {{dat.warranty}}</ion-select-option>
+                <ion-select-option *ngFor="let dat of myWarranty" [value]="dat.id">{{dat.warranty}}</ion-select-option>
               </ion-select>
             </ion-item>
           </ion-col>
@@ -485,7 +491,7 @@
         <ion-scroll scrollX="true" scrollY="true">
           <img [src]="floorImage" (click)="getImageCoordinates($event)" style="width:100%;height:100%">
           <!-- <div class="pinpoint" [ngStyle]="pinpointStyle"></div> -->
-          <i class="fa fa-map-marker" [ngStyle]="pinpointStyle" style="position:absolute; color:red"></i>
+          <i class="fa fa-map-marker" [ngStyle]="pinpointStyle" style="position:absolute; color:red;font-size:25px"></i>
           <!-- <ion-icon name="pin-outline" color="danger" class="pinpoint" [ngStyle]="pinpointStyle" style="height:30px;width:30px;"></ion-icon> -->
         </ion-scroll>
       </div>

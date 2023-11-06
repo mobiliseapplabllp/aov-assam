@@ -9,9 +9,9 @@
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
   <key>NSCameraUsageDescription</key>
-	<string>Need Camera Access to take pictures</string>
+	<string>Need Camera Access to Resolve Ticket, Upload Attandance and Scan QR Code</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Need Location Permission</string>
+	<string>Need Location Permission to Submit User Attandance</string>
   <key>NSPhotoLibraryUsageDescription</key>
 	<string>Need Library Access Permission</string>
   <key>NSPhotoLibraryAddUsageDescription</key>
