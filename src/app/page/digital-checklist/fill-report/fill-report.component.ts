@@ -59,6 +59,16 @@ export class FillReportComponent  implements OnInit {
     this.getScheduleQuestion();
   }
 
+  removeListen() {
+    SpeechRecognition.removeAllListeners();
+  }
+
+  permission() {
+    SpeechRecognition.requestPermissions().then(res => {
+      console.log(res);
+    })
+  }
+
   getScheduleQuestion() {
     this.presentLoading().then(preLoad => {
       this.httpDigital.getScheduleQuestion(this.schedule_id).subscribe({
@@ -133,12 +143,62 @@ export class FillReportComponent  implements OnInit {
     this.common.openDoc(url);
   }
 
-  changeResponseAction(val: any, ev: any) {
+  speak(val: any) {
+    const speak = async () => {
+      await TextToSpeech.speak({
+        text: val.q_desc,
+        lang: this.selectedLanguage,
+        rate: 1.0,
+        pitch: 1.0,
+        volume: 1.0,
+        category: 'ambient',
+      }).finally(() => {
+        this.listen(val);
+      });
+    };
+    speak();
+  }
+
+  listen(val: any) {
+    console.log(val);
+    SpeechRecognition.start({
+      language: this.selectedLanguage,
+      maxResults: 2,
+      prompt: val.q_desc,
+      partialResults: true,
+      popup: true,
+    }).then(res => {
+      console.log(res);
+      let respns, voiceResponse, obj, option = val.options.filter((ops: any) => ops.optn_desc === 'Yes')[0];
+      voiceResponse = res.matches[0].toLocaleLowerCase();
+      if (voiceResponse === 'yes' || voiceResponse === 'yess' || voiceResponse === 'yeees' || voiceResponse === 'yaaa' || voiceResponse === 'ha') {
+        respns = option.optn_id;
+      } else if (voiceResponse === 'no' || voiceResponse === 'nooo' || voiceResponse === 'naaa' || voiceResponse === 'na' || voiceResponse === 'nhi') {
+        respns = option.optn_id;
+      } else {
+        return;
+      }
+      val.rspns = respns;
+      val.response.optn_id = val.rspns;
+      obj = {
+        wo_id: this.schedule_id,
+        rspns: val.rspns,
+        q_id: val.q_id,
+        q_type:val.q_type,
+        q_max_score:val.q_max_score,
+        rspns_source: environment.source,
+        on_behalf : this.on_behalf
+      }
+      this.submitResponseAction(obj, val);
+      // val.remark = res.matches[0];
+    });
+  }
+
+  changeResponseAction(val: any) {
     console.log(val);
     if (val.response && val.rspns == val.response.optn_id) {
       return;
     }
-
     val.isNotFill = false
     const obj = {
       wo_id: this.schedule_id,
@@ -149,12 +209,16 @@ export class FillReportComponent  implements OnInit {
       rspns_source: environment.source,
       on_behalf : this.on_behalf
     }
+    this.submitResponseAction(obj, val);
+  }
+
+  submitResponseAction(obj: any, val: any) {
     this.presentLoading().then(preLoad => {
       this.httpDigital.scheduleResponseAction(obj).subscribe({
         next:(data) => {
           if (data.status) {
             this.common.presentToast(data.msg, 'success');
-            const obj = val.options.filter((val: any) => val.optn_id === ev.target.value)[0];
+            const obj = val.options.filter((val: any) => val.optn_id === val.rspns)[0];
             val.response.optn_id = val.rspns;
             val.isRemarkMandatory = obj.is_rmrk_mandatory;
             val.isDocMandatory = obj.is_doc_mandatory;
@@ -361,51 +425,6 @@ export class FillReportComponent  implements OnInit {
       }
     });
     modal.present();
-  }
-
-  speak(val: any) {
-    const speak = async () => {
-      await TextToSpeech.speak({
-        text: val.q_desc,
-        lang: this.selectedLanguage,
-        rate: 1.0,
-        pitch: 1.0,
-        volume: 1.0,
-        category: 'ambient',
-      }).finally(() => {
-        this.listen(val);
-      });
-    };
-    speak();
-  }
-
-  permission() {
-    SpeechRecognition.requestPermissions().then(res => {
-      console.log(res);
-    })
-  }
-
-  listen(val: any) {
-    console.log(val);
-    SpeechRecognition.start({
-      language: this.selectedLanguage,
-      maxResults: 2,
-      prompt: val.q_desc,
-      partialResults: true,
-      popup: true,
-    }).then(res => {
-      console.log(res);
-      val.remark = res.matches[0];
-    })
-    // SpeechRecognition.addListener("partialResults", (data: any) => {
-    //   console.log(data);
-    //   console.log("partialResults was fired", data.matches);
-    //   val.remark = data.matches[0];
-    // });
-  }
-
-  removeListen() {
-    SpeechRecognition.removeAllListeners();
   }
 
   changeLan(lang: string) {

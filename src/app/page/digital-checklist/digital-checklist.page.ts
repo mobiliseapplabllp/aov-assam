@@ -16,8 +16,8 @@ export class DigitalChecklistPage implements OnInit {
   segmentStatus = 'assigned';
   allChecklist: any = [];
   loading: any;
-  // selectedDate = moment().format('YYYY-MM-DD');
-  selectedDate = '2023-11-08';
+  selectedDate = moment().format('YYYY-MM-DD');
+  // selectedDate = '2023-11-08';
   scanBarcode: any;
   isOnBehalf = 0;
   assignCheckList: any = [];

@@ -90,7 +90,7 @@
         </ion-item>
         <ion-row>
           <ion-col size="12" class="ion-no-padding" >
-            <ion-radio-group  [(ngModel)]="val.rspns" (ionChange)="changeResponseAction(val, $event)">
+            <ion-radio-group  [(ngModel)]="val.rspns" (ionChange)="changeResponseAction(val)">
               <ion-row>
                 <ion-col size="4" *ngFor="let opt of val.options">
                   <ion-item lines="none" [disabled]="schedule_status === 2 || schedule_status === 'attended'" >
