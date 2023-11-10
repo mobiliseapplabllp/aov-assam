@@ -4,6 +4,28 @@
       <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-title>Fill Report</ion-title>
+    <ion-buttons slot="end">
+      <ion-button id="click-trigger" slot="icon-only">
+        <ion-icon name="language-outline"></ion-icon>
+      </ion-button>
+      <!-- <ion-button (click)="makeOffline()"  [disabled]="isAlreadySaved">Offline Save</ion-button> -->
+    </ion-buttons>
+    <ion-popover trigger="click-trigger" triggerAction="click" [dismissOnSelect]="true">
+      <ng-template>
+        <ion-content>
+          <ion-item (click)="changeLan('hi')" >
+            <ion-label>Hindi</ion-label>
+          </ion-item>
+          <ion-item (click)="changeLan('en')" >
+            <ion-label>English</ion-label>
+          </ion-item>
+          <ion-item (click)="changeLan('pa')" >
+            <ion-label>Punjabi</ion-label>
+          </ion-item>
+        </ion-content>
+      </ng-template>
+    </ion-popover>
+
     <!-- <ion-buttons slot="end" >
       <ion-button (click)="makeOffline()"  [disabled]="isAlreadySaved">Offline Save</ion-button>
     </ion-buttons> -->
@@ -60,11 +82,11 @@
             <b>{{i+1}}</b>
           </ion-avatar>
           <ion-label class="ion-text-wrap" [innerHTML]="val.q_desc"></ion-label>
-          <!-- <ion-buttons slot="end">
+          <ion-buttons slot="end" (click)="speak(val)">
             <ion-button slot="icon-only">
               <ion-icon name="volume-high-outline"></ion-icon>
             </ion-button>
-          </ion-buttons> -->
+          </ion-buttons>
         </ion-item>
         <ion-row>
           <ion-col size="12" class="ion-no-padding" >
@@ -82,11 +104,11 @@
         </ion-row>
         <ion-item [ngClass]="{redBorder: val.isRemarkMandatory === 1 && !val.remark }">
           <ion-input type="text" [(ngModel)]="val.remark" placeholder="Enter Remark" (change)="changeRemark(val)" [disabled]="schedule_status === 2 || schedule_status === 'attended' || !val.rspns"></ion-input>
-          <!-- <ion-buttons slot="end">
-            <ion-button slot="icon-only">
+          <ion-buttons slot="end">
+            <ion-button slot="icon-only" (click)="listen(val)">
               <ion-icon name="mic-outline"></ion-icon>
             </ion-button>
-          </ion-buttons> -->
+          </ion-buttons>
         </ion-item>
         <ion-row>
           <ion-col size="6" class="ion-no-padding" >

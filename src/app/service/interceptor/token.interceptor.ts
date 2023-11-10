@@ -25,18 +25,34 @@ export class TokenInterceptor implements HttpInterceptor {
     if (!localStorage.getItem('token1')) {
       return next.handle(request);
     } else {
-      const userToken = localStorage.getItem('token1');
-      const modifiedReq = request.clone({headers: request.headers.set('Authorization', `Bearer ${userToken}`).set('Accept', 'application/json')});
-      return next.handle(modifiedReq).pipe(tap(() => {},
-        (err: any) => {
-        if (err instanceof HttpErrorResponse) {
-          if (err.status !== 401) {
-           return;
+      if (request.url != 'https://translate.googleapis.com/language/translate/v2?key=AIzaSyDJjHphpheVQM7CRYNqHHdJqMqAgt0IY70') {
+        const userToken = localStorage.getItem('token1');
+        const modifiedReq = request.clone({headers: request.headers.set('Authorization', `Bearer ${userToken}`).set('Accept', 'application/json')});
+        return next.handle(modifiedReq).pipe(tap(() => {},
+          (err: any) => {
+          if (err instanceof HttpErrorResponse) {
+            if (err.status !== 401) {
+            return;
+            }
+            alert('Your Session is timeout please login again');
+            App.exitApp();
           }
-          alert('Your Session is timeout please login again');
-          App.exitApp();
-        }
-      }));
+        }));
+      } else {
+        const userToken = localStorage.getItem('token1');
+        const modifiedReq = request.clone({headers: request.headers.set('Accept', 'application/json')});
+        return next.handle(modifiedReq).pipe(tap(() => {},
+          (err: any) => {
+          if (err instanceof HttpErrorResponse) {
+            if (err.status !== 401) {
+            return;
+            }
+            alert('Your Session is timeout please login again');
+            App.exitApp();
+          }
+        }));
+      }
+
     }
   }
 

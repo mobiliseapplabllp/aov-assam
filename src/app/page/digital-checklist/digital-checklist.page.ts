@@ -16,7 +16,8 @@ export class DigitalChecklistPage implements OnInit {
   segmentStatus = 'assigned';
   allChecklist: any = [];
   loading: any;
-  selectedDate = moment().format('YYYY-MM-DD');
+  // selectedDate = moment().format('YYYY-MM-DD');
+  selectedDate = '2023-11-08';
   scanBarcode: any;
   isOnBehalf = 0;
   assignCheckList: any = [];
@@ -131,20 +132,40 @@ export class DigitalChecklistPage implements OnInit {
     this.assignCheckList = [];
     this.attendedCheckList = [];
     this.presentLoading().then(preLoad => {
-      this.httpDigital.getSceduleMissed(loc_id).subscribe(data => {
-        console.log(data);
-        this.dismissloading();
-        if (data.status) {
-          this.isOnBehalf = 1;
-          this.allChecklist = data.data;
-          this.assignCheckList = this.allChecklist.filter((val: any) => val.schedule_status == 'assigned');
-          this.attendedCheckList = this.allChecklist.filter((val: any) => val.schedule_status == 'attended');
-        } else {
-          this.common.presentToast(data.msg, 'warning');
+      this.httpDigital.getSceduleMissed(loc_id).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.isOnBehalf = 1;
+            this.allChecklist = data.data;
+            this.assignCheckList = this.allChecklist.filter((val: any) => val.schedule_status == 'assigned');
+            this.attendedCheckList = this.allChecklist.filter((val: any) => val.schedule_status == 'attended');
+          } else {
+            this.common.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.common.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
         }
-      }, err => {
-        this.dismissloading();
-      })
+      }
+      //   data => {
+      //   console.log(data);
+      //   this.dismissloading();
+      //   if (data.status) {
+      //     this.isOnBehalf = 1;
+      //     this.allChecklist = data.data;
+      //     this.assignCheckList = this.allChecklist.filter((val: any) => val.schedule_status == 'assigned');
+      //     this.attendedCheckList = this.allChecklist.filter((val: any) => val.schedule_status == 'attended');
+      //   } else {
+      //     this.common.presentToast(data.msg, 'warning');
+      //   }
+      // }, err => {
+      //   this.dismissloading();
+      // }
+      )
     })
   }
 

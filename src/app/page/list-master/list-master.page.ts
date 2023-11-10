@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoadingController, ModalController, ToastController } from '@ionic/angular';
+import { LoadingController, ModalController, Platform, ToastController } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { ListMasterService } from 'src/app/provider/list-master/list-master.service';
 import { LoginService } from 'src/app/provider/login/login.service';
@@ -39,8 +39,9 @@ export class ListMasterPage implements OnInit {
     private loginPro: LoginService,
     private loadingController: LoadingController,
     private common: CommonService,
-    public router: Router,
-    private modalCtrl: ModalController) {
+    private router: Router,
+    private platform: Platform
+  ) {
     const user = localStorage.getItem('user');
     if (user) {
       this.userData = JSON.parse(user);
@@ -56,6 +57,10 @@ export class ListMasterPage implements OnInit {
         this.userData = this.loginPro.getLoginUserValue();
         this.getMenuDetail();
         this.getDashboard();
+        // if (this.platform.is('capacitor')) {
+        //   this.permission();
+        //   this.listen();
+        // }
       } else {
         let menu, MENU_TEMP = localStorage.getItem('home_menu');
         if (MENU_TEMP) {
@@ -111,10 +116,18 @@ export class ListMasterPage implements OnInit {
       prompt: "Say something",
       partialResults: true,
       popup: true,
-    });
-    SpeechRecognition.addListener("partialResults", (data: any) => {
-      console.log("partialResults was fired", data.matches);
-    });
+    }).then(res => {
+      console.log(res);
+    })
+    // SpeechRecognition.addListener("partialResults", (data: any) => {
+    //   console.log("partialResults was fired", data.matches);
+    //   // if (data.matches[0] == 'open asset tagging') {
+    //   //   const data = {
+    //   //     link: '/add-asset'
+    //   //   }
+    //   //   this.openPage(data);
+    //   // }
+    // });
   }
 
   removeListen() {

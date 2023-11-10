@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { LoadingController, ModalController, NavController } from '@ionic/angular';
+import { LoadingController, ModalController, NavController, Platform } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { DigitalChecklistService } from 'src/app/provider/digital-checklist/digital-checklist.service';
 import { SignatureComponent } from 'src/app/shared/signature/signature.component';
@@ -31,13 +31,15 @@ export class FillReportComponent  implements OnInit {
   arr: any = [];
   offlineId: any = [];
   isAlreadySaved!: boolean;
+  selectedLanguage =  'en';
   constructor(
     private activeRoute: ActivatedRoute,
     private httpDigital: DigitalChecklistService,
     private common: CommonService,
     private navCtrl: NavController,
     private loadingController: LoadingController,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private platform: Platform
   ) { }
 
   ngOnInit() {
@@ -50,6 +52,9 @@ export class FillReportComponent  implements OnInit {
       this.isAlreadySaved = true
     } else {
       this.isAlreadySaved = false;
+    }
+    if (this.platform.is('capacitor')) {
+      this.permission();
     }
     this.getScheduleQuestion();
   }
@@ -358,17 +363,81 @@ export class FillReportComponent  implements OnInit {
     modal.present();
   }
 
-  speak(msg: string) {
+  speak(val: any) {
     const speak = async () => {
       await TextToSpeech.speak({
-        text: msg,
-        lang: 'en',
+        text: val.q_desc,
+        lang: this.selectedLanguage,
         rate: 1.0,
         pitch: 1.0,
         volume: 1.0,
         category: 'ambient',
+      }).finally(() => {
+        this.listen(val);
       });
     };
     speak();
+  }
+
+  permission() {
+    SpeechRecognition.requestPermissions().then(res => {
+      console.log(res);
+    })
+  }
+
+  listen(val: any) {
+    console.log(val);
+    SpeechRecognition.start({
+      language: this.selectedLanguage,
+      maxResults: 2,
+      prompt: val.q_desc,
+      partialResults: true,
+      popup: true,
+    }).then(res => {
+      console.log(res);
+      val.remark = res.matches[0];
+    })
+    // SpeechRecognition.addListener("partialResults", (data: any) => {
+    //   console.log(data);
+    //   console.log("partialResults was fired", data.matches);
+    //   val.remark = data.matches[0];
+    // });
+  }
+
+  removeListen() {
+    SpeechRecognition.removeAllListeners();
+  }
+
+  changeLan(lang: string) {
+    var question: any = [], temp: any;
+    temp = this.scheduleArr[0].qus;
+    for (var i = 0 ; i < temp.length; i++) {
+      question.push(temp[i].q_desc);
+    }
+    this.translate(question, lang);
+  }
+
+  translate(data: any, lang: string) {
+    this.presentLoading().then(preLoad => {
+      this.httpDigital.googleTranslate(data, lang).subscribe({
+        next:(translateText) => {
+          console.log(translateText.data.translations[1].translatedText);
+          for (var i = 0 ; i < this.scheduleArr.length;i++) {
+            for (var j = 0 ; j < this.scheduleArr[i].qus.length; j++) {
+              this.scheduleArr[i].qus[j].q_desc = translateText.data.translations[j].translatedText
+            }
+          }
+          this.selectedLanguage = lang;
+        },
+        error:(err) => {
+          console.log(err);
+          this.dismissloading();
+          this.common.presentToastWithOk(JSON.stringify(err), 'warning');
+        },
+        complete:() => {
+          this.dismissloading();
+        }
+      })
+    });
   }
 }

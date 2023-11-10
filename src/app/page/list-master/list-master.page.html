@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title> {{userName}} </ion-title>
+    <ion-title (click)="listen()"> {{userName}} </ion-title>
     <!-- <ion-buttons slot="end" >
       <ion-button (click)="openPageTest('/menu-roaster')">Roaster</ion-button>
       <ion-button (click)="openPageTest('/digital-checklist')">Digital</ion-button>
