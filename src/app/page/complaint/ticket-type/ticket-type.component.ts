@@ -36,6 +36,8 @@ export class TicketTypeComponent  implements OnInit {
     private loadingController: LoadingController,
     public navParam: NavParams) {
       this.allData = this.navParam.get('allData');
+      console.log(this.allData);
+      console.log(this.locations);
       this.ticket = this.allData.tkts_id;
       if ((this.allData.tkts_issue_id == 2) || this.allData.tkts_issue_id == 1 && !this.allData.ext_asset_id) {
         this.isShowBuilding = true;
@@ -431,7 +433,8 @@ export class TicketTypeComponent  implements OnInit {
     this.dismissloading();
     this.loading = await this.loadingController.create({
       cssClass: 'my-custom-class',
-      message: 'Please wait...'
+      message: 'Please wait...',
+      duration: 8000
     });
     await this.loading.present();
   }

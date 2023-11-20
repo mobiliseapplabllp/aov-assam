@@ -66,7 +66,7 @@ export class ComplaintCardsComponent  implements OnInit {
           if (data.status) {
             this.openTicketWork();
           } else {
-            this.openTicketTypeModal();
+            this.openTicketTypeModal(data.locations);
           }
         },
         error:() => {
@@ -80,11 +80,11 @@ export class ComplaintCardsComponent  implements OnInit {
     });
   }
 
-  async openTicketTypeModal() {
+  async openTicketTypeModal(locations: any) {
     const modal = await this.modalCtrl.create({
       component: TicketTypeComponent,
       cssClass: 'my-modal',
-      componentProps: { allData:  this.data }
+      componentProps: { allData:  this.data, locations: locations }
     });
     modal.onWillDismiss().then(disModal => {
       console.log(disModal);
@@ -210,6 +210,7 @@ export class ComplaintCardsComponent  implements OnInit {
     this.loading = await this.loadingController.create({
       cssClass: 'my-custom-class',
       message: 'Please wait...',
+
     });
     await this.loading.present();
   }
