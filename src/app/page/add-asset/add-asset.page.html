@@ -41,7 +41,7 @@
           </ion-col>
           <ion-col>
             <ion-item>
-              <ion-label color="primary" position="floating">Building </ion-label>
+              <ion-label color="primary" position="floating">Building <ion-text color="danger">*</ion-text></ion-label>
               <ion-select interface="action-sheet" mode="ios" formControlName="bldg_id" ><!--(ionChange)="changeBuilding($event)"-->
                 <ion-select-option *ngFor="let dat of myBuildingArr" [value]="dat.value">{{dat.label}}</ion-select-option>
               </ion-select>

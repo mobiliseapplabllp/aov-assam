@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>Fill Report</ion-title>
+    <ion-title >Fill Reports</ion-title>
     <ion-buttons slot="end">
       <ion-button id="click-trigger" slot="icon-only">
         <ion-icon name="language-outline"></ion-icon>
@@ -32,7 +32,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <div *ngFor="let dat of scheduleArr" #a>
+  <div *ngFor="let dat of scheduleArr">
     <ion-card>
       <ion-row>
         <ion-col size="6">
@@ -76,13 +76,13 @@
       </ion-row>
     </ion-card>
     <div *ngIf="dat.isResponseShow" class="ion-no-padding">
-      <div style="margin:10px;padding:5px 0px ;border:1px solid black;border-radius: 10px;" *ngFor="let val of dat.qus; let i = index" [ngClass]="{critical: val.critical_desc === 'Critical', noncritical: val.critical_desc === 'Non Critical', fullborder: val.isNotFill === true}">
-        <ion-item>
+      <div style="margin:10px;padding:5px 0px ;border:1px solid black;border-radius: 10px;" *ngFor="let val of dat.qus; let i = index" [ngClass]="{critical: val.critical_desc === 'Critical', noncritical: val.critical_desc === 'Non Critical', fullborder: val.isNotFill === true, bgcolor: val.bgcolor === true}" #a>
+        <ion-item color="none">
           <ion-avatar class="center">
             <b>{{i+1}}</b>
           </ion-avatar>
           <ion-label class="ion-text-wrap" [innerHTML]="val.q_desc"></ion-label>
-          <ion-buttons slot="end" (click)="speak(val)">
+          <ion-buttons slot="end" (click)="speakCondition(val, i)">
             <ion-button slot="icon-only">
               <ion-icon name="volume-high-outline"></ion-icon>
             </ion-button>
@@ -90,7 +90,7 @@
         </ion-item>
         <ion-row>
           <ion-col size="12" class="ion-no-padding" >
-            <ion-radio-group  [(ngModel)]="val.rspns" (ionChange)="changeResponseAction(val)">
+            <ion-radio-group  [(ngModel)]="val.rspns" (ionChange)="changeResponseAction(val)" color="none">
               <ion-row>
                 <ion-col size="4" *ngFor="let opt of val.options">
                   <ion-item lines="none" [disabled]="schedule_status === 2 || schedule_status === 'attended'" >
@@ -105,7 +105,7 @@
         <ion-item [ngClass]="{redBorder: val.isRemarkMandatory === 1 && !val.remark }">
           <ion-input type="text" [(ngModel)]="val.remark" placeholder="Enter Remark" (change)="changeRemark(val)" [disabled]="schedule_status === 2 || schedule_status === 'attended' || !val.rspns"></ion-input>
           <ion-buttons slot="end">
-            <ion-button slot="icon-only" (click)="listen(val)">
+            <ion-button slot="icon-only" (click)="listenCondition(val)">
               <ion-icon name="mic-outline"></ion-icon>
             </ion-button>
           </ion-buttons>
@@ -113,7 +113,7 @@
         <ion-row>
           <ion-col size="6" class="ion-no-padding" >
             <div [hidden]="schedule_status === 2 || schedule_status === 'attended'" >
-              <ion-button size="small" [color]="!val.imagename ? 'primary': 'success'" [fill]="!val.imagename ? 'outline' : 'solid' " (click)="presentActionSheet(val)" [ngClass]="{redBorder: val.isDocMandatory === 1 &&  !val.imagename}">
+              <ion-button size="small" [color]="!val.imagename ? 'primary': 'success'" [fill]="!val.imagename ? 'outline' : 'solid' " (click)="presentActionSheet(val, 1)" [ngClass]="{redBorder: val.isDocMandatory === 1 &&  !val.imagename}">
                 IMG
                 <ion-icon name="attach-outline" slot="end" *ngIf="!val.imagename"></ion-icon>
                 <ion-icon name="checkmark-done-outline" slot="end" *ngIf="val.imagename"></ion-icon>

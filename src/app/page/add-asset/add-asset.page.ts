@@ -84,7 +84,7 @@ export class AddAssetPage implements OnInit {
       bldg_id: [''],
       floor_id: [''],
       floor_id_desc: [''],
-      loc_id: [''],
+      loc_id: ['', Validators.required],
       loc_id_desc: [''],
       dept_id: [''],
       dept_id_desc: [''],

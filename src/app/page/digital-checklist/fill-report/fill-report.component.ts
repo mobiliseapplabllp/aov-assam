@@ -5,7 +5,7 @@ import { CommonService } from 'src/app/provider/common/common.service';
 import { DigitalChecklistService } from 'src/app/provider/digital-checklist/digital-checklist.service';
 import { SignatureComponent } from 'src/app/shared/signature/signature.component';
 import { environment } from 'src/environments/environment';
-import { Camera, CameraResultType } from '@capacitor/camera';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import { SpeechRecognition } from "@capacitor-community/speech-recognition";
 @Component({
@@ -32,6 +32,9 @@ export class FillReportComponent  implements OnInit {
   offlineId: any = [];
   isAlreadySaved!: boolean;
   selectedLanguage =  'en';
+  index: any;
+  qusList: any = [];
+  loop = false;
   constructor(
     private activeRoute: ActivatedRoute,
     private httpDigital: DigitalChecklistService,
@@ -57,6 +60,11 @@ export class FillReportComponent  implements OnInit {
       this.permission();
     }
     this.getScheduleQuestion();
+  }
+
+  ionViewDidLeave() {
+    this.loop = false;
+    this.removeListen();
   }
 
   removeListen() {
@@ -143,54 +151,109 @@ export class FillReportComponent  implements OnInit {
     this.common.openDoc(url);
   }
 
+  changeBackground(ind: any) {
+    for (var i = 0; i < this.scheduleArr.length;i++) {
+      for (var j = 0 ; j < this.scheduleArr[i].qus.length;j++) {
+        if (ind == j) {
+          this.scheduleArr[i].qus[j].bgcolor = true;
+        } else {
+          this.scheduleArr[i].qus[j].bgcolor = false;
+        }
+      }
+    }
+  }
+
+  speakCondition(val: any, ind: any) {
+    this.index = ind;
+    val.tempoutput = 'response';
+    val.listen = false;
+    this.loop = true;
+    val.bgcolor = true;
+    if (!val.tempoutput || val.tempoutput === 'response') {
+      val.q_desc_temp = val.q_desc
+    }
+    this.changeBackground(ind);
+    this.scroll(ind);
+    this.speak(val);
+
+  }
+
   speak(val: any) {
     const speak = async () => {
       await TextToSpeech.speak({
-        text: val.q_desc,
+        text: val.q_desc_temp,
         lang: this.selectedLanguage,
         rate: 1.0,
         pitch: 1.0,
         volume: 1.0,
         category: 'ambient',
       }).finally(() => {
+        val.speak = true;
         this.listen(val);
       });
     };
     speak();
   }
 
+  listenCondition(val: any) {
+    val.speak = false;
+    val.listen = true
+    val.tempoutput = 'remark';
+    this.listen(val);
+  }
+
   listen(val: any) {
     console.log(val);
     SpeechRecognition.start({
-      language: this.selectedLanguage,
+      language: 'en',
       maxResults: 2,
       prompt: val.q_desc,
       partialResults: true,
       popup: true,
     }).then(res => {
       console.log(res);
-      let respns, voiceResponse, obj, option = val.options.filter((ops: any) => ops.optn_desc === 'Yes')[0];
+      let respns, voiceResponse, obj, option: any;
       voiceResponse = res.matches[0].toLocaleLowerCase();
-      if (voiceResponse === 'yes' || voiceResponse === 'yess' || voiceResponse === 'yeees' || voiceResponse === 'yaaa' || voiceResponse === 'ha') {
-        respns = option.optn_id;
-      } else if (voiceResponse === 'no' || voiceResponse === 'nooo' || voiceResponse === 'naaa' || voiceResponse === 'na' || voiceResponse === 'nhi') {
-        respns = option.optn_id;
-      } else {
-        return;
+      if (!val.tempoutput || val.tempoutput === 'response') {
+        if (voiceResponse === 'yes' || voiceResponse === 'yess' || voiceResponse === 'yeees' || voiceResponse === 'yaaa' || voiceResponse === 'ha') {
+          option = val.options.filter((ops: any) => ops.optn_desc === 'Yes')[0];
+          respns = option.optn_id;
+        } else if (voiceResponse === 'no' || voiceResponse === 'nooo' || voiceResponse === 'naaa' || voiceResponse === 'na' || voiceResponse === 'nhi') {
+          option = val.options.filter((ops: any) => ops.optn_desc === 'No')[0];
+          respns = option.optn_id;
+        } else {
+          val.tempoutput = 'response';
+          val.q_desc_temp = 'We Accept Only yes, no and NA';
+          this.speak(val);
+          return;
+        }
+        val.rspns = respns;
+        val.response.optn_id = val.rspns;
+        val.listen = true
+        obj = {
+          wo_id: this.schedule_id,
+          rspns: val.rspns,
+          q_id: val.q_id,
+          q_type:val.q_type,
+          q_max_score:val.q_max_score,
+          rspns_source: environment.source,
+          on_behalf : this.on_behalf,
+        }
+        this.submitResponseAction(obj, val);
+      } else if (val.tempoutput === 'remark') {
+        val.remark = voiceResponse
+        obj = {
+          wo_id:this.schedule_id,
+          remark: val.remark,
+          q_id: val.q_id,
+          rspns_source: environment.source,
+          on_behalf : this.on_behalf,
+          optn_id: val.rspns
+        }
+        this.submitRemark(obj);
+      } else if (val.tempoutput === 'document') {
+        this.presentActionSheet(val, 2);
       }
-      val.rspns = respns;
-      val.response.optn_id = val.rspns;
-      obj = {
-        wo_id: this.schedule_id,
-        rspns: val.rspns,
-        q_id: val.q_id,
-        q_type:val.q_type,
-        q_max_score:val.q_max_score,
-        rspns_source: environment.source,
-        on_behalf : this.on_behalf
-      }
-      this.submitResponseAction(obj, val);
-      // val.remark = res.matches[0];
     });
   }
 
@@ -199,7 +262,10 @@ export class FillReportComponent  implements OnInit {
     if (val.response && val.rspns == val.response.optn_id) {
       return;
     }
-    val.isNotFill = false
+    val.isNotFill = false;
+    val.speak = false;
+    val.listen = false;
+    this.loop = false;
     const obj = {
       wo_id: this.schedule_id,
       rspns: val.rspns,
@@ -218,10 +284,24 @@ export class FillReportComponent  implements OnInit {
         next:(data) => {
           if (data.status) {
             this.common.presentToast(data.msg, 'success');
-            const obj = val.options.filter((val: any) => val.optn_id === val.rspns)[0];
+            console.log(val);
+            const obj = val.options.filter((val1: any) => val1.optn_id === val.rspns)[0];
+            console.log(obj);
             val.response.optn_id = val.rspns;
             val.isRemarkMandatory = obj.is_rmrk_mandatory;
             val.isDocMandatory = obj.is_doc_mandatory;
+            if (val.isRemarkMandatory && val.speak) {
+              val.tempoutput = 'remark';
+              val.q_desc_temp = 'Please Speak Remark';
+              this.speak(val);
+            } else if (!val.isRemarkMandatory && val.speak) {
+              this.repeatLoop();
+              // if (this.loop && this.index < this.scheduleArr[0].qus.length - 1) {
+              //   let ind = this.index+1
+              //   const val = this.scheduleArr[0].qus[ind];
+              //   this.speakCondition(val, ind);
+              // }
+            }
           } else if(data.status == false) {
             this.common.presentToast(data.msg, 'warning');
           } else {
@@ -241,6 +321,7 @@ export class FillReportComponent  implements OnInit {
 
   changeRemark(val: any) {
     console.log(val);
+    this.loop = false;
     const obj = {
       wo_id:this.schedule_id,
       remark: val.remark,
@@ -249,11 +330,25 @@ export class FillReportComponent  implements OnInit {
       on_behalf : this.on_behalf,
       optn_id: val.rspns
     }
+
     console.log(obj);
+    this.submitRemark(obj);
+  }
+
+  submitRemark(obj: any) {
     this.presentLoading().then(preLoad => {
       this.httpDigital.schuleRemarkAction(obj).subscribe({
         next:(data) => {
           if (data.status) {
+            const tmp = this.scheduleArr[0].qus[this.index];
+            if (tmp.isDocMandatory) {
+              tmp.tempoutput = 'document';
+              tmp.q_desc_temp = 'Please Upload Image';
+              this.speak(tmp);
+            } else {
+              this.repeatLoop();
+            }
+
             this.common.presentToast(data.msg , 'success');
           } else if (data.status == false){
             this.common.presentToast(data.msg , 'warning');
@@ -269,41 +364,60 @@ export class FillReportComponent  implements OnInit {
           this.dismissloading();
         }
       })
-    })
+    });
   }
 
-  changePhoto(event: any, val: any): void {
-    if (event.target.files.length > 0) {
-      const file = event.target.files[0];
-      const formData = new FormData();
-      formData.append('wo_id', this.schedule_id);
-      formData.append('attachment2', file);
-      formData.append('q_id', val.q_id);
-      formData.append('rspns_source', environment.source);
-      formData.append('on_behalf', this.on_behalf);
-      this.presentLoading().then(preLoad => {
-        this.httpDigital.scheduleDocAction(formData).subscribe({
-          next:(data) => {
-            console.log(data);
-          },
-          error:() => {
-            this.dismissloading();
-          },
-          complete:() => {
-            this.dismissloading();
-          }
-        })
-      })
+  repeatLoop() {
+    if (this.loop && this.index < this.scheduleArr[0].qus.length - 1) {
+      let ind = this.index+1
+      const val = this.scheduleArr[0].qus[ind];
+      this.speakCondition(val, ind);
     }
   }
 
-  async presentActionSheet(val: any) {
-    const takePicture = async () => {
-      const image = await Camera.getPhoto({
+  // changePhoto(event: any, val: any): void {
+  //   if (event.target.files.length > 0) {
+  //     const file = event.target.files[0];
+  //     const formData = new FormData();
+  //     formData.append('wo_id', this.schedule_id);
+  //     formData.append('attachment2', file);
+  //     formData.append('q_id', val.q_id);
+  //     formData.append('rspns_source', environment.source);
+  //     formData.append('on_behalf', this.on_behalf);
+  //     this.presentLoading().then(preLoad => {
+  //       this.httpDigital.scheduleDocAction(formData).subscribe({
+  //         next:(data) => {
+  //           console.log(data);
+  //         },
+  //         error:() => {
+  //           this.dismissloading();
+  //         },
+  //         complete:() => {
+  //           this.dismissloading();
+  //         }
+  //       })
+  //     })
+  //   }
+  // }
+
+  async presentActionSheet(val: any, ind: any) {
+    var obj: any = {}
+    if (ind === 1) {
+      obj = {
         quality: 80,
         allowEditing: false,
         resultType: CameraResultType.Uri,
-      });
+      }
+    } else {
+      obj = {
+        quality: 80,
+        allowEditing: false,
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Camera,
+      }
+    }
+    const takePicture = async () => {
+      const image = await Camera.getPhoto(obj);
       this.readImg(image, val)
     };
     takePicture();
@@ -367,7 +481,7 @@ export class FillReportComponent  implements OnInit {
             this.common.presentToastWithOk(`Please add Response for Question No ${ j + 1} from Category ${ this.scheduleArr[i].cat_desc }`, 'warning');
             this.scheduleArr[i].qus[j].isNotFill = true;
             this.scheduleArr[i].isResponseShow = true;
-            this.scroll(i);
+            this.scroll(j);
             return;
           } else {
             this.scheduleArr[i].qus[j].isNotFill = false;
@@ -403,7 +517,7 @@ export class FillReportComponent  implements OnInit {
 
   scroll(indexFound: any) {
     setTimeout(() => {
-      const userToScrollOn = this.itemlist.toArray();
+      const userToScrollOn: any = this.itemlist.toArray();
       userToScrollOn[indexFound].nativeElement.scrollIntoView({
         behavior: 'smooth'
       }, (err: any) => {
