@@ -189,7 +189,13 @@ export class FillReportComponent  implements OnInit {
         category: 'ambient',
       }).finally(() => {
         val.speak = true;
-        this.listen(val);
+        if (val.tempoutput === 'document') {
+          this.presentActionSheet(val, 2);
+        } else if (val.tempoutput === 'final') {
+          return;
+        } else {
+          this.listen(val);
+        }
       });
     };
     speak();
@@ -199,6 +205,7 @@ export class FillReportComponent  implements OnInit {
     val.speak = false;
     val.listen = true
     val.tempoutput = 'remark';
+    this.loop = false;
     this.listen(val);
   }
 
@@ -293,14 +300,10 @@ export class FillReportComponent  implements OnInit {
             if (val.isRemarkMandatory && val.speak) {
               val.tempoutput = 'remark';
               val.q_desc_temp = 'Please Speak Remark';
+              this.scroll(this.index);
               this.speak(val);
             } else if (!val.isRemarkMandatory && val.speak) {
               this.repeatLoop();
-              // if (this.loop && this.index < this.scheduleArr[0].qus.length - 1) {
-              //   let ind = this.index+1
-              //   const val = this.scheduleArr[0].qus[ind];
-              //   this.speakCondition(val, ind);
-              // }
             }
           } else if(data.status == false) {
             this.common.presentToast(data.msg, 'warning');
@@ -330,7 +333,6 @@ export class FillReportComponent  implements OnInit {
       on_behalf : this.on_behalf,
       optn_id: val.rspns
     }
-
     console.log(obj);
     this.submitRemark(obj);
   }
@@ -340,16 +342,18 @@ export class FillReportComponent  implements OnInit {
       this.httpDigital.schuleRemarkAction(obj).subscribe({
         next:(data) => {
           if (data.status) {
-            const tmp = this.scheduleArr[0].qus[this.index];
-            if (tmp.isDocMandatory) {
-              tmp.tempoutput = 'document';
-              tmp.q_desc_temp = 'Please Upload Image';
-              this.speak(tmp);
-            } else {
-              this.repeatLoop();
-            }
-
             this.common.presentToast(data.msg , 'success');
+            if (this.loop) {
+              const tmp = this.scheduleArr[0].qus[this.index];
+              if (tmp.isDocMandatory) {
+                tmp.tempoutput = 'document';
+                tmp.q_desc_temp = 'Please Upload Photo';
+                this.scroll(this.index);
+                this.speak(tmp);
+              } else {
+                this.repeatLoop();
+              }
+            }
           } else if (data.status == false){
             this.common.presentToast(data.msg , 'warning');
           } else {
@@ -368,11 +372,20 @@ export class FillReportComponent  implements OnInit {
   }
 
   repeatLoop() {
+    let ind = this.index+1;
+    console.log(ind);
+    console.log(this.scheduleArr[0].qus.length)
     if (this.loop && this.index < this.scheduleArr[0].qus.length - 1) {
-      let ind = this.index+1
       const val = this.scheduleArr[0].qus[ind];
       this.speakCondition(val, ind);
+    } else if (ind == this.scheduleArr[0].qus.length) {
+      const val: any = {};
+      val.tempoutput = 'final';
+      val.q_desc_temp = 'All Checklist is Completed, Please Enter Final Remark and Signature, Thankyou';
+      this.changeBackground(ind);
+      this.speak(val);
     }
+
   }
 
   // changePhoto(event: any, val: any): void {
@@ -438,8 +451,9 @@ export class FillReportComponent  implements OnInit {
       this.httpDigital.scheduleDocAction(formData).subscribe({
         next:(data) => {
           if (data.status) {
-            val.imagename = 'Uploaded';
             this.common.presentToast(data.msg, 'success');
+            val.imagename = 'Uploaded';
+            this.repeatLoop();
           } else {
             this.common.presentToast(data.msg, 'warning');
           }

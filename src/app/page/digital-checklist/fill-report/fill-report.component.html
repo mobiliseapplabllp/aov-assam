@@ -82,7 +82,7 @@
             <b>{{i+1}}</b>
           </ion-avatar>
           <ion-label class="ion-text-wrap" [innerHTML]="val.q_desc"></ion-label>
-          <ion-buttons slot="end" (click)="speakCondition(val, i)">
+          <ion-buttons slot="end" (click)="speakCondition(val, i)" [hidden]="schedule_status === 2 || schedule_status === 'attended'">
             <ion-button slot="icon-only">
               <ion-icon name="volume-high-outline"></ion-icon>
             </ion-button>
@@ -104,7 +104,7 @@
         </ion-row>
         <ion-item [ngClass]="{redBorder: val.isRemarkMandatory === 1 && !val.remark }">
           <ion-input type="text" [(ngModel)]="val.remark" placeholder="Enter Remark" (change)="changeRemark(val)" [disabled]="schedule_status === 2 || schedule_status === 'attended' || !val.rspns"></ion-input>
-          <ion-buttons slot="end">
+          <ion-buttons slot="end" [hidden]="schedule_status === 2 || schedule_status === 'attended'">
             <ion-button slot="icon-only" (click)="listenCondition(val)">
               <ion-icon name="mic-outline"></ion-icon>
             </ion-button>
