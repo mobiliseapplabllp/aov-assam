@@ -13,7 +13,7 @@ export class TicketTypeComponent  implements OnInit {
   loading: any;
   public ticketForm!: FormGroup;
   barcodeList: any = [];
-  requestData: any = [];
+  requestData1: any = [];
   ticket: any;
   issueType: any = [];
   query: any = [];
@@ -38,6 +38,7 @@ export class TicketTypeComponent  implements OnInit {
       this.allData = this.navParam.get('allData');
       console.log(this.allData);
       console.log(this.locations);
+
       this.ticket = this.allData.tkts_id;
       if ((this.allData.tkts_issue_id == 2) || this.allData.tkts_issue_id == 1 && !this.allData.ext_asset_id) {
         this.isShowBuilding = true;
@@ -49,6 +50,7 @@ export class TicketTypeComponent  implements OnInit {
   ngOnInit() {
     this.initForm();
     this.getPriority();
+    console.log(this.requestData1);
   }
 
   getRequestType(id: any) {
@@ -91,6 +93,7 @@ export class TicketTypeComponent  implements OnInit {
     });
     setTimeout(() => {
       this.ticketForm.get('ticketId')?.setValue(this.ticket);
+      this.ticketForm.get('tkt_tag')?.setValue(this.requestData1.tkt_tag.toString())
     });
     this.getIssueType();
   }

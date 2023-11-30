@@ -66,7 +66,7 @@ export class ComplaintCardsComponent  implements OnInit {
           if (data.status) {
             this.openTicketWork();
           } else {
-            this.openTicketTypeModal(data.locations);
+            this.openTicketTypeModal(data.locations, data.data);
           }
         },
         error:() => {
@@ -80,11 +80,12 @@ export class ComplaintCardsComponent  implements OnInit {
     });
   }
 
-  async openTicketTypeModal(locations: any) {
+  async openTicketTypeModal(locations: any, data: any) {
+    console.log(data);
     const modal = await this.modalCtrl.create({
       component: TicketTypeComponent,
       cssClass: 'my-modal',
-      componentProps: { allData:  this.data, locations: locations }
+      componentProps: { allData:  this.data, locations: locations, requestData1: data }
     });
     modal.onWillDismiss().then(disModal => {
       console.log(disModal);
