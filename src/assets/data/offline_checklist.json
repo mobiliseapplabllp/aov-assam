@@ -1,0 +1,231 @@
+[{
+	"schedule_id": 1342,
+	"schedule_unique_id": "CHK001342",
+	"schedule_status": "assigned",
+	"schedule_date": "2023-01-02",
+	"chk_cat_name": "Sewage Treatment Plant1",
+	"device_name": "Furniture1",
+	"location_desc": "Cafeteria1",
+	"barcode": "1010103115",
+  "backgroundColor": "#f70234",
+	"qus": [{
+		"q_desc": "The bar screen is clean and in good condition1",
+		"critical_desc": "Non Critical",
+		"q_id": 982,
+		"q_max_score": "0.00",
+		"q_type": 226,
+		"question_type": "option",
+		"options":[{
+			"q_id": 982,
+			"optn_id": 2944,
+			"optn_desc": "Yes",
+			"is_rmrk_mandatory": 0,
+			"is_doc_mandatory": 0
+		},{
+			"q_id": 982,
+			"optn_id": 2945,
+			"optn_desc": "No",
+			"is_rmrk_mandatory": 1,
+			"is_doc_mandatory": 1
+		},{
+			"q_id": 982,
+			"optn_id": 2946,
+			"optn_desc": "NA",
+			"is_rmrk_mandatory": 0,
+			"is_doc_mandatory": 0
+		}]
+	},{
+		"q_desc": "The bar screen is clean and in good condition2",
+		"critical_desc": "Non Critical",
+		"q_id": 983,
+		"q_max_score": "0.00",
+		"q_type": 226,
+		"question_type": "option",
+		"options":[{
+			"q_id": 983,
+			"optn_id": 3944,
+			"optn_desc": "Yes",
+			"is_rmrk_mandatory": 0,
+			"is_doc_mandatory": 0
+		},{
+			"q_id": 983,
+			"optn_id": 3945,
+			"optn_desc": "No",
+			"is_rmrk_mandatory": 1,
+			"is_doc_mandatory": 1
+		},{
+			"q_id": 983,
+			"optn_id": 3946,
+			"optn_desc": "NA",
+			"is_rmrk_mandatory": 0,
+			"is_doc_mandatory": 0
+		}]
+	},{
+		"q_desc": "The bar screen is clean and in good condition2",
+		"critical_desc": "Non Critical",
+		"q_id": 983,
+		"q_max_score": "0.00",
+		"q_type": 226,
+		"question_type": "option",
+		"options":[{
+			"q_id": 983,
+			"optn_id": 3944,
+			"optn_desc": "Yes",
+			"is_rmrk_mandatory": 0,
+			"is_doc_mandatory": 0
+		},{
+			"q_id": 983,
+			"optn_id": 3945,
+			"optn_desc": "No",
+			"is_rmrk_mandatory": 1,
+			"is_doc_mandatory": 1
+		},{
+			"q_id": 983,
+			"optn_id": 3946,
+			"optn_desc": "NA",
+			"is_rmrk_mandatory": 0,
+			"is_doc_mandatory": 0
+		}]
+	},{
+		"q_desc": "The bar screen is clean and in good condition2",
+		"critical_desc": "Non Critical",
+		"q_id": 983,
+		"q_max_score": "0.00",
+		"q_type": 226,
+		"question_type": "option",
+		"options":[{
+			"q_id": 983,
+			"optn_id": 3944,
+			"optn_desc": "Yes",
+			"is_rmrk_mandatory": 0,
+			"is_doc_mandatory": 0
+		},{
+			"q_id": 983,
+			"optn_id": 3945,
+			"optn_desc": "No",
+			"is_rmrk_mandatory": 0,
+			"is_doc_mandatory": 0
+		},{
+			"q_id": 983,
+			"optn_id": 3946,
+			"optn_desc": "NA",
+			"is_rmrk_mandatory": 0,
+			"is_doc_mandatory": 0
+		}]
+	},{
+		"q_desc": "The bar screen is clean and in good condition2",
+		"critical_desc": "Non Critical",
+		"q_id": 983,
+		"q_max_score": "0.00",
+		"q_type": 226,
+		"question_type": "option",
+		"options":[{
+			"q_id": 983,
+			"optn_id": 3944,
+			"optn_desc": "Yes",
+			"is_rmrk_mandatory": 0,
+			"is_doc_mandatory": 0
+		},{
+			"q_id": 983,
+			"optn_id": 3945,
+			"optn_desc": "No",
+			"is_rmrk_mandatory": 0,
+			"is_doc_mandatory": 0
+		},{
+			"q_id": 983,
+			"optn_id": 3946,
+			"optn_desc": "NA",
+			"is_rmrk_mandatory": 0,
+			"is_doc_mandatory": 0
+		}]
+	},{
+		"q_desc": "The bar screen is clean and in good condition2",
+		"critical_desc": "Non Critical",
+		"q_id": 983,
+		"q_max_score": "0.00",
+		"q_type": 226,
+		"question_type": "option",
+		"options":[{
+			"q_id": 983,
+			"optn_id": 3944,
+			"optn_desc": "Yes",
+			"is_rmrk_mandatory": 0,
+			"is_doc_mandatory": 0
+		},{
+			"q_id": 983,
+			"optn_id": 3945,
+			"optn_desc": "No",
+			"is_rmrk_mandatory": 0,
+			"is_doc_mandatory": 0
+		},{
+			"q_id": 983,
+			"optn_id": 3946,
+			"optn_desc": "NA",
+			"is_rmrk_mandatory": 0,
+			"is_doc_mandatory": 0
+		}]
+	}]
+},{
+	"schedule_id": 1343,
+	"schedule_unique_id": "CHK001343",
+	"schedule_status": "assigned",
+	"schedule_date": "2023-01-02",
+	"chk_cat_name": "Sewage Treatment Plant2",
+	"device_name": "Furniture",
+	"location_desc": "Cafeteria",
+	"barcode": "1010103115",
+  "backgroundColor": "#f70234",
+	"qus": [{
+		"q_desc": "The bar screen is clean and in good condition12",
+		"critical_desc": "Non Critical",
+		"q_id": 982,
+		"q_max_score": "0.00",
+		"q_type": 226,
+		"question_type": "option",
+		"options":[{
+			"q_id": 982,
+			"optn_id": 2944,
+			"optn_desc": "Yes",
+			"is_rmrk_mandatory": 0,
+			"is_doc_mandatory": 0
+		},{
+			"q_id": 982,
+			"optn_id": 2945,
+			"optn_desc": "No",
+			"is_rmrk_mandatory": 0,
+			"is_doc_mandatory": 0
+		},{
+			"q_id": 982,
+			"optn_id": 2946,
+			"optn_desc": "NA",
+			"is_rmrk_mandatory": 0,
+			"is_doc_mandatory": 0
+		}]
+	},{
+		"q_desc": "The bar screen is clean and in good condition22",
+		"critical_desc": "Non Critical",
+		"q_id": 983,
+		"q_max_score": "0.00",
+		"q_type": 226,
+		"question_type": "option",
+		"options":[{
+			"q_id": 983,
+			"optn_id": 3944,
+			"optn_desc": "Yes",
+			"is_rmrk_mandatory": 0,
+			"is_doc_mandatory": 0
+		},{
+			"q_id": 983,
+			"optn_id": 3945,
+			"optn_desc": "No",
+			"is_rmrk_mandatory": 0,
+			"is_doc_mandatory": 0
+		},{
+			"q_id": 983,
+			"optn_id": 3946,
+			"optn_desc": "NA",
+			"is_rmrk_mandatory": 0,
+			"is_doc_mandatory": 0
+		}]
+	}]
+}]

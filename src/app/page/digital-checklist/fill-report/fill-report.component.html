@@ -1,0 +1,146 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title >Fill Reports</ion-title>
+    <ion-buttons slot="end">
+      <ion-button id="click-trigger" slot="icon-only">
+        <ion-icon name="language-outline"></ion-icon>
+      </ion-button>
+      <!-- <ion-button (click)="makeOffline()"  [disabled]="isAlreadySaved">Offline Save</ion-button> -->
+    </ion-buttons>
+    <ion-popover trigger="click-trigger" triggerAction="click" [dismissOnSelect]="true">
+      <ng-template>
+        <ion-content>
+          <ion-item (click)="changeLan('hi')" >
+            <ion-label>Hindi</ion-label>
+          </ion-item>
+          <ion-item (click)="changeLan('en')" >
+            <ion-label>English</ion-label>
+          </ion-item>
+          <ion-item (click)="changeLan('pa')" >
+            <ion-label>Punjabi</ion-label>
+          </ion-item>
+        </ion-content>
+      </ng-template>
+    </ion-popover>
+
+    <!-- <ion-buttons slot="end" >
+      <ion-button (click)="makeOffline()"  [disabled]="isAlreadySaved">Offline Save</ion-button>
+    </ion-buttons> -->
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div *ngFor="let dat of scheduleArr">
+    <ion-card>
+      <ion-row>
+        <ion-col size="6">
+          <ion-text color="primary"> PC Name</ion-text><br>
+          <ion-text>{{arr.ccName}}</ion-text>
+        </ion-col>
+        <ion-col size="6">
+          <ion-text color="primary"> Location</ion-text><br>
+          <ion-text>{{arr.location_desc}}</ion-text>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="6">
+          <ion-text color="primary"> CheckList ID</ion-text><br>
+          <ion-text>{{arr.schedule_unique_id}}</ion-text>
+        </ion-col>
+        <ion-col size="6">
+          <ion-text color="primary"> CheckList</ion-text><br>
+          <ion-text>{{dat.chk_cat_name}}</ion-text>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="6">
+          <ion-text color="primary"> Schedule Date</ion-text><br>
+          <ion-text>{{arr.schedule_date}}</ion-text>
+        </ion-col>
+        <ion-col size="6" *ngIf="schedule_status === 2 || schedule_status === 'attended'" >
+          <ion-text color="primary"> Attended Date</ion-text><br>
+          <ion-text>{{arr.submitted_date}}</ion-text>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="schedule_status === 2 || schedule_status === 'attended'" >
+        <ion-col size="6">
+          <ion-text color="primary"> Review Date</ion-text><br>
+          <ion-text>{{arr.review_date}}</ion-text>
+        </ion-col>
+        <ion-col size="6" >
+          <ion-text color="primary"> Submit By</ion-text><br>
+          <ion-text>{{arr.user}}</ion-text>
+        </ion-col>
+      </ion-row>
+    </ion-card>
+    <div *ngIf="dat.isResponseShow" class="ion-no-padding">
+      <div style="margin:10px;padding:5px 0px ;border:1px solid black;border-radius: 10px;" *ngFor="let val of dat.qus; let i = index" [ngClass]="{critical: val.critical_desc === 'Critical', noncritical: val.critical_desc === 'Non Critical', fullborder: val.isNotFill === true, bgcolor: val.bgcolor === true}" #a>
+        <ion-item color="none">
+          <ion-avatar class="center">
+            <b>{{i+1}}</b>
+          </ion-avatar>
+          <ion-label class="ion-text-wrap" [innerHTML]="val.q_desc"></ion-label>
+          <ion-buttons slot="end" (click)="speakCondition(val, i)" [hidden]="schedule_status === 2 || schedule_status === 'attended'">
+            <ion-button slot="icon-only">
+              <ion-icon name="volume-high-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-item>
+        <ion-row>
+          <ion-col size="12" class="ion-no-padding" >
+            <ion-radio-group  [(ngModel)]="val.rspns" (ionChange)="changeResponseAction(val)" color="none">
+              <ion-row>
+                <ion-col size="4" *ngFor="let opt of val.options">
+                  <ion-item lines="none" [disabled]="schedule_status === 2 || schedule_status === 'attended'" >
+                    <ion-label>{{opt.optn_desc}}</ion-label>
+                    <ion-radio slot="start" [value]="opt.optn_id" style="margin-right:3px"></ion-radio>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+            </ion-radio-group>
+          </ion-col>
+        </ion-row>
+        <ion-item [ngClass]="{redBorder: val.isRemarkMandatory === 1 && !val.remark }">
+          <ion-input type="text" [(ngModel)]="val.remark" placeholder="Enter Remark" (change)="changeRemark(val)" [disabled]="schedule_status === 2 || schedule_status === 'attended' || !val.rspns"></ion-input>
+          <ion-buttons slot="end" [hidden]="schedule_status === 2 || schedule_status === 'attended'">
+            <ion-button slot="icon-only" (click)="listenCondition(val)">
+              <ion-icon name="mic-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-item>
+        <ion-row>
+          <ion-col size="6" class="ion-no-padding" >
+            <div [hidden]="schedule_status === 2 || schedule_status === 'attended'" >
+              <ion-button size="small" [color]="!val.imagename ? 'primary': 'success'" [fill]="!val.imagename ? 'outline' : 'solid' " (click)="presentActionSheet(val, 1)" [ngClass]="{redBorder: val.isDocMandatory === 1 &&  !val.imagename}">
+                IMG
+                <ion-icon name="attach-outline" slot="end" *ngIf="!val.imagename"></ion-icon>
+                <ion-icon name="checkmark-done-outline" slot="end" *ngIf="val.imagename"></ion-icon>
+              </ion-button>
+            </div>
+          </ion-col>
+          <ion-col size="6" class="ion-text-right" *ngIf="val.attachment">
+            <ion-button color="danger" (click)="viewDocs(val.attachment)" fill="clear">
+              <ion-icon name="attach-outline"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </div>
+    </div>
+  </div>
+  <ion-item [ngClass]="{fullborder: remarkErr && !remark}">
+    <ion-label position="floating">Remark</ion-label>
+    <ion-input type="text" [(ngModel)]="remark" [disabled]="schedule_status === 2 || schedule_status === 'attended' "></ion-input>
+  </ion-item>
+  <img [src]="sign_attachment" style="width:200px;height:200px;" *ngIf="sign_attachment" style="border:1px solid black">
+  <ion-item lines="none" [hidden]="schedule_status === 2 || schedule_status === 'attended'">
+    <ion-button (click)="openSign()" [fill]="signatureBase64 ? 'solid':'outline'">Signature <ion-icon name="checkmark-done-outline" slot="end" *ngIf="signatureBase64"></ion-icon></ion-button>
+    <img [src]="signatureBase64" style="height:30px;width:30px;border:1px solid black" slot="end" *ngIf="signatureBase64">
+  </ion-item>
+</ion-content>
+<ion-footer *ngIf="scheduleArr.length > 0" [hidden]="schedule_status === 2 || schedule_status === 'attended'">
+  <ion-toolbar>
+    <ion-button expand="block" (click)="finalSubmit()" tappable>Submit <ion-icon name="save-outline" slot="end"></ion-icon> </ion-button>
+  </ion-toolbar>
+</ion-footer>

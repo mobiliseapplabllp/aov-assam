@@ -1,0 +1,55 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button deafultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Attendance</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="contents">
+  <div class="div1">
+    <ion-row class="row1">
+      <ion-col>
+        <div class="row1">{{yesterday }}</div>
+        <div class="row2">{{today }}</div>
+        <div class="row1">{{tommorow}}</div>
+      </ion-col>
+      <ion-col>
+        <div class="div_round">
+          <span style="color: var(--ion-color-primary);">{{ currentTime }}</span>
+        </div>
+      </ion-col>
+    </ion-row>
+  </div>
+
+  <ion-card class="cards">
+    <div class="div2">
+      <ion-grid>
+        <ion-item (click)="openRoName()">
+          <ion-label position="floating">Select Site <ion-text color="danger">*</ion-text></ion-label>
+          <ion-input type="text" [(ngModel)]="costCenter" readonly></ion-input>
+        </ion-item>
+        <ion-row *ngIf="checkLastAttendanceStatus">
+          <ion-col class="ion-text-center">
+            <ion-button (click)="checkGPSValidation('IN')" [disabled]="attendanceStatus">PUNCH IN</ion-button>
+          </ion-col>
+          <ion-col class="ion-text-center">
+            <ion-button (click)="checkGPSValidation('OUT')" [disabled]="!attendanceStatus">PUNCH OUT</ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col class="ion-text-center">
+            <ion-button (click)="attendanceHistory()">ATTENDANCE HISTORY</ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      <h5>
+        <ion-icon name="time"></ion-icon> Punch in at-- {{latitude}} - {{longitude}}
+      </h5>
+    </div>
+  </ion-card>
+  <section style="height:300px;width:100%; padding:5px;">
+    <div id="map" style="height:100%;width:100%"></div>
+  </section>
+</ion-content>

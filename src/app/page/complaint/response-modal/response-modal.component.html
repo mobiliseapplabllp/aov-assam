@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Response</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close(null, false)">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-grid>
+    <ion-row *ngFor="let dat of dataView">
+      <ion-col class="center" size="4">{{dat.barcode}}</ion-col>
+      <ion-col>{{dat.msg}}</ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+<ion-footer class="ion-no-border">
+  <ion-toolbar>
+    <ion-button (click)="close(null, false)" color="danger" expand="block">Close <ion-icon name="close-outline" slot="end"></ion-icon> </ion-button>
+  </ion-toolbar>
+</ion-footer>

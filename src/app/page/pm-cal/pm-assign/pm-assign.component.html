@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Assign</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModal(null, false)">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+
+  <ion-item *ngFor="let dat of allTeamMember;let i = index">
+    <ion-avatar class="center">{{i+1}}</ion-avatar>
+    <ion-label class="ion-text-wrap">
+      {{dat.label}}
+    </ion-label>
+    <ion-button slot="end" color="primary" (click)="submit(dat)">
+      Assign
+    </ion-button>
+  </ion-item>
+</ion-content>

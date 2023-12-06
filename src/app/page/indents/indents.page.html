@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+     <ion-label>Indent</ion-label>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-segment [(ngModel)]="status">
+    <ion-segment-button value="pending">
+      <ion-label>Pending </ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="not-pending">
+      <ion-label>Reject/Closed</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+  <div [ngSwitch]='status'>
+    <div *ngSwitchCase="'pending'">
+      <app-indent-card *ngFor="let dat of indentView" [data]="dat" [type]="'pending'" (greetEvent)="myCustom($event)"></app-indent-card>
+      <ion-infinite-scroll threshold="100px" (ionInfinite)="infiniteScroll($event)">
+        <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data..."> </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </div>
+    <div *ngSwitchCase="'not-pending'">
+      <app-indent-card *ngFor="let dat of indentView" [data]="dat" [type]="'not_pending'"></app-indent-card>
+      <ion-infinite-scroll threshold="100px" (ionInfinite)="infiniteScroll($event)">
+        <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data..."> </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </div>
+  </div>
+</ion-content>

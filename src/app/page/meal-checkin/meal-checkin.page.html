@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Meal Checkin</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="checkinMeal">
+    <ion-item>
+      <ion-label position="floating">Select RO Name  <ion-text color="danger">*</ion-text> </ion-label>
+      <ion-select interface="action-sheet" formControlName="pc_id" (ionChange)="changeRo($event)" mode="ios">
+        <ion-select-option *ngFor="let dat of allRoName" [value]="dat.value">{{dat.label}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Select Location  <ion-text color="danger">*</ion-text> </ion-label>
+      <ion-select interface="action-sheet" formControlName="loc_id" (ionChange)="changeLocation($event)" mode="ios">
+        <ion-select-option *ngFor="let dat of allLocation" [value]="dat.loc_id">{{dat.loc_name}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Select Roaster  <ion-text color="danger">*</ion-text> </ion-label>
+      <ion-select interface="action-sheet" formControlName="roaster_id" (ionChange)="changeRoster($event)" mode="ios">
+        <ion-select-option *ngFor="let dat of allRoaster" [value]="dat.meal_type_id">{{dat.meal_type_name}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-row>
+      <ion-col>
+        <ion-button expand="block" (click)="openQrScanner()">Scan QR</ion-button>
+      </ion-col>
+    </ion-row>
+  </form>
+
+</ion-content>

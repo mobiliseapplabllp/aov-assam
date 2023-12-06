@@ -1,0 +1,107 @@
+ion-content.contents {
+  ion-card.cardFirst {
+      margin: 0;
+      background-image: linear-gradient(to left,#B0C4DE,#20B2AA);
+      height: 70px;
+  }
+  ion-card.cardSecond {
+      margin: 0;
+      background-image: linear-gradient(to left, #66CDAA,#32CD32);
+      height: 70px;
+  }
+  ion-card.cardThird {
+      margin: 0;
+      background-image: linear-gradient(to left,#FA8072,#FF6347);
+      height: 70px;
+  }
+  ion-card.cardFourth {
+      margin: 0;
+      background-image: linear-gradient(to left,#A9A9A9,#8FBC8F);
+      height: 70px;
+  }
+  ion-card-header.cardHead {
+      height: 20px;
+      margin-top: 0;
+      padding-top: 0;
+      font-weight: bold;
+      color: black;
+  }
+  p.paraLeave {
+      margin-top: 3px;
+      color: white;
+  }
+
+  div.div1{
+      ion-row.row1{
+        position: relative;
+        ion-col{
+          text-align:center;
+
+          div.row1{
+            background-color: var(--ion-color-primary);
+            height:50px;
+            margin-bottom:3px;
+            border-radius:6px;
+            text-align:center;
+            line-height:50px;
+            text-transform: uppercase;
+            color:white;
+          }
+          div.row2{
+            background-color:var(--ion-color-light);
+            height:50px;
+            margin-bottom:3px;
+            border-radius:6px;
+            text-align:center;
+            line-height:50px;
+            color:black;
+            text-transform: uppercase;
+            border:1px solid var(--ion-color-primary)
+          }
+          div.div_round{
+            // color: #3880ff;
+            height:150px;
+            width:150px;
+            border:2px solid gray;
+            border-radius:50%;
+            text-align:center;
+            margin:auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            span{
+              text-align:center;
+              line-height:150px;
+              font-size:25px;
+              color:black;
+            }
+          }
+        }
+      }
+    }
+
+    ion-card.cards{
+      div.div2{
+        padding: 5px;
+        height:100%;
+        ion-grid{
+          ion-row{
+            ion-col{
+              ion-button{
+                width:100%;
+                font-size:11px;
+                height:40px;
+                font-weight:bold;
+              }
+            }
+          }
+        }
+
+      }
+    }
+    div.map-canvas {
+      height: 300px;
+      width: 100%;
+    }
+}

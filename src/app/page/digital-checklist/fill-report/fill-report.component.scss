@@ -1,0 +1,23 @@
+.critical {
+  border-right:4px solid var(--ion-color-danger) !important;
+}
+
+.noncritical {
+  border-right:4px solid var(--ion-color-success) !important;
+}
+
+.fullborder {
+  border:3px solid var(--ion-color-danger) !important;
+}
+
+.redBorder {
+  border:2px solid var(--ion-color-danger) !important;
+}
+
+.bgcolor {
+  background-color: rgb(233, 186, 97);
+}
+
+ion-text {
+  font-weight: 550;
+}

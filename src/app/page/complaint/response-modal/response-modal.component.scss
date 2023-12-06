@@ -1,0 +1,13 @@
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+ion-grid {
+  ion-row{
+    ion-col {
+      border:1px solid var(--ion-color-primary);
+      font-weight: 550;
+    }
+  }
+}

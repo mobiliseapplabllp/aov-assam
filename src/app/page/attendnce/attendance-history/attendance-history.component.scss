@@ -1,0 +1,22 @@
+ion-content.contents{
+  .odd{
+      background-color:rgb(228, 229, 230);
+    }
+    .even{
+      background-color:white;
+    }
+  // ion-grid.grid1{
+  //     // border:1px solid grey;
+  //     ion-row{
+  //         ion-col{
+  //             text-align: center;
+  //             // border:1px solid black;
+  //         }
+  //     }
+  // }
+  ion-row {
+    ion-col {
+      font-weight: 500;
+    }
+  }
+}

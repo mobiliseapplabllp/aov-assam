@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Register</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-item color="light"  >
+    <ion-label position="floating">Company Code <ion-text color="danger">*</ion-text></ion-label>
+    <ion-input type="text"> </ion-input>
+  </ion-item>
+
+  <ion-item color="light" >
+    <ion-label position="floating"> Mobile No <ion-text color="danger">*</ion-text></ion-label>
+    <ion-input type="number"> </ion-input>
+  </ion-item>
+
+  <ion-item color="light" >
+    <ion-label position="floating">Name <ion-text color="danger">*</ion-text></ion-label>
+    <ion-input type="text"> </ion-input>
+  </ion-item>
+
+  <ion-item color="light" >
+    <ion-label position="floating">Emp Code <ion-text color="danger">*</ion-text></ion-label>
+    <ion-input type="text"> </ion-input>
+  </ion-item>
+
+  <ion-item color="light" >
+    <ion-label position="floating">Email <ion-text color="danger">*</ion-text></ion-label>
+    <ion-input type="text"> </ion-input>
+  </ion-item>
+
+  <ion-row>
+    <ion-col>
+      <ion-button expand="block" color="primary" (click)="registeredFormSubmit()">Register</ion-button>
+    </ion-col>
+  </ion-row>
+
+</ion-content>

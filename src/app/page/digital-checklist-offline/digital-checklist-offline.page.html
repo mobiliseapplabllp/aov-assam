@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Digital Checklist Offline</ion-title>
+    <ion-buttons slot="end" *ngIf="isInternet">
+      <ion-button (click)="uploadToSever()">Save All</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-item *ngFor="let dat of allData" lines="full" color="none" (click)="openTran(dat)" [ngStyle]="{'background-color': dat.offlineSave ? 'green': 'none'}">
+    <ion-label class="ion-text-wrap">
+      <h2><b>{{dat.schedule_unique_id}}</b></h2>
+      <p>{{dat.chk_cat_name}}</p>
+      <p>{{dat.location_desc}}</p>
+      <p>{{dat.barcode}}</p>
+    </ion-label>
+    <ion-label slot="end" class="ion-text-right">
+      {{dat.schedule_date | date: 'dd-MMM-yyyy'}}<br>
+      {{dat.schedule_time}}<br>
+      <b>{{dat.schedule_status}}</b><br>
+      {{dat.device_name}}
+    </ion-label>
+  </ion-item>
+</ion-content>

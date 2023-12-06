@@ -1,0 +1,89 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Digital Checklist</ion-title>
+    <ion-buttons slot="end">
+      <!-- <ion-button fill="clear" color="light" (click)="openPage('/digital-checklist-offline')">
+        <ion-icon name="cloud-upload-outline"></ion-icon>
+      </ion-button> -->
+      <ion-button id="chklist-date" fill="clear" color="light" class="ion-text-capitalize" [hidden]="scanBarcode">
+        <ion-icon name="calendar-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-popover trigger="chklist-date" >
+      <ng-template>
+        <ion-datetime #popoverDatetime max="2099" presentation="date" size="cover" (ionChange)="changeDateComponent($event)"></ion-datetime>
+      </ng-template>
+    </ion-popover>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding-start ion-padding-end">
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" >
+    <ion-fab-button fill="clear" color="primary" (click)="openBarcode()">
+      <ion-icon name="qr-code-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <ion-row [hidden]="scanBarcode">
+    <ion-col size="4" class="ion-text-left">
+      <ion-button fill="clear" (click)="changeDate('prev')">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </ion-button>
+    </ion-col>
+    <ion-col size="4" class="ion-text-center center">
+      <b>{{selectedDate | date: 'dd-MMM-yyyy'}}</b>
+    </ion-col>
+    <ion-col size="4" class="ion-text-right" >
+      <ion-button fill="clear" (click)="changeDate('next')">
+        <ion-icon name="chevron-forward-outline"></ion-icon>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+
+  <ion-segment [(ngModel)]='segmentStatus' style="background-color: white">
+    <ion-segment-button value="assigned">
+      <ion-label>Assigned(<ion-text color="danger">{{assignCheckList.length}}</ion-text>)</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="attended">
+      <ion-label>Attended(<ion-text color="danger">{{attendedCheckList.length}}</ion-text>)</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <div [ngSwitch]='segmentStatus'>
+    <div *ngSwitchCase= "'assigned'">
+      <ion-item *ngFor="let dat of assignCheckList" lines="full" color="none" (click)="openFillReport(dat)" [ngStyle]="{'border-left': '3px solid' + dat.backgroundColor }">
+        <ion-label class="ion-text-wrap">
+          <h2><b>{{dat.schedule_unique_id}}</b></h2>
+          <p>{{dat.chk_cat_name}}</p>
+          <p>{{dat.location_desc}}</p>
+          <p>{{dat.barcode}}</p>
+        </ion-label>
+        <ion-label slot="end" class="ion-text-right">
+          {{dat.schedule_date | date: 'dd-MMM-yyyy'}}<br>
+          {{dat.schedule_time}}<br>
+          <b>{{dat.schedule_status}}</b><br>
+          {{dat.device_name}}
+        </ion-label>
+      </ion-item>
+    </div>
+    <div *ngSwitchCase= "'attended'">
+      <ion-item *ngFor="let dat of attendedCheckList" lines="full" color="none" (click)="openFillReport(dat)" [ngStyle]="{'border-left': '3px solid' + dat.backgroundColor }">
+        <ion-label class="ion-text-wrap">
+          <h2><b>{{dat.schedule_unique_id}}</b></h2>
+          <p>{{dat.chk_cat_name}}</p>
+          <p>{{dat.location_desc}}</p>
+          <p>{{dat.barcode}}</p>
+        </ion-label>
+        <ion-label slot="end" class="ion-text-right">
+          {{dat.schedule_date | date: 'dd-MMM-yyyy'}}<br>
+          {{dat.schedule_time}}<br>
+          <b>{{dat.schedule_status}}</b><br>
+          {{dat.device_name}}
+        </ion-label>
+      </ion-item>
+    </div>
+  </div>
+</ion-content>

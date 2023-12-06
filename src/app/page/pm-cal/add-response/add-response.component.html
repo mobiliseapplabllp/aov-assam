@@ -1,0 +1,61 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title> Corrective Response Detail </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close(null, false)">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <form [formGroup]="addResponse" >
+    <ion-row>
+      <ion-col class="ion-text-wrap">
+        <ion-text><b>Question Refer:</b> </ion-text><br> <ion-text color="medium" [innerHTML]="requestedData.q_desc"></ion-text>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-text color="dark">Requirement</ion-text><br>
+        <ion-text color="medium">{{requestedData.requirement}}</ion-text>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button color="warning" size="small" expand="block">{{requestedData.critical_desc}}</ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button color="primary" size="small" expand="block">{{requestedData.scope_desc}}</ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button color="warning" size="small" expand="block">{{requestedData.slaDate}}</ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-item>
+      <ion-label position="floating">Corrective Action Response <ion-text color="danger">*</ion-text> </ion-label>
+      <ion-select interface="action-sheet" formControlName="corrective_action" mode="ios">
+        <ion-select-option *ngFor="let dat of correctiveArray" value={{dat.optn_id}}>{{dat.optn_desc}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item id="add-rspns-date">
+      <ion-label color="primary" position="floating">Corrective Action Date</ion-label>
+      <ion-input type="text" [value]="addResponse.value.rspns_date | date"   placeholder="Action Date"  readonly></ion-input>
+    </ion-item>
+    <ion-popover trigger="add-rspns-date" >
+      <ng-template>
+        <ion-datetime #popoverDatetime [min]="newDate" presentation="date" formControlName="rspns_date" [max]="maxDate" (ionChange)="changeDate()"></ion-datetime>
+      </ng-template>
+    </ion-popover>
+    <ion-item>
+      <ion-label position="floating">Remark <ion-text color="danger">*</ion-text></ion-label>
+      <ion-input type="text" formControlName="remark"></ion-input>
+    </ion-item>
+    <ion-button size="small" fill="outline" (click)="presentActionSheet()" color="{{!isImgUpload ? 'danger' : 'success'}}">Attachment <ion-icon *ngIf="isImgUpload" name="checkmark-circle-outline"></ion-icon></ion-button>
+    <ion-row>
+      <ion-col>
+        <ion-button size="full" (click)="submit()" [disabled]="!addResponse.valid">Save</ion-button>
+      </ion-col>
+    </ion-row>
+  </form>
+</ion-content>
