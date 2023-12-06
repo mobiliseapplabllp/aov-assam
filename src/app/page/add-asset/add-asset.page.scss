@@ -66,3 +66,9 @@ input {
   width: 1000px;
   height: 1000px;
 }
+
+ion-row {
+  ion-col {
+    padding: 0px;
+  }
+}

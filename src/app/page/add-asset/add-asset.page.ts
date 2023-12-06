@@ -14,6 +14,7 @@ import * as moment from 'moment';
 import { FloorComponent } from 'src/app/shared/floor/floor.component';
 import { LocationComponent } from 'src/app/shared/location/location.component';
 import { DeviceGroupComponent } from 'src/app/shared/device-group/device-group.component';
+import { CostCenterComponent } from 'src/app/shared/cost-center/cost-center.component';
 @Component({
   selector: 'app-add-asset',
   templateUrl: './add-asset.page.html',
@@ -126,7 +127,7 @@ export class AddAssetPage implements OnInit {
 
     });
     this.pinPointStyleFun();
-    this.getFacilityType();
+    // this.getFacilityType();
     // this.getDeviceGroup();
     this.getOwnership();
     this.getEquipStatus();
@@ -383,12 +384,12 @@ export class AddAssetPage implements OnInit {
 
 
   async openSiteModal() {
-    if (!this.addAsset.value.faciity_type) {
-      alert('Please Select Facilty Type');
-      return;
-    }
+    // if (!this.addAsset.value.faciity_type) {
+    //   alert('Please Select Facilty Type');
+    //   return;
+    // }
     const modal = await this.modalController.create({
-      component: AssetPlantComponent,
+      component: CostCenterComponent,
       cssClass: 'my-modal',
       componentProps : { faciity_type: this.addAsset.value.faciity_type}
     });
