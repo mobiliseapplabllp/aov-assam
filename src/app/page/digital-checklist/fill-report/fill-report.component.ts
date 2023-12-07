@@ -232,12 +232,15 @@ export class FillReportComponent  implements OnInit {
         if (voiceResponse === 'yes' || voiceResponse === 'yess' || voiceResponse === 'yeees' || voiceResponse === 'yaaa' || voiceResponse === 'ha') {
           option = val.options.filter((ops: any) => ops.optn_desc === 'Yes')[0];
           respns = option.optn_id;
-        } else if (voiceResponse === 'no' || voiceResponse === 'nooo' || voiceResponse === 'naaa' || voiceResponse === 'na' || voiceResponse === 'nhi') {
+        } else if (voiceResponse === 'no' || voiceResponse === 'nooo') {
           option = val.options.filter((ops: any) => ops.optn_desc === 'No')[0];
+          respns = option.optn_id;
+        } else if (voiceResponse === 'n a' || voiceResponse === 'na' || voiceResponse === 'not applicable' || voiceResponse === 'not app') {
+          option = val.options.filter((ops: any) => ops.optn_desc === 'NA')[0];
           respns = option.optn_id;
         } else {
           val.tempoutput = 'response';
-          val.q_desc_temp = 'We Accept Only yes, no and NA';
+          val.q_desc_temp = 'We Accept Only yes, no and Not Applicable';
           this.speak(val);
           return;
         }
