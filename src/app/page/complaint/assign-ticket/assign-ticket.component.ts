@@ -3,7 +3,6 @@ import { LoadingController, ModalController } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { ComplaintService } from 'src/app/provider/complaint/complaint.service';
 import { environment } from 'src/environments/environment';
-
 @Component({
   selector: 'app-assign-ticket',
   templateUrl: './assign-ticket.component.html',
@@ -12,6 +11,7 @@ import { environment } from 'src/environments/environment';
 export class AssignTicketComponent  implements OnInit {
   ticket_id: any;
   empList: any = [];
+  empListCopy: any = [];
   emp: any = [];
   loading: any;
   userData: any = [];
@@ -33,20 +33,47 @@ export class AssignTicketComponent  implements OnInit {
   }
 
   getTeamsMember() {
-    this.httpComplaint.getTeam().subscribe(data => {
-      if (data.status) {
-        this.empList = data.data
-      } else {
-        this.httpCommon.presentToast(data.msg, 'warning');
-      }
-    });
+    this.presentLoading().then(preLoad => {
+      this.httpComplaint.getTeam().subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.empList = data.data;
+            this.empListCopy = data.data;
+          } else {
+            this.httpCommon.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissLoading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissLoading();
+        }
+      });
+    })
+
   }
 
-  assign() {
-    console.log(this.emp);
+  search(ev: any) {
+    let val: any;
+    console.log(ev.target.value);
+    val = ev.target.value;
+    this.empList = this.empListCopy;
+    if (val && val.trim() !== '') {
+      this.empList = this.empList.filter((dat: any) => {
+        if ((dat.label.toLowerCase().indexOf(val.toLowerCase()) > -1)) {
+          return (dat.label.toLowerCase().indexOf(val.toLowerCase()) > -1);
+        }
+        return
+      });
+    }
+  }
+
+  assign(data: any) {
     const obj = {
       source: environment.source,
-      team: this.emp.value + '-' + this.emp.team_id,
+      team: data.value + '-' + data.team_id,
       ticketId: this.ticket_id
     }
     this.presentLoading().then(preLoad => {

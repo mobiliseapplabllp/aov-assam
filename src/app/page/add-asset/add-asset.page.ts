@@ -78,7 +78,7 @@ export class AddAssetPage implements OnInit {
     private loadingController: LoadingController,
     private router: Router) {
     this.addAsset = this.formbuilder.group({
-      faciity_type: ['', Validators.required],
+      faciity_type: [''],
       site_id_description:[''],
       site_id: ['', Validators.required],
       block_id: [''],

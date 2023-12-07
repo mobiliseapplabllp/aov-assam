@@ -1,6 +1,5 @@
 <ion-header>
   <ion-toolbar color="primary">
-
     <ion-title>Assign Ticket</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="close(null, false)">
@@ -8,9 +7,20 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar (ionChange)="search($event)" debounce="1000"></ion-searchbar>
+  </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-card>
+  <ion-virtual-scroll [items]="empList" approxItemHeight="320px">
+    <ion-item *virtualItem="let item; let itemBounds = bounds;">
+      <ion-label class="ion-text-wrap">
+        {{item.label}}
+      </ion-label>
+      <ion-button slot="end" (click)="assign(item)">Assign</ion-button>
+    </ion-item>
+  </ion-virtual-scroll>
+  <!-- <ion-card>
     <ion-item>
       <ion-label position="floating">Select Employee</ion-label>
       <ion-select interface="action-sheet" [(ngModel)]="emp">
@@ -22,6 +32,6 @@
         <ion-button shape="round" (click)="assign()">Assign</ion-button>
       </ion-col>
     </ion-row>
-  </ion-card>
+  </ion-card> -->
 
 </ion-content>

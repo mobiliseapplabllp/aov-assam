@@ -172,13 +172,20 @@ export class FillReportComponent  implements OnInit {
     if (!val.tempoutput || val.tempoutput === 'response') {
       val.q_desc_temp = val.q_desc
     }
-    this.changeBackground(ind);
-    this.scroll(ind);
-    this.speak(val);
-
+    const isLanguageSupported = async (lang: string) => {
+      const isSupported = await TextToSpeech.isLanguageSupported({ lang });
+      if (isSupported.supported === false) {
+        this.common.presentToast('Your Phone Not Supported This Language', 'warning');
+      } else {
+        this.changeBackground(ind);
+        this.scroll(ind);
+        this.speak(val);
+      }
+    };
+    isLanguageSupported(this.selectedLanguage);
   }
 
-  speak(val: any) {
+  async speak(val: any) {
     const speak = async () => {
       await TextToSpeech.speak({
         text: val.q_desc_temp,

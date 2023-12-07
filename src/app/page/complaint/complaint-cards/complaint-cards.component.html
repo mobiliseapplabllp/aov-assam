@@ -19,9 +19,6 @@
     <ion-row>
       <ion-col>
         <ion-text color="light" class="head">{{data.stage_desc}} ({{data.issue_desc}})</ion-text>
-        <!-- <ion-text color="light" class="head" *ngIf="data.rslv_date == '0000-00-00 00:00:00'  ">Not Resolved Yet</ion-text><br>
-        <ion-text color="light" class="head" *ngIf="data.rslv_date !== '0000-00-00 00:00:00'  ">Resolved Date {{data.rslv_date}}</ion-text><br>
-        <ion-text color="light" class="head">{{data.totalDelay}}</ion-text> -->
       </ion-col>
       <ion-col>
         <ion-text color="light" class="head" *ngIf="data.rslv_date === '0000-00-00 00:00:00'"> Ticket Ageing: {{data.totalDelay}}</ion-text>
@@ -111,19 +108,18 @@
         <ion-col class="ion-text-center">
           <ion-button style="width:80%;font-size:xx-small;" color="medium" (click)="history()">History </ion-button>
         </ion-col>
-        <ion-col class="ion-text-center" >
+        <ion-col class="ion-text-center" *ngIf="data.canWork" >
           <ion-button *ngIf="data.stage_id === 4 || data.stage_id === 6; else worknow" style="width:80%;font-size:xx-small;" color="success" (click)="fsr(data.tkts_id)">EFSR</ion-button>
           <ng-template #worknow>
             <ion-button style="width:80%;font-size:xx-small;" color="warning" (click)="work_now()">Work Now</ion-button>
           </ng-template>
-          <!-- <ion-button *ngIf="data.rslv_date === '0000-00-00 00:00:00';else efsr" style="width:80%;font-size:xx-small;" color="warning" (click)="work_now()">Work Now</ion-button>
-          <ng-template #efsr>
-            <ion-button style="width:80%;font-size:xx-small;" color="success" (click)="fsr(data.tkts_id)">EFSR</ion-button>
-          </ng-template> -->
         </ion-col>
-        <!-- <ion-col class="ion-text-center" *ngIf="data.is_reopen_icon === 1">
-          <ion-button style="width:80%;font-size:xx-small;" color="tertiary"  (click)="presentAlertConfirm(data.tkts_id)">Re-open</ion-button>
-        </ion-col> -->
+        <ion-col class="ion-text-center"  *ngIf="!data.canWork" [hidden]="data.stage_id === 4 || data.stage_id === 6 ">
+          <ion-button style="width:80%;font-size:xx-small;" color="success" (click)="assignTicket(data.tkts_id)">Assign</ion-button>
+        </ion-col>
+        <ion-col class="ion-text-center"  *ngIf="(data.stage_id === 4 || data.stage_id === 6) && !data.canWork ">
+          <ion-button style="width:80%;font-size:xx-small;" color="success" (click)="fsr(data.tkts_id)">EFSR</ion-button>
+        </ion-col>
       </ion-row>
     </ion-grid>
 </ion-card>

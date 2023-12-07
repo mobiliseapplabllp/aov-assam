@@ -55,13 +55,13 @@
   <div [ngSwitch]='segmentStatus'>
     <div *ngSwitchCase= "'assigned'">
       <ion-item *ngFor="let dat of assignCheckList" lines="full" color="none" (click)="openFillReport(dat)" [ngStyle]="{'border-left': '3px solid' + dat.backgroundColor }">
-        <ion-label class="ion-text-wrap">
+        <ion-label class="ion-text-left ion-text-wrap" style="width:50%">
           <h2><b>{{dat.schedule_unique_id}}</b></h2>
           <p>{{dat.chk_cat_name}}</p>
           <p>{{dat.location_desc}}</p>
           <p>{{dat.barcode}}</p>
         </ion-label>
-        <ion-label slot="end" class="ion-text-right">
+        <ion-label slot="end" class="ion-text-right ion-text-wrap" style="width:50%">
           {{dat.schedule_date | date: 'dd-MMM-yyyy'}}<br>
           {{dat.schedule_time}}<br>
           <b>{{dat.schedule_status}}</b><br>

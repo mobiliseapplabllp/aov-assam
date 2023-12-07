@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment';
 import { SiteDetailComponent } from '../site-detail/site-detail.component';
 import { TicketHistoryComponent } from '../ticket-history/ticket-history.component';
 import { TicketTypeComponent } from '../ticket-type/ticket-type.component';
+import { AssignTicketComponent } from '../assign-ticket/assign-ticket.component';
 @Component({
   selector: 'app-complaint-cards',
   templateUrl: './complaint-cards.component.html',
@@ -34,7 +35,14 @@ export class ComplaintCardsComponent  implements OnInit {
     private navCtrl: NavController
   ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    console.log(this.ticketType);
+    // const user = localStorage.getItem('user');
+    // if (user) {
+    //   this.userData = JSON.parse(user);
+    //   console.log(this.userData);
+    // }
+  }
 
   isHidden(data: any) {
     data.hide = !data.hide;
@@ -230,5 +238,23 @@ export class ComplaintCardsComponent  implements OnInit {
       }
     });
   }
+
+  async assignTicket(ticket_id: any) {
+    const modal = await this.modalCtrl.create({
+      component: AssignTicketComponent,
+      cssClass: 'my-modal',
+      componentProps: {
+        ticket_id: ticket_id
+      }
+    });
+    modal.onWillDismiss().then(async disModal => {
+      console.log(disModal);
+      if (disModal.role) {
+
+      }
+    });
+    modal.present();
+  }
+
 
 }
