@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
@@ -22,10 +22,8 @@ export class LoginService {
       this.https.post(environment.url + 'login' , obj).subscribe({
         next:(data) => {
           this.userDataTemp = data;
-          console.log(this.userDataTemp);
           if (this.userDataTemp.status) {
             this.userData = this.userDataTemp.user;
-            console.log(this.userData);
             this.username.next(this.userData);
           }
           resolve(data);
@@ -46,6 +44,10 @@ export class LoginService {
 
   getLoginUserValue() {
     return this.userData;
+  }
+
+  refreshToken(): Observable<any> {
+    return this.https.get(environment.url + 'refresh');
   }
 
   changePassword(userid: any, otp1: any, pass: any ) {

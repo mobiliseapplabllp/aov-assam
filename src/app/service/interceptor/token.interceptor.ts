@@ -35,7 +35,7 @@ export class TokenInterceptor implements HttpInterceptor {
             return;
             }
             alert('Your Session is timeout please login again');
-            App.exitApp();
+            this.router.navigateByUrl('/login',{replaceUrl: true});
           }
         }));
       } else {
@@ -48,7 +48,7 @@ export class TokenInterceptor implements HttpInterceptor {
             return;
             }
             alert('Your Session is timeout please login again');
-            App.exitApp();
+            this.router.navigateByUrl('/login',{replaceUrl: true});
           }
         }));
       }

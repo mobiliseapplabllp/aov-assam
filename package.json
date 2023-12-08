@@ -35,6 +35,7 @@
     "@capacitor/network": "^5.0.6",
     "@capacitor/status-bar": "4.1.1",
     "@ionic/angular": "^6.1.9",
+    "angular-user-idle": "^4.0.0",
     "angular2-signaturepad": "^2.11.0",
     "ionicons": "^6.0.3",
     "moment": "^2.29.4",

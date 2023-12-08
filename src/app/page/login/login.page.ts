@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoadingController, MenuController, ModalController, Platform } from '@ionic/angular';
+import * as moment from 'moment';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { DigitalChecklistService } from 'src/app/provider/digital-checklist/digital-checklist.service';
 import { LoginService } from 'src/app/provider/login/login.service';
@@ -121,6 +122,7 @@ export class LoginPage implements OnInit {
           localStorage.setItem('token1', this.userValue.token);
           localStorage.setItem('enc_id', this.userValue.enc_id);
           localStorage.setItem('user', JSON.stringify(this.userValue.user));
+          localStorage.setItem('isAlreadyLogin', 'true');
           this.router.navigateByUrl('/list-master', { replaceUrl: true });
         }
       }
