@@ -48,8 +48,6 @@ export class FillReportComponent  implements OnInit {
   ngOnInit() {
     this.schedule_id = this.activeRoute.snapshot.paramMap.get('id');
     this.on_behalf = this.activeRoute.snapshot.paramMap.get('behalf');
-    console.log(this.activeRoute.snapshot.paramMap.get('behalf'));
-    console.log(this.schedule_id);
     let check = this.offlineId.filter((val: any) => val === this.schedule_id);
     if(check.length > 0) {
       this.isAlreadySaved = true
@@ -57,7 +55,13 @@ export class FillReportComponent  implements OnInit {
       this.isAlreadySaved = false;
     }
     if (this.platform.is('capacitor')) {
-      this.permission();
+      SpeechRecognition.checkPermissions().then(res => {
+        if (res.speechRecognition === 'granted') {
+          return
+        } else {
+          this.permission();
+        }
+      });
     }
     this.getScheduleQuestion();
   }
@@ -65,6 +69,10 @@ export class FillReportComponent  implements OnInit {
   ionViewDidLeave() {
     this.loop = false;
     this.removeListen();
+    const stop = async () => {
+      await TextToSpeech.stop();
+    };
+    stop();
   }
 
   removeListen() {
@@ -73,7 +81,6 @@ export class FillReportComponent  implements OnInit {
 
   permission() {
     SpeechRecognition.requestPermissions().then(res => {
-      console.log(res);
     })
   }
 
@@ -81,7 +88,6 @@ export class FillReportComponent  implements OnInit {
     this.presentLoading().then(preLoad => {
       this.httpDigital.getScheduleQuestion(this.schedule_id).subscribe({
         next:(data) => {
-          console.log(data);
           if (data.status) {
             this.arr = data.data;
             this.scheduleArr = data.data.categories;
@@ -132,10 +138,16 @@ export class FillReportComponent  implements OnInit {
     })
   }
 
-  async presentLoading() {
+  async presentLoading(msg?: string) {
+    let message;
+    if (!msg) {
+      message = 'Please Wait...';
+    } else {
+      message = msg
+    }
     this.loading = await this.loadingController.create({
       cssClass: 'my-custom-class',
-      message: 'Please wait...',
+      message: message,
       duration: 8000
     });
     await this.loading.present();
@@ -175,7 +187,7 @@ export class FillReportComponent  implements OnInit {
     const isLanguageSupported = async (lang: string) => {
       const isSupported = await TextToSpeech.isLanguageSupported({ lang });
       if (isSupported.supported === false) {
-        this.common.presentToast('Your Phone Not Supported This Language', 'warning');
+        this.common.presentToastWithOk('Please Select Google Preferred engine. go to Setting and Search "Text-to-speech output" then select "Preferred engine" and select "Speech Recognition and Synthesis"', 'warning');
       } else {
         this.changeBackground(ind);
         this.scroll(ind);
@@ -217,65 +229,88 @@ export class FillReportComponent  implements OnInit {
   }
 
   listen(val: any) {
-    console.log(val);
     SpeechRecognition.start({
-      language: 'en',
+      language: this.selectedLanguage,
       maxResults: 2,
       prompt: val.q_desc,
       partialResults: true,
       popup: true,
     }).then(res => {
-      console.log(res);
-      let respns, voiceResponse, obj, option: any;
-      voiceResponse = res.matches[0].toLocaleLowerCase();
-      if (!val.tempoutput || val.tempoutput === 'response') {
-        if (voiceResponse === 'yes' || voiceResponse === 'yess' || voiceResponse === 'yeees' || voiceResponse === 'yaaa' || voiceResponse === 'ha') {
-          option = val.options.filter((ops: any) => ops.optn_desc === 'Yes')[0];
-          respns = option.optn_id;
-        } else if (voiceResponse === 'no' || voiceResponse === 'nooo') {
-          option = val.options.filter((ops: any) => ops.optn_desc === 'No')[0];
-          respns = option.optn_id;
-        } else if (voiceResponse === 'n a' || voiceResponse === 'na' || voiceResponse === 'not applicable' || voiceResponse === 'not app') {
-          option = val.options.filter((ops: any) => ops.optn_desc === 'NA')[0];
-          respns = option.optn_id;
-        } else {
-          val.tempoutput = 'response';
-          val.q_desc_temp = 'We Accept Only yes, no and Not Applicable';
-          this.speak(val);
-          return;
-        }
-        val.rspns = respns;
-        val.response.optn_id = val.rspns;
-        val.listen = true
-        obj = {
-          wo_id: this.schedule_id,
-          rspns: val.rspns,
-          q_id: val.q_id,
-          q_type:val.q_type,
-          q_max_score:val.q_max_score,
-          rspns_source: environment.source,
-          on_behalf : this.on_behalf,
-        }
-        this.submitResponseAction(obj, val);
-      } else if (val.tempoutput === 'remark') {
-        val.remark = voiceResponse
-        obj = {
-          wo_id:this.schedule_id,
-          remark: val.remark,
-          q_id: val.q_id,
-          rspns_source: environment.source,
-          on_behalf : this.on_behalf,
-          optn_id: val.rspns
-        }
-        this.submitRemark(obj);
-      } else if (val.tempoutput === 'document') {
-        this.presentActionSheet(val, 2);
+      let voiceResponse, voiceResponseTemp: any;
+      voiceResponseTemp = res.matches[0];
+      if (this.selectedLanguage == 'en') {
+        voiceResponse = res.matches[0].toLocaleLowerCase();
+        this.listenAction(val, voiceResponse);
+      } else {
+        this.presentLoading('Translate String to  English Language').then(preLoad => {
+          this.httpDigital.googleTranslate([voiceResponseTemp], 'en').subscribe({
+            next:(translateText) => {
+              voiceResponse = translateText.data.translations[0].translatedText;
+              this.listenAction(val, voiceResponse);
+            },
+            error:() => {
+              this.common.presentToast(environment.errMsg, 'danger');
+              this.dismissloading();
+            },
+            complete:() => {
+              this.dismissloading();
+            }
+          });
+        });
       }
     });
   }
 
+  listenAction(val: any, voiceResponseTemp: any) {
+    let respns, obj, option: any, voiceResponse;
+    voiceResponse = voiceResponseTemp.toLocaleLowerCase();
+    if (!val.tempoutput || val.tempoutput === 'response') {
+      if (voiceResponse === 'yes' || voiceResponse === 'yess' || voiceResponse === 'yeees' || voiceResponse === 'yaaa' || voiceResponse === 'ha') {
+        option = val.options.filter((ops: any) => ops.optn_value === 'Yes')[0];
+        respns = option.optn_id;
+      } else if (voiceResponse === 'no' || voiceResponse === 'nooo') {
+        option = val.options.filter((ops: any) => ops.optn_value === 'No')[0];
+        respns = option.optn_id;
+      } else if (voiceResponse === 'n a' || voiceResponse === 'na' || voiceResponse === 'not applicable' || voiceResponse === 'not app') {
+        option = val.options.filter((ops: any) => ops.optn_value === 'NA')[0];
+        respns = option.optn_id;
+      } else {
+        val.tempoutput = 'response';
+        val.q_desc_temp = 'We Accept Only yes, no and Not Applicable';
+        this.speak(val);
+        return;
+      }
+      val.rspns = respns;
+      val.response.optn_id = val.rspns;
+      val.listen = true
+      obj = {
+        wo_id: this.schedule_id,
+        rspns: val.rspns,
+        q_id: val.q_id,
+        q_type:val.q_type,
+        q_max_score:val.q_max_score,
+        rspns_source: environment.source,
+        on_behalf : this.on_behalf,
+      }
+      this.submitResponseAction(obj, val);
+    } else if (val.tempoutput === 'remark') {
+      val.remark = voiceResponse
+      obj = {
+        wo_id:this.schedule_id,
+        remark: val.remark,
+        q_id: val.q_id,
+        rspns_source: environment.source,
+        on_behalf : this.on_behalf,
+        optn_id: val.rspns
+      }
+      this.submitRemark(obj);
+    } else if (val.tempoutput === 'document') {
+      this.presentActionSheet(val, 2);
+    }
+
+  }
+
   changeResponseAction(val: any) {
-    console.log(val);
     if (val.response && val.rspns == val.response.optn_id) {
       return;
     }
@@ -301,9 +336,7 @@ export class FillReportComponent  implements OnInit {
         next:(data) => {
           if (data.status) {
             this.common.presentToast(data.msg, 'success');
-            console.log(val);
             const obj = val.options.filter((val1: any) => val1.optn_id === val.rspns)[0];
-            console.log(obj);
             val.response.optn_id = val.rspns;
             val.isRemarkMandatory = obj.is_rmrk_mandatory;
             val.isDocMandatory = obj.is_doc_mandatory;
@@ -333,7 +366,6 @@ export class FillReportComponent  implements OnInit {
   }
 
   changeRemark(val: any) {
-    console.log(val);
     this.loop = false;
     const obj = {
       wo_id:this.schedule_id,
@@ -343,7 +375,6 @@ export class FillReportComponent  implements OnInit {
       on_behalf : this.on_behalf,
       optn_id: val.rspns
     }
-    console.log(obj);
     this.submitRemark(obj);
   }
 
@@ -383,8 +414,6 @@ export class FillReportComponent  implements OnInit {
 
   repeatLoop() {
     let ind = this.index+1;
-    console.log(ind);
-    console.log(this.scheduleArr[0].qus.length)
     if (this.loop && this.index < this.scheduleArr[0].qus.length - 1) {
       const val = this.scheduleArr[0].qus[ind];
       this.speakCondition(val, ind);
@@ -566,11 +595,14 @@ export class FillReportComponent  implements OnInit {
   }
 
   changeLan(lang: string) {
-    var question: any = [], temp: any;
+    var question: any = [], temp: any, options;
     temp = this.scheduleArr[0].qus;
     for (var i = 0 ; i < temp.length; i++) {
       question.push(temp[i].q_desc);
     }
+    question.push('yes');
+    question.push('no');
+    question.push('not applicable');
     this.translate(question, lang);
   }
 
@@ -578,16 +610,24 @@ export class FillReportComponent  implements OnInit {
     this.presentLoading().then(preLoad => {
       this.httpDigital.googleTranslate(data, lang).subscribe({
         next:(translateText) => {
-          console.log(translateText.data.translations[1].translatedText);
+          const optionArr = translateText.data.translations.slice(-3);
           for (var i = 0 ; i < this.scheduleArr.length;i++) {
             for (var j = 0 ; j < this.scheduleArr[i].qus.length; j++) {
               this.scheduleArr[i].qus[j].q_desc = translateText.data.translations[j].translatedText
+              if (lang == 'en') {
+                this.scheduleArr[i].qus[j].options[0].optn_desc = 'Yes';
+                this.scheduleArr[i].qus[j].options[1].optn_desc = 'No';
+                this.scheduleArr[i].qus[j].options[2].optn_desc = 'NA';
+              } else {
+                this.scheduleArr[i].qus[j].options[0].optn_desc = optionArr[0].translatedText;
+                this.scheduleArr[i].qus[j].options[1].optn_desc = optionArr[1].translatedText;
+                this.scheduleArr[i].qus[j].options[2].optn_desc = optionArr[2].translatedText;
+              }
             }
           }
           this.selectedLanguage = lang;
         },
         error:(err) => {
-          console.log(err);
           this.dismissloading();
           this.common.presentToastWithOk(JSON.stringify(err), 'warning');
         },
