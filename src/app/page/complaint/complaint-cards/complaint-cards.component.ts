@@ -239,18 +239,19 @@ export class ComplaintCardsComponent  implements OnInit {
     });
   }
 
-  async assignTicket(ticket_id: any) {
+  async assignTicket(ticket_id: any,  data: any) {
     const modal = await this.modalCtrl.create({
       component: AssignTicketComponent,
       cssClass: 'my-modal',
       componentProps: {
-        ticket_id: ticket_id
+        ticket_id: ticket_id,
+        allData: data
       }
     });
     modal.onWillDismiss().then(async disModal => {
       console.log(disModal);
       if (disModal.role) {
-
+        this.greetEvent.emit(true);
       }
     });
     modal.present();

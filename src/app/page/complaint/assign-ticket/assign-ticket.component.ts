@@ -16,6 +16,7 @@ export class AssignTicketComponent  implements OnInit {
   loading: any;
   userData: any = [];
   loaidng:any;
+  allData: any = [];
   constructor(
     private modalCtrl: ModalController,
     private httpCommon: CommonService,
@@ -25,6 +26,7 @@ export class AssignTicketComponent  implements OnInit {
 
   ngOnInit() {
     console.log(this.ticket_id);
+    console.log(this.allData);
     this.getTeamsMember();
   }
 
@@ -34,7 +36,7 @@ export class AssignTicketComponent  implements OnInit {
 
   getTeamsMember() {
     this.presentLoading().then(preLoad => {
-      this.httpComplaint.getTeam().subscribe({
+      this.httpComplaint.getTeam(this.allData.pc_id).subscribe({
         next:(data) => {
           if (data.status) {
             this.empList = data.data;

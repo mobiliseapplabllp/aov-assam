@@ -336,7 +336,8 @@ export class TicketWorkComponent  implements OnInit {
       component: AssignTicketComponent,
       cssClass: 'my-modal',
       componentProps: {
-        ticket_id: this.ticket_id
+        ticket_id: this.ticket_id,
+        allData: this.requestedData
       }
     });
     modal.onWillDismiss().then(async disModal => {

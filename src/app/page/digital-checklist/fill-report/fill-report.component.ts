@@ -307,7 +307,6 @@ export class FillReportComponent  implements OnInit {
     } else if (val.tempoutput === 'document') {
       this.presentActionSheet(val, 2);
     }
-
   }
 
   changeResponseAction(val: any) {
@@ -424,33 +423,7 @@ export class FillReportComponent  implements OnInit {
       this.changeBackground(ind);
       this.speak(val);
     }
-
   }
-
-  // changePhoto(event: any, val: any): void {
-  //   if (event.target.files.length > 0) {
-  //     const file = event.target.files[0];
-  //     const formData = new FormData();
-  //     formData.append('wo_id', this.schedule_id);
-  //     formData.append('attachment2', file);
-  //     formData.append('q_id', val.q_id);
-  //     formData.append('rspns_source', environment.source);
-  //     formData.append('on_behalf', this.on_behalf);
-  //     this.presentLoading().then(preLoad => {
-  //       this.httpDigital.scheduleDocAction(formData).subscribe({
-  //         next:(data) => {
-  //           console.log(data);
-  //         },
-  //         error:() => {
-  //           this.dismissloading();
-  //         },
-  //         complete:() => {
-  //           this.dismissloading();
-  //         }
-  //       })
-  //     })
-  //   }
-  // }
 
   async presentActionSheet(val: any, ind: any) {
     var obj: any = {}
