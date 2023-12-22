@@ -12,6 +12,10 @@ import { AddMeterComponent } from './add-meter/add-meter.component';
 import { HistoryComponent } from './history/history.component';
 import { ReadingHistoryComponent } from './reading-history/reading-history.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { DaysComponent } from './days/days.component';
+import { AssignToComponent } from './assign-to/assign-to.component';
+import { EscalateToComponent } from './escalate-to/escalate-to.component';
+
 
 @NgModule({
   imports: [
@@ -27,6 +31,9 @@ import { SharedModule } from 'src/app/shared/shared.module';
     AddReadingComponent,
     AddMeterComponent,
     HistoryComponent,
-    ReadingHistoryComponent]
+    ReadingHistoryComponent,
+    DaysComponent,
+    AssignToComponent,
+    EscalateToComponent]
 })
 export class MeterPageModule {}

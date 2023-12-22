@@ -19,12 +19,20 @@ export class MeterService {
     return this.http.get(environment.url + 'meter/meter-uom-all');
   }
 
+  meterPcWiseUser(pc_id: any): Observable<any> {
+    return this.http.get(environment.url + 'meter/meter-pc-wise-users/' + pc_id);
+  }
+
   addMeter(formData: any): Observable<any> {
-    return this.http.post(environment.url + 'meter/add-meter', formData)
+    return this.http.post(environment.url + 'meter/add-meter-aman', formData)
   }
 
   getPendingWo(): Observable<any> {
     return this.http.get(environment.url + 'meter/ifms/get-pending-work-order');
+  }
+
+  getPendingWoBarcode(url: string): Observable<any> {
+    return this.http.get('https://hr-access.herokuapp.com/' + url);
   }
 
   updateReading(formData: any): Observable<any> {

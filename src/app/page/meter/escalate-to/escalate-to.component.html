@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title> Escalate To </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close(null, false)">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-searchbar></ion-searchbar>
+  <ion-virtual-scroll [items]="userList" approxItemHeight="320px">
+    <ion-item *virtualItem="let item; let itemBounds = bounds;">
+      <ion-label class="ion-text-wrap">
+        {{item.username}} ({{item.name}} {{item.lname}})
+      </ion-label>
+      <ion-checkbox slot="end" [(ngModel)]="item.isSelect"></ion-checkbox>
+    </ion-item>
+  </ion-virtual-scroll>
+</ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-button (click)="submit()" expand="block">Select Employee</ion-button>
+  </ion-toolbar>
+</ion-footer>

@@ -1,0 +1,13 @@
+
+ion-modal {
+  &.center1 {
+    --width: calc(100% - 2em);
+    align-items: center;
+    --height: auto;
+    .ion-page {
+      position: relative;
+      display: block;
+      contain: content;
+    }
+  }
+}

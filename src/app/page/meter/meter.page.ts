@@ -25,7 +25,41 @@ export class MeterPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.common.setBarcode('');
     this.getPendingWo();
+  }
+
+  ionViewDidEnter() {
+    let bar = this.common.getBarcode();
+    if (bar) {
+      this.meterInfo = [];
+      this.meterInfoCopy = [];
+      console.log(bar);
+      this.getPendingWOusingBarcode(bar);
+    }
+  }
+
+  getPendingWOusingBarcode(url: string) {
+    this.presentLoading().then(preLoad => {
+      this.httpMeter.getPendingWoBarcode(url).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.meterInfo = data.data;
+            this.meterInfoCopy = data.data;
+          } else {
+            this.common.presentToast(data.info, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissloading();
+          this.common.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissloading();
+        }
+      })
+    })
+
   }
 
   getPendingWo() {
@@ -35,6 +69,8 @@ export class MeterPage implements OnInit {
           if (data.status) {
             this.meterInfo = data.data;
             this.meterInfoCopy = data.data;
+          } else {
+            this.common.presentToast(data.info, 'warning');
           }
         },
         error:() => {
@@ -84,15 +120,20 @@ export class MeterPage implements OnInit {
         this.save(obj, dat);
       }
     } else if (type === 'both') {
-      if (this.checkConsumptionCondition(dat) && this.checkGenertionCondition(dat)) {
+      if (this.checkConsumptionCondition(dat) && this.checkGenertionCondition(dat) && this.checkOtherCondition(dat)) {
         const obj = {
           wo_id: dat.wo_id,
           consume_reading: dat.consumption_reading,
-          gen_reading: dat.generate_reading
+          gen_reading: dat.generate_reading,
+          new_oth_reading: dat.other_reading
         }
         this.save(obj, dat);
       }
     }
+  }
+
+  openBarcode() {
+    this.router.navigateByUrl('/barcode');
   }
 
   checkConsumptionCondition(dat: any) {
@@ -113,6 +154,15 @@ export class MeterPage implements OnInit {
       return false;
     } else if (dat.is_img_req == 1 && !dat.isGenerationImg) {
       alert('Generation Image is Required');
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  checkOtherCondition(dat: any) {
+    if (!dat.other_reading && dat.oth_read == 1) {
+      alert('Other Reading is Required');
       return false;
     } else {
       return true;
@@ -174,7 +224,6 @@ export class MeterPage implements OnInit {
           allowEditing: false,
           source: CameraSource.Camera,
           resultType: CameraResultType.Uri,
-
         }
       }
       const image = await Camera.getPhoto(obj);
@@ -240,6 +289,10 @@ export class MeterPage implements OnInit {
     this.meterInfo =  this.meterInfo.filter((dat: any) => {
       if (dat.make.toLowerCase().indexOf(ev.target.value.toLowerCase())> -1) {
         return (dat.make.toLowerCase().indexOf(ev.target.value.toLowerCase()) > -1);
+      } else if (dat.ext_id.toLowerCase().indexOf(ev.target.value.toLowerCase())> -1) {
+        return (dat.ext_id.toLowerCase().indexOf(ev.target.value.toLowerCase()) > -1);
+      } else if (dat.wo_id.toLowerCase().indexOf(ev.target.value.toLowerCase())> -1) {
+        return (dat.wo_id.toLowerCase().indexOf(ev.target.value.toLowerCase()) > -1);
       }
       return;
     });

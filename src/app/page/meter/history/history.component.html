@@ -54,19 +54,23 @@
       </ion-buttons>
     </ion-item>
     <ion-row>
-      <ion-col *ngIf="dat.is_consumption === 1" class="ion-padding-start" style="position:relative">
+      <ion-col *ngIf="dat.is_consumption === 1" class="ion-padding-start" size="6" style="position:relative">
         <ion-text color="primary">Consumption</ion-text><br>
         <ion-text>{{dat.reading}}</ion-text>
         <ion-button size="small" fill="clear" *ngIf="dat.img1" (click)="openDoc(dat.img1)">
           <ion-icon name="attach-outline"></ion-icon>
         </ion-button>
       </ion-col>
-      <ion-col *ngIf="dat.is_generation === 1 " class="ion-padding-start">
+      <ion-col *ngIf="dat.is_generation === 1 " class="ion-padding-start" size="6">
         <ion-text color="primary">Generation</ion-text><br>
         <ion-text>{{dat.gen_reading}}</ion-text>
         <ion-button size="small" fill="clear" *ngIf="dat.img2" (click)="openDoc(dat.img2)">
           <ion-icon name="attach-outline"></ion-icon>
         </ion-button>
+      </ion-col>
+      <ion-col *ngIf="dat.oth_read === 1 " class="ion-padding-start" size="6">
+        <ion-text color="primary">Other</ion-text><br>
+        <ion-text>{{dat.oth_reading}}</ion-text>
       </ion-col>
     </ion-row>
     <div *ngIf="dat.isMore">

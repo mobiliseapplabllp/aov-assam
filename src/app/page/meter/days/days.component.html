@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Select Days</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close(null, false)">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-item *ngFor="let dat of days;let i = index">
+    <ion-label><b>{{dat.days}}</b></ion-label>
+    <ion-checkbox [(ngModel)]="dat.selected"></ion-checkbox>
+  </ion-item>
+  <ion-button expand="block" (click)="selectDone()">Select Days</ion-button>
+
+</ion-content>
