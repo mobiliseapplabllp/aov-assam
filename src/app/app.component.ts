@@ -28,8 +28,8 @@ export class AppComponent {
     private loadingController: LoadingController,
     private common: CommonService) {
       this.platform.ready().then(res => {
-        // this.initApp();
-        // this.getUserData();
+        this.initApp();
+        this.getUserData();
       })
   }
 

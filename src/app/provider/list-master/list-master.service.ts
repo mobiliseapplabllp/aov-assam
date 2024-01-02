@@ -8,6 +8,9 @@ import { environment } from 'src/environments/environment';
 export class ListMasterService {
   data: any
   private myMenuTemp = new BehaviorSubject([]);
+  // https://dialogflow.googleapis.com/v2/projects/orderpizza-cobx/agent/sessions
+  private baseURL = 'https://dialogflow.googleapis.com/v2/projects/orderpizza-cobx/agent/sessions/1234:detectIntent';
+  private token = 'AIzaSyDJjHphpheVQM7CRYNqHHdJqMqAgt0IY70';
   constructor(
     public https: HttpClient
   ) { }
@@ -50,4 +53,24 @@ export class ListMasterService {
   getComplaintSummary(): Observable<any> {
     return this.https.get(environment.url + 'complaints/dash/statusCount');
   }
+
+  sendMessage(message: string) {
+    const data = {
+      queryInput: {
+        text: {
+          text: message,
+          languageCode: 'en',
+        },
+      },
+    };
+
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${this.token}`,
+    };
+
+    return this.https.post(this.baseURL, data , {headers});
+  }
+
+
 }

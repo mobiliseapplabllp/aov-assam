@@ -135,7 +135,7 @@
       </ion-item>
       <ion-item>
         <ion-label position="floating">Price Unit <ion-text color="danger">*</ion-text>  </ion-label>
-        <ion-input type="text" formControlName="unit_price"></ion-input>
+        <ion-input type="number" formControlName="unit_price"></ion-input>
       </ion-item>
       <ion-item>
         <ion-label position="floating">Model <ion-text color="danger">*</ion-text> </ion-label>
@@ -168,7 +168,7 @@
       </ion-item>
       <ion-item>
         <ion-label position="floating">Consumption  <ion-text color="danger">*</ion-text> </ion-label>
-        <ion-select interface="action-sheet" formControlName="is_consumption">
+        <ion-select interface="action-sheet" formControlName="is_consumption" mode="ios">
           <ion-select-option value="1"> Yes</ion-select-option>
           <ion-select-option value="0">No</ion-select-option>
         </ion-select>
@@ -188,7 +188,7 @@
 
       <ion-item>
         <ion-label position="floating">Generation  <ion-text color="danger">*</ion-text> </ion-label>
-        <ion-select interface="action-sheet" formControlName="is_generation">
+        <ion-select interface="action-sheet" formControlName="is_generation" mode="ios">
           <ion-select-option value="1"> Yes</ion-select-option>
           <ion-select-option value="0">No</ion-select-option>
         </ion-select>
@@ -208,7 +208,7 @@
 
       <ion-item>
         <ion-label position="floating">Other  <ion-text color="danger">*</ion-text> </ion-label>
-        <ion-select interface="action-sheet" formControlName="oth_read">
+        <ion-select interface="action-sheet" formControlName="oth_read" mode="ios">
           <ion-select-option value="1"> Yes</ion-select-option>
           <ion-select-option value="0">No</ion-select-option>
         </ion-select>
@@ -228,7 +228,7 @@
 
       <ion-item>
         <ion-label position="floating">Multiplication Factor  <ion-text color="danger">*</ion-text> </ion-label>
-        <ion-select interface="action-sheet" formControlName="mult_fact">
+        <ion-select interface="action-sheet" formControlName="mult_fact" mode="ios">
           <ion-select-option value="1"> Yes</ion-select-option>
           <ion-select-option value="0">No</ion-select-option>
         </ion-select>
@@ -244,7 +244,7 @@
 
       <ion-item>
         <ion-label position="floating">Reading Incremental  <ion-text color="danger">*</ion-text> </ion-label>
-        <ion-select interface="action-sheet" formControlName="inc">
+        <ion-select interface="action-sheet" formControlName="inc" mode="ios">
           <ion-select-option value="1"> Yes</ion-select-option>
           <ion-select-option value="0">No</ion-select-option>
         </ion-select>
@@ -252,7 +252,7 @@
 
       <ion-item>
         <ion-label position="floating">Back Date Reading Allowed <ion-text color="danger">*</ion-text> </ion-label>
-        <ion-select interface="action-sheet" formControlName="back_date">
+        <ion-select interface="action-sheet" formControlName="back_date" mode="ios">
           <ion-select-option value="1"> Yes</ion-select-option>
           <ion-select-option value="0">No</ion-select-option>
         </ion-select>
@@ -264,7 +264,7 @@
 
       <ion-item>
         <ion-label position="floating">Reading Update Allowed <ion-text color="danger">*</ion-text> </ion-label>
-        <ion-select interface="action-sheet" formControlName="edit_allow">
+        <ion-select interface="action-sheet" formControlName="edit_allow" mode="ios">
           <ion-select-option value="1"> Yes</ion-select-option>
           <ion-select-option value="0">No</ion-select-option>
         </ion-select>
@@ -276,7 +276,7 @@
 
       <ion-item>
         <ion-label position="floating">Image Required <ion-text color="danger">*</ion-text> </ion-label>
-        <ion-select interface="action-sheet" formControlName="img_req">
+        <ion-select interface="action-sheet" formControlName="img_req" mode="ios">
           <ion-select-option value="1"> Yes</ion-select-option>
           <ion-select-option value="0">No</ion-select-option>
         </ion-select>
@@ -284,7 +284,7 @@
 
       <ion-item>
         <ion-label position="floating">Remark Required <ion-text color="danger">*</ion-text> </ion-label>
-        <ion-select interface="action-sheet" formControlName="remark_req">
+        <ion-select interface="action-sheet" formControlName="remark_req" mode="ios">
           <ion-select-option value="1"> Yes</ion-select-option>
           <ion-select-option value="0">No</ion-select-option>
         </ion-select>
@@ -292,7 +292,7 @@
 
       <ion-item>
         <ion-label position="floating">Gallery  <ion-text color="danger">*</ion-text> </ion-label>
-        <ion-select interface="action-sheet" formControlName="can_upld_gallery">
+        <ion-select interface="action-sheet" formControlName="can_upld_gallery" mode="ios">
           <ion-select-option value="1"> Yes</ion-select-option>
           <ion-select-option value="0">No</ion-select-option>
         </ion-select>
@@ -377,7 +377,7 @@
         <ion-input type="text" [(ngModel)]="remark"></ion-input>
       </ion-item>
 
-      <ion-button expand="block"  (click)="addMeter()">Add meter <ion-icon name="save-outline" slot="end"></ion-icon> </ion-button>
+      <ion-button expand="block"  (click)="checkCondition()" [disabled]="addAsset.invalid">Add meter <ion-icon name="save-outline" slot="end"></ion-icon> </ion-button>
 
 
 

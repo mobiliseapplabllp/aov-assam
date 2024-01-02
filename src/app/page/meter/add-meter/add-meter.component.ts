@@ -107,8 +107,8 @@ export class AddMeterComponent implements OnInit {
       img_req: ['', Validators.required],
       remark_req: ['', Validators.required],
       can_upld_gallery: ['', Validators.required],
-      fromDate: ['', Validators.required],
-      toDate: ['', Validators.required],
+      // fromDate: ['', Validators.required],
+      // toDate: ['', Validators.required],
 
       // from_date: [''],
       // from_date_temp: [''],
@@ -183,9 +183,14 @@ export class AddMeterComponent implements OnInit {
     if (type === 'from') {
       let date = moment(this.timeArr[index].from_date).format('H:mm');
       this.timeArr[index].from_date_temp = date;
+      this.timeArr[index].to_date_temp = null;
     } else {
       let date = moment(this.timeArr[index].to_date).format('H:mm');
       this.timeArr[index].to_date_temp = date;
+      if (moment(this.timeArr[index].to_date) < moment(this.timeArr[index].from_date)) {
+        this.httpCommon.presentToast('To Time Should Be greater than from time', 'warning');
+        this.timeArr[index].to_date_temp = null;
+      }
     }
     console.log(this.timeArr);
   }
@@ -195,7 +200,12 @@ export class AddMeterComponent implements OnInit {
   }
 
   removeTimeArr(index: number) {
-    this.timeArr.splice(index, 1);
+    if (this.timeArr.length === 1) {
+      this.httpCommon.presentToast('At Least one from time or to is mandatory', 'warning');
+    } else {
+      this.timeArr.splice(index, 1);
+    }
+
   }
 
 
@@ -345,14 +355,91 @@ export class AddMeterComponent implements OnInit {
     this.addAsset.get('ext_id')?.setValue(prefix + id);
   }
 
+  checkCondition() {
+    if (this.checkConsumtionCondition() && this.checkGenerationCondition() && this.checkOtherCondition() && this.checkMultiCondition() && this.checkUserCondition() && this.checkEscalateCondition() && this.checkDaysCondition()) {
+      if (!this.fromDate || !this.toDate) {
+        this.httpCommon.presentToast('Frequency From and Frequency To date is Required', 'warning')
+      } else {
+        this.addMeter();
+      }
+    }
+  }
+
+  checkConsumtionCondition() {
+    if (this.addAsset.value.is_consumption === '1' && (!this.addAsset.value.cuns_min || !this.addAsset.value.cuns_max)) {
+      this.httpCommon.presentToast('Consumption Minimum & Maximum Reading is required', 'warning');
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  checkGenerationCondition() {
+    if (this.addAsset.value.is_generation === '1' && (!this.addAsset.value.gen_min || !this.addAsset.value.gen_max)) {
+      this.httpCommon.presentToast('Generation Minimum & Maximum Reading is required', 'warning');
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  checkOtherCondition() {
+    if (this.addAsset.value.oth_read === '1' && (!this.addAsset.value.oth_min || !this.addAsset.value.oth_max)) {
+      this.httpCommon.presentToast('Other Minimum & Maximum Reading is required', 'warning');
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  checkMultiCondition() {
+    if (this.addAsset.value.mult_fact === '1' && !this.addAsset.value.mult_fact_val) {
+      this.httpCommon.presentToast('Enter Multi Factor Value', 'warning');
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  checkUserCondition() {
+    if (this.usr.length > 0) {
+      return true;
+    } else {
+      this.httpCommon.presentToast('Please Select Assign To Employee', 'warning');
+      return false;
+    }
+  }
+
+  checkEscalateCondition() {
+    if (this.escalate_to.length > 0) {
+      return true;
+    } else {
+      this.httpCommon.presentToast('Please Select Escalate To Employee', 'warning');
+      return false;
+    }
+  }
+
+  checkDaysCondition() {
+    if (this.days.length > 0) {
+      return true;
+    } else {
+      this.httpCommon.presentToast('Please Select Days', 'warning');
+      return false
+    }
+  }
+
   addMeter() {
     console.log(this.timeArr);
     if (this.addAsset.value.is_child_asset == '1' && !this.parentAssetObj.isExists) {
       this.httpCommon.presentToast('Please Verify Parent Asset Id', 'warning');
       return;
     }
-    var timeslots = this.timeArr.map((res: any) => res.from_date_temp);
-    var totimeslots = this.timeArr.map((res: any) => res.to_date_temp);
+    var timeslots, totimeslots, fromDate, toDate;
+    timeslots = this.timeArr.map((res: any) => res.from_date_temp);
+    totimeslots = this.timeArr.map((res: any) => res.to_date_temp);
+    fromDate = moment(this.fromDate).format('YYYY-MM-DD');
+    toDate = moment(this.toDate).format('YYYY-MM-DD');
+
     for(let key in this.addAsset.value) {
       this.formData.delete(key);
       this.formData.append(key, this.addAsset.value[key]);
@@ -364,8 +451,9 @@ export class AddMeterComponent implements OnInit {
     this.formData.delete('totimeslots');
     this.formData.delete('remark');
     this.formData.delete('assets');
-    this.formData.delete('fromDate')
-    this.formData.delete('toDate')
+    this.formData.delete('fromDate');
+    this.formData.delete('toDate');
+    this.formData.delete('type');
 
     this.formData.append('daysSlots', JSON.stringify(this.days));
     this.formData.append('escalate_to',JSON.stringify(this.escalate_to));
@@ -374,8 +462,9 @@ export class AddMeterComponent implements OnInit {
     this.formData.append('totimeslots', JSON.stringify(totimeslots));
     this.formData.append('remark', this.remark);
     this.formData.append('assets', JSON.stringify(this.parentAssetObj));
-    this.formData.append('fromDate', this.fromDate)
-    this.formData.append('toDate', this.toDate);
+    this.formData.append('fromDate', fromDate)
+    this.formData.append('toDate', toDate);
+    this.formData.append('type', '2');
 
     this.presentLoading().then(preLoad => {
       this.httpMeter.addMeter(this.formData).subscribe({

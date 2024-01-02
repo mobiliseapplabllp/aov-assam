@@ -25,6 +25,7 @@ export class TokenInterceptor implements HttpInterceptor {
     if (!localStorage.getItem('token1')) {
       return next.handle(request);
     } else {
+      console.log(request.url);
       if (request.url != 'https://translate.googleapis.com/language/translate/v2?key=AIzaSyDJjHphpheVQM7CRYNqHHdJqMqAgt0IY70') {
         const userToken = localStorage.getItem('token1');
         const modifiedReq = request.clone({headers: request.headers.set('Authorization', `Bearer ${userToken}`).set('Accept', 'application/json')});

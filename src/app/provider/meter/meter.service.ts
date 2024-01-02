@@ -24,7 +24,7 @@ export class MeterService {
   }
 
   addMeter(formData: any): Observable<any> {
-    return this.http.post(environment.url + 'meter/add-meter-aman', formData)
+    return this.http.post(environment.url + 'meter/add-meter', formData)
   }
 
   getPendingWo(): Observable<any> {
