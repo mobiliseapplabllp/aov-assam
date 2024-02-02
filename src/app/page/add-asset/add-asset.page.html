@@ -25,6 +25,29 @@
             </ion-item>
           </ion-col>
           <ion-col size="12">
+            <ion-card *ngIf="segmentType">
+              <ion-row>
+                <ion-col size="4"><b>Segment Type</b></ion-col>
+                <ion-col>{{segmentType}}</ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4"><b>Sub Segment</b></ion-col>
+                <ion-col>{{sub_segment}}</ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4"><b>City</b></ion-col>
+                <ion-col>{{city}}</ion-col>
+              </ion-row>
+
+            </ion-card>
+            <!-- <ion-item>
+              <ion-label>
+                <h3>Segment Type : {{segmentType}}</h3>
+                <h3>City: {{city}}</h3>
+              </ion-label>
+            </ion-item> -->
+          </ion-col>
+          <ion-col size="12">
             <ion-item >
               <ion-label color="primary" position="floating">Blocks</ion-label>
               <ion-select interface="action-sheet"  mode="ios" formControlName="block_id" (ionChange)="changeBlock($event)">
@@ -34,7 +57,7 @@
           </ion-col>
           <ion-col>
             <ion-item>
-              <ion-label color="primary" position="floating">Building <ion-text color="danger">*</ion-text></ion-label>
+              <ion-label color="primary" position="floating">Building </ion-label>
               <ion-select interface="action-sheet" mode="ios" formControlName="bldg_id" ><!--(ionChange)="changeBuilding($event)"-->
                 <ion-select-option *ngFor="let dat of myBuildingArr" [value]="dat.value">{{dat.label}}</ion-select-option>
               </ion-select>
@@ -44,13 +67,13 @@
         <ion-row>
           <ion-col>
             <ion-item (click)="openFloorModal()">
-              <ion-label color="primary" position="floating">Floor <ion-text color="danger">*</ion-text></ion-label>
+              <ion-label color="primary" position="floating">Floor </ion-label>
               <ion-input type="text" formControlName="floor_id_desc" readonly></ion-input>
             </ion-item>
           </ion-col>
           <ion-col>
             <ion-item (click)="openLocationModal()">
-              <ion-label color="primary" position="floating">Location <ion-text color="danger">*</ion-text></ion-label>
+              <ion-label color="primary" position="floating">Location </ion-label>
               <ion-input type="text" formControlName="loc_id_desc" readonly></ion-input>
             </ion-item>
           </ion-col>
@@ -86,7 +109,7 @@
           <ion-col size="8">
             <ion-item>
               <ion-label color="primary" position="floating">Asset ID <ion-text color="danger">*</ion-text></ion-label>
-              <ion-input inputmode="tel" formControlName="input_asset_id" maxlength="6" placeholder="6 Digit Only"></ion-input>
+              <ion-input inputmode="tel" formControlName="input_asset_id" maxlength="4" placeholder="4 Digit Only"></ion-input>
               <ion-button slot="end" fill="outline" color="danger" (click)="openScanner()">
                 <ion-icon name="qr-code-outline"></ion-icon>
               </ion-button>
@@ -96,7 +119,7 @@
         <ion-row>
           <ion-col>
             <ion-item>
-              <ion-label color="primary" position="floating">Client Asset Id <ion-text color="danger">*</ion-text></ion-label>
+              <ion-label color="primary" position="floating">Client Asset Id </ion-label>
               <ion-input type="text" formControlName="client_asset_id" ></ion-input>
             </ion-item>
           </ion-col>
@@ -168,17 +191,18 @@
           <ion-col>
             <ion-item>
               <ion-label color="primary" position="floating">Device Class  <ion-text color="danger">*</ion-text></ion-label>
-              <ion-select interface="action-sheet" mode="ios" formControlName="subgrp_class">
+              <ion-input type="text" formControlName="subgrp_class" readonly></ion-input>
+              <!-- <ion-select interface="action-sheet" mode="ios" formControlName="subgrp_class" readonly>
                 <ion-select-option value="Critical">Critical</ion-select-option>
                 <ion-select-option value="Non-Critical">Non-Critical</ion-select-option>
-              </ion-select>
+              </ion-select> -->
             </ion-item>
           </ion-col>
         </ion-row>
         <ion-row>
           <ion-col>
             <ion-item>
-              <ion-label color="primary" position="floating">Device Sub Cat Remark  <ion-text color="danger">*</ion-text></ion-label>
+              <ion-label color="primary" position="floating">Device Sub Cat Remark  </ion-label>
               <ion-input type="text" formControlName="device_sub_cate_remark" ></ion-input>
             </ion-item>
           </ion-col>
@@ -343,7 +367,7 @@
         <ion-row>
           <ion-col>
             <ion-item>
-              <ion-label color="primary" position="floating">Warranty</ion-label>
+              <ion-label color="primary" position="floating">Warranty <ion-text color="danger">*</ion-text> </ion-label>
               <ion-select interface="action-sheet" mode="ios" formControlName="warranty_id" (ionChange)="changeWarranty()">
                 <ion-select-option *ngFor="let dat of myWarranty" [value]="dat.id">{{dat.warranty}}</ion-select-option>
               </ion-select>
@@ -447,7 +471,7 @@
   </section>
 </ion-content>
 <ion-footer>
-  <ion-toolbar>
+  <ion-toolbar> <!---->
     <ion-button size="block" [disabled]="addAsset.invalid" (click)="saveAsset()">Submit <ion-icon name="save-outline" slot="end"></ion-icon></ion-button> <!--[disabled]="addAsset.invalid"-->
   </ion-toolbar>
 </ion-footer>

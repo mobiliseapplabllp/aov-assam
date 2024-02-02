@@ -62,7 +62,7 @@ export class TicketTypeComponent  implements OnInit {
             this.ticketForm.get('req_type_id')?.setValue(this.allData.req_type_id);
           }, 100);
         } else {
-          this.httpCommon.presentToast(data.msg, 'danger');
+          this.httpCommon.presentToast(data.msg, 'warning');
         }
       },
       error:() => {

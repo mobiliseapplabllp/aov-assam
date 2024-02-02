@@ -46,7 +46,7 @@
     <ion-row  *ngFor="let data of myAttendance;let i = index; let odd=odd;let even=even" [ngClass]="{ odd: odd, even: even}"  >
       <ion-col> {{data.punch_in_date}} </ion-col>
       <ion-col> {{data.punch_in_time}} </ion-col>
-      <ion-col> {{data.punch_out_date}} </ion-col>
+      <ion-col> {{data.punch_out_time}} </ion-col>
     </ion-row>
   </ion-grid>
 </ion-content>

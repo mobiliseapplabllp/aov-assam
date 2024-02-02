@@ -248,8 +248,9 @@ export class TicketWorkComponent  implements OnInit {
   }
 
   checkHasWip() {
-    this.openInstructionModal();
+    this.submitTicket();
     return;
+    this.openInstructionModal();
     if (this.arr.hasWIP == 0) {
       this.openInstructionModal();
     } else {

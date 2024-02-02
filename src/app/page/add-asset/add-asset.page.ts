@@ -44,7 +44,7 @@ export class AddAssetPage implements OnInit {
   public errorMessages = {
     input_asset_id: [
       { type: 'required', message: 'Asset ID is Required' },
-      { type: 'minlength', message: 'Asset Id should have 6 digits' }
+      { type: 'minlength', message: 'Asset Id should have 4 digits' }
     ],
   };
   parentAssetObj: any = {};
@@ -69,7 +69,10 @@ export class AddAssetPage implements OnInit {
   }
   pinpointStyle = {};
   floorImage!: string;
-  currentDate: any
+  currentDate: any;
+  segmentType!: string;
+  city!: string;
+  sub_segment!: string;
   constructor(
     private formbuilder: FormBuilder,
     private httpAsset: MyAssetGetService,
@@ -85,23 +88,23 @@ export class AddAssetPage implements OnInit {
       bldg_id: [''],
       floor_id: [''],
       floor_id_desc: [''],
-      loc_id: ['', Validators.required],
+      loc_id: [''],
       loc_id_desc: [''],
       dept_id: [''],
       dept_id_desc: [''],
       sub_dept_id:[''],
       ext_asset_id_pre: [''],
-      input_asset_id: ['',[Validators.required , Validators.minLength(6)]],
+      input_asset_id: ['',[Validators.required , Validators.minLength(4)]],
       ext_asset_id:[''],
-      client_asset_id:['',[Validators.required]],
-      is_child_asset:['', Validators.required],
+      client_asset_id:[''],
+      is_child_asset:[''],
       parent_asset_id: [''],
       grp_id:['', Validators.required],
       grp_id_desc:['', Validators.required],
       subgrp_id:['', Validators.required],
       subgrp_id_desc:['', Validators.required],
       subgrp_class:['', Validators.required],
-      device_sub_cate_remark: ['', Validators.required],
+      device_sub_cate_remark: [''],
       make:[''],
       model :['', Validators.required],
       serial_no:['', Validators.required],
@@ -117,7 +120,7 @@ export class AddAssetPage implements OnInit {
       is_asset: ['', Validators.required],
       technology_id: [''],
       install_by: [''],
-      warranty_id: [''],
+      warranty_id: ['', Validators.required],
       warranty_start_date: [''],
       warranty_end_date: [''],
       vend_code: [''],
@@ -426,7 +429,10 @@ export class AddAssetPage implements OnInit {
         this.httpAsset.getPrefixBarcode(disModal.data.pc_id).subscribe(data => {
           console.log(data);
           if (data.status) {
-            this.prefixBarcode = data.data.barcode_prefix
+            this.prefixBarcode = data.data.barcode_prefix;
+            this.segmentType = data.data.seg_desc;
+            this.city = data.data.ct_name;
+            this.sub_segment = data.data.subseg_desc;
             this.addAsset.get('ext_asset_id_pre')?.setValue(this.prefixBarcode);
           }
         });
@@ -883,16 +889,24 @@ export class AddAssetPage implements OnInit {
   submitAsset() {
     let prefix_barcode, barcode, fullbarcode, pur_date, install_date, warranty_start_date, warranty_end_date;
     pur_date = this.addAsset.value.pur_date;
-    install_date = this.addAsset.value.install_date,
+    install_date! = this.addAsset.value.install_date,
     warranty_start_date = this.addAsset.value.warranty_start_date,
     warranty_end_date = this.addAsset.value.warranty_end_date,
     prefix_barcode = this.addAsset.value.ext_asset_id_pre;
     barcode = this.addAsset.value.input_asset_id;
     fullbarcode = prefix_barcode + barcode;
-    this.addAsset.get('pur_date')?.setValue(moment(pur_date).format('YYYY-MM-DD'));
-    this.addAsset.get('install_date')?.setValue(moment(install_date).format('YYYY-MM-DD'));
-    this.addAsset.get('warranty_start_date')?.setValue(moment(warranty_start_date).format('YYYY-MM-DD'));
-    this.addAsset.get('warranty_end_date')?.setValue(moment(warranty_end_date).format('YYYY-MM-DD'));
+    if (pur_date) {
+      this.addAsset.get('pur_date')?.setValue(moment(pur_date).format('YYYY-MM-DD'));
+    }
+    if (install_date) {
+      this.addAsset.get('install_date')?.setValue(moment(install_date).format('YYYY-MM-DD')!);
+    }
+
+    if (warranty_start_date && warranty_end_date) {
+      this.addAsset.get('warranty_start_date')?.setValue(moment(warranty_start_date).format('YYYY-MM-DD'));
+      this.addAsset.get('warranty_end_date')?.setValue(moment(warranty_end_date).format('YYYY-MM-DD'));
+    }
+
     this.addAsset.get('ext_asset_id')?.setValue(fullbarcode);
     this.stopRequest();
     this.presentLoading().then(preLoad => {
@@ -937,12 +951,12 @@ export class AddAssetPage implements OnInit {
     this.clrTiimeOut = setTimeout(() => {
       console.log('clear timeout');
       if (this.pendingApi) {
-        this.httpCommon.presentToastWithOk('Session Timeout... Please Submit Data Again', 'danger');
+        this.httpCommon.presentToastWithOk('Due to poor internet connectivity, your data submission failed. Please try again when your internet is stronger.', 'danger');
         this.pendingApi.unsubscribe();
         this.dismissloading();
       }
       this.clrTime();
-    }, 30000);
+    }, 90000);
   }
 
   clrTime() {

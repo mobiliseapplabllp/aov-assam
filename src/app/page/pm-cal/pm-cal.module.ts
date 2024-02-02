@@ -13,6 +13,7 @@ import { PmReportComponent } from './pm-report/pm-report.component';
 import { ViewReportComponent } from './view-report/view-report.component';
 import { AddResponseComponent } from './add-response/add-response.component';
 import { PtwUploadComponent } from './ptw-upload/ptw-upload.component';
+import { ClosePmsComponent } from './close-pms/close-pms.component';
 
 @NgModule({
   imports: [
@@ -29,6 +30,7 @@ import { PtwUploadComponent } from './ptw-upload/ptw-upload.component';
     PmReportComponent,
     ViewReportComponent,
     AddResponseComponent,
-    PtwUploadComponent]
+    PtwUploadComponent,
+    ClosePmsComponent]
 })
 export class PmCalPageModule {}

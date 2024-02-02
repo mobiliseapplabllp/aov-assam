@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">SoCampus Service</string>
-    <string name="title_activity_main">SoCampus Service</string>
-    <string name="package_name">com.socampuseng.mbl</string>
-    <string name="custom_url_scheme">com.socampuseng.mbl</string>
+    <string name="app_name">Aov Assam</string>
+    <string name="title_activity_main">Aov Assam</string>
+    <string name="package_name">com.aovassam.mbl</string>
+    <string name="custom_url_scheme">com.aovassam.mbl</string>
 </resources>

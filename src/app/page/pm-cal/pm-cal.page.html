@@ -101,17 +101,20 @@
             </ion-col>
           </ion-row>
           <ion-row>
-            <ion-col size="4">
+            <ion-col size="3">
               <ion-button class="ion-text-capitalize" color="secondary" size="small" expand="block" (click)="pmAssign(dat)"> Assign </ion-button>
             </ion-col>
-            <ion-col size="4">
+            <ion-col size="3">
               <div *ngIf="dat.can_fill_chklist && dat.stage_id === 1">
-                <ion-button class="ion-text-capitalize" size="small" color="danger" *ngIf="!dat.ptw_attach && !dat.ptw_status" expand="block" (click)="uploadPtw(dat)" >Upload PTW</ion-button>
+                <ion-button class="ion-text-capitalize" size="small" color="danger" *ngIf="!dat.ptw_attach && !dat.ptw_status" expand="block" (click)="uploadPtw(dat)" >PTW <ion-icon name="arrow-up-outline" slot="end"></ion-icon></ion-button>
               </div>
               <ion-button class="ion-text-capitalize" size="small" color="medium" *ngIf="dat.ptw_attach" expand="block" (click)="viewAttachment(dat.ptw_attach)" >PTW Img</ion-button>
             </ion-col>
-            <ion-col size="4" *ngIf="dat.can_fill_chklist && dat.stage_id === 1">
-              <ion-button class="ion-text-capitalize" color="tertiary" size="small" expand="block" (click)="openFillReport(dat)" *ngIf="(dat.ptw_attach && dat.ptw_status === 1) || !dat.ptw_mandatory">Fill Checklist  </ion-button>
+            <ion-col size="3" *ngIf="dat.can_fill_chklist && dat.stage_id === 1">
+              <ion-button class="ion-text-capitalize" color="tertiary" size="small" expand="block" (click)="openFillReport(dat)" *ngIf="(dat.ptw_attach && dat.ptw_status === 1) || !dat.ptw_mandatory">Fill </ion-button>
+            </ion-col>
+            <ion-col size="3">
+              <ion-button class="ion-text-capitalize" color="primary" size="small" expand="block" (click)="closedPms(dat)"> Close </ion-button>
             </ion-col>
           </ion-row>
         </ion-card-content>

@@ -106,6 +106,10 @@ export class PmCalService {
     });
   }
 
+  closeAction(formData: any): Observable<any> {
+    return this.https.post(environment.url + 'pmscal/schedule/close_pms_action', formData);
+  }
+
   getPmReportCategory(): Observable<any> {
     return this.https.get(environment.url + 'pmsMainCategory.php')
   }

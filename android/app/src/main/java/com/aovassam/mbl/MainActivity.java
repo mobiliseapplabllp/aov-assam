@@ -1,4 +1,4 @@
-package com.socampuseng.mbl;
+package com.aovassam.mbl;
 
 import com.getcapacitor.BridgeActivity;
 

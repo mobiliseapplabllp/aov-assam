@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoadingController, ModalController } from '@ionic/angular';
+import { LoadingController, ModalController, Platform } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { PmCalService } from 'src/app/provider/pm-cal/pm-cal.service';
 import { CostCenterComponent } from 'src/app/shared/cost-center/cost-center.component';
@@ -9,6 +9,7 @@ import { PmAssignComponent } from './pm-assign/pm-assign.component';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { PtwUploadComponent } from './ptw-upload/ptw-upload.component';
 import { DigitalChecklistService } from 'src/app/provider/digital-checklist/digital-checklist.service';
+import { ClosePmsComponent } from './close-pms/close-pms.component';
 @Component({
   selector: 'app-pm-cal',
   templateUrl: './pm-cal.page.html',
@@ -55,6 +56,7 @@ export class PmCalPage implements OnInit {
     private modalCtrl: ModalController,
     private router: Router,
     private httpDigital: DigitalChecklistService,
+    private platform: Platform
   ) { }
 
   ngOnInit() {
@@ -149,6 +151,23 @@ export class PmCalPage implements OnInit {
     this.closePmCopy = [];
   }
 
+  async closedPms(data: any) {
+    const modal = await this.modalCtrl.create({
+      component: ClosePmsComponent,
+      cssClass: 'my-modal2',
+      componentProps : {
+        data: data
+      }
+    });
+    modal.onWillDismiss().then(disModal => {
+      console.log(disModal);
+      if (disModal.role) {
+        this.openPm = this.openPm.filter((val: any) => val.wo_id !== disModal.data.wo_id);
+      }
+    });
+    return await modal.present();
+  }
+
   multiAssign() {
     console.log(this.openPm);
     const obj =this.openPm.filter((val: any) => val.isSelect == true);
@@ -193,11 +212,16 @@ export class PmCalPage implements OnInit {
   }
 
   openFillReport(data: any) {
-    if (data.ext_asset_id) {
-      this.openBarcode(data)
+    if (this.platform.is('capacitor')) {
+      if (data.ext_asset_id) {
+        this.openBarcode(data)
+      } else {
+        this.openPage(data);
+      }
     } else {
       this.openPage(data);
     }
+
   }
 
   openBarcode(data: any) {
