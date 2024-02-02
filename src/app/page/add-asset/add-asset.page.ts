@@ -140,6 +140,17 @@ export class AddAssetPage implements OnInit {
 
   ngOnInit() {
     this.httpCommon.setBarcode('');
+    this.httpAsset.getAssetMasterData('0000-00-00 00:00:00').subscribe({
+      next:(data) => {
+        console.log(data);
+      },
+      error:() => {
+
+      },
+      complete:() => {
+
+      }
+    })
   }
 
   get input_asset_id() {

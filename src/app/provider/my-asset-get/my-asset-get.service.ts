@@ -11,17 +11,21 @@ export class MyAssetGetService {
     public https: HttpClient,
   ) { }
 
-  getAssetMasterData(lastdatetime: any) {
-    return new Promise(resolve => {
-      this.https.get(environment.url + 'assets/reporting/assetMasterData?systemDateTime=' + lastdatetime).subscribe({
-        next:(data) => {
-          resolve(data);
-        },
-        error:() => {
-          resolve(false);
-        }
-      });
-    });
+  // getAssetMasterData(lastdatetime: any) {
+  //   return new Promise(resolve => {
+  //     this.https.get(environment.url + 'assets/reporting/assetMasterData?systemDateTime=' + lastdatetime).subscribe({
+  //       next:(data) => {
+  //         resolve(data);
+  //       },
+  //       error:() => {
+  //         resolve(false);
+  //       }
+  //     });
+  //   });
+  // }
+
+  getAssetMasterData(lastdatetime: any): Observable<any> {
+    return this.https.get('assets/data/asset_master.json')
   }
 
   getDecBarcode(enc_barcode: string): Observable<any> {
