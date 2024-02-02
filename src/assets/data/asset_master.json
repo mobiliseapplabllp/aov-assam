@@ -1,0 +1,154 @@
+[
+  {
+    "site_detail":[{
+      "barcode_prefix": "110002",
+      "label": "110002 BPHC,NIZ KAURBAHA",
+      "pc_desc":"110002 BPHC,NIZ KAURBAHA",
+      "pc_ext_id": "110002",
+      "pc_id": 2,
+      "value":2
+    },{
+      "barcode_prefix": "110003",
+      "label" : "110003 BPHC,TAMULPUR",
+      "pc_desc" : "110003 BPHC,TAMULPUR",
+      "pc_ext_id" : "110003",
+      "pc_id" : 3,
+      "value" : 3
+    },{
+      "barcode_prefix" : "210004",
+      "label" : "210004 CHC,BARAMA",
+      "pc_desc" : "210004 CHC,BARAMA",
+      "pc_ext_id" : "210004",
+      "pc_id" : 4,
+      "value" : 4
+    }],
+    "blocks": [{
+      "label": "NA",
+      "value": 1
+    }],
+    "building": [{
+      "label": "TPF",
+      "value": 1
+    },{
+      "label": "UNATTI",
+      "value": 2
+    },{
+      "label": "CWH",
+      "value": 3
+    }],
+    "floor": [{
+      "floor_img": "",
+      "label": "GROUND-FLOOR",
+      "value":1
+    },{
+      "floor_img": "",
+      "label": "FIRST-FLOOR",
+      "value":2
+    },{
+      "floor_img": "",
+      "label": "SECOND-FLOOR",
+      "value":2
+    }],
+    "location": [{
+      "label": "Testing Location",
+      "value":15
+    }],
+    "department": [{
+      "dept_desc" : "ACCONTANT ROOM",
+      "dept_ext_id" : null,
+      "dept_id" : 1
+    },{
+      "dept_desc" : "ADMINISTRATOR ROOM" ,
+      "dept_ext_id" :  null,
+      "dept_id" : 2
+    }],
+    "sub_department": [{
+      "dept_desc" :  "ACCONTANT ROOM",
+      "dept_ext_id" :  null,
+      "dept_id": 1,
+      "sub_dept_desc" : "ACCONTANT ROOM",
+      "sub_dept_id" : 1
+    }],
+    "device_group": [{
+      "label" :  "Analyzer",
+      "rate_of_dprctn" : 0,
+      "value" : 1
+    },{
+      "label" :  "Ventilator",
+      "rate_of_dprctn" : 0,
+      "value" : 2
+    },{
+      "label" :  "Aspirators",
+      "rate_of_dprctn" : 0,
+      "value" : 3
+    }],
+    "device_sub_group": [{
+      "label" :  "ANALYZERS, LABORATORY, BLOOD GAS",
+      "subgrp_class" : "Non-Critical",
+      "value" : 1
+    },{
+      "label" :  "ANALYZERS, LABORATORY, BLOOD GAS/PH",
+      "subgrp_class" : "Non-Critical",
+      "value" : 2
+    }],
+    "manufacturer": [{
+      "mnfctrer_desc" : "3M HEALTHCARE",
+      "mnfctrer_ext_id" : "",
+      "mnfctrer_id" : 1
+    },{
+      "mnfctrer_desc" : "A & D Co Ltd",
+      "mnfctrer_ext_id" : "",
+      "mnfctrer_id" : 1
+    }],
+    "ownership": [{
+      "id" : 1,
+      "label" : "Customer/Client",
+      "ownership" : "Customer/Client",
+      "value" : 1
+    },{
+      "id" : 2,
+      "label" : "OEM",
+      "ownership" : "OEM",
+      "value" :  2
+    },{
+      "id" : 3,
+      "label" : "AOV",
+      "ownership" : "AOV",
+      "value" :  3
+    }],
+    "equip_status": [{
+      "id" : 1,
+      "label" : "Physical Damage",
+      "status_name" : "Physical Damage",
+      "value" : 1
+    },{
+      "id" :  2,
+      "label" : "Condemned",
+      "status_name" :  "Condemned",
+      "value" : 2
+    }],
+    "technology_status": [{
+      "label" :  "New",
+      "value": 1
+    },{
+      "label" :  "OLD",
+      "value": 2
+    },{
+      "label" :  "Obsolete",
+      "value": 3
+    }],
+    "warranty": [{
+      "id" : 1,
+      "status" : 1,
+      "warranty" : "UNDER WARRANTY"
+    },{
+      "id" : 2,
+      "status" : 1,
+      "warranty" : "UNDER AMC"
+    },{
+      "id" : 3,
+      "status" : 1,
+      "warranty" : "UNDER CMC"
+    }]
+  }
+]
