@@ -16,6 +16,8 @@ import { LocationComponent } from 'src/app/shared/location/location.component';
 import { DeviceGroupComponent } from 'src/app/shared/device-group/device-group.component';
 import { CostCenterComponent } from 'src/app/shared/cost-center/cost-center.component';
 import { AssetSqliteService } from 'src/app/provider/asset-sqlite/asset-sqlite.service';
+import { db } from '../../provider/local-db/local-db.service';
+import { liveQuery } from 'dexie';
 @Component({
   selector: 'app-add-asset',
   templateUrl: './add-asset.page.html',
@@ -129,7 +131,13 @@ export class AddAssetPage implements OnInit {
       vend_code: [''],
       is_insured: [''],
       remark: [''],
-      source: [environment.source]
+      source: [environment.source],
+      x_cor: [''],
+      y_cor: [''],
+      pur_invoice: [''],
+      asset_img: [''],
+      asset_img2: [''],
+      asset_img3: ['']
 
     });
     this.pinPointStyleFun();
@@ -145,59 +153,65 @@ export class AddAssetPage implements OnInit {
         if (this.platform.is('capacitor')) {
           this.checkAndUpdateMaster();
         } else {
-          this.myOwnership = [{
-            id : 1,
-            label : "Customer/Client",
-            ownership : "Customer/Client",
-            value : 1
-          },{
-            id : 2,
-            label : "OEM",
-            ownership : "OEM",
-            value :  2
-          },{
-            id : 3,
-            label : "AOV",
-            ownership : "AOV",
-            value :  3
-          }],
-          this.myEquipStatus = [{
-            id : 1,
-            label : "Physical Damage",
-            status_name : "Physical Damage",
-            value : 1
-          },{
-            id :  2,
-            label : "Condemned",
-            status_name :  "Condemned",
-            value : 2
-          }],
-          this.myTechnology = [{
-            label :  "New",
-            value: 1
-          },{
-            label :  "OLD",
-            value: 2
-          },{
-            label :  "Obsolete",
-            value: 3
-          }],
-          this.myWarranty = [{
-            id : 1,
-            status : 1,
-            warranty : "UNDER WARRANTY"
-          },{
-            id : 2,
-            status : 1,
-            warranty : "UNDER AMC"
-          },{
-            id : 3,
-            status : 1,
-            warranty : "UNDER CMC"
-          }]
+          this.dummyData();
         }
+      } else {
+        this.dummyData();
       }
     });
+  }
+
+  dummyData() {
+    this.myOwnership = [{
+      id : 1,
+      label : "Customer/Client",
+      ownership : "Customer/Client",
+      value : 1
+    },{
+      id : 2,
+      label : "OEM",
+      ownership : "OEM",
+      value :  2
+    },{
+      id : 3,
+      label : "AOV",
+      ownership : "AOV",
+      value :  3
+    }],
+    this.myEquipStatus = [{
+      id : 1,
+      label : "Physical Damage",
+      status_name : "Physical Damage",
+      value : 1
+    },{
+      id :  2,
+      label : "Condemned",
+      status_name :  "Condemned",
+      value : 2
+    }],
+    this.myTechnology = [{
+      label :  "New",
+      value: 1
+    },{
+      label :  "OLD",
+      value: 2
+    },{
+      label :  "Obsolete",
+      value: 3
+    }],
+    this.myWarranty = [{
+      id : 1,
+      status : 1,
+      warranty : "UNDER WARRANTY"
+    },{
+      id : 2,
+      status : 1,
+      warranty : "UNDER AMC"
+    },{
+      id : 3,
+      status : 1,
+      warranty : "UNDER CMC"
+    }]
   }
 
   checkAndUpdateMaster() {
@@ -421,6 +435,7 @@ export class AddAssetPage implements OnInit {
       this.img1 = random;
       this.formData.delete('asset_img');
       this.formData.append('asset_img', blob, random);
+      this.addAsset.get('asset_img')?.setValue(blob);
       this.presentLoading().then(preLoad => {
         this.dismissloading();
         return;
@@ -431,6 +446,7 @@ export class AddAssetPage implements OnInit {
       this.img2 = random;
       this.formData.delete('asset_img2');
       this.formData.append('asset_img2', blob, random );
+      this.addAsset.get('asset_img2')?.setValue(blob);
       this.presentLoading().then(preLoad => {
         this.dismissloading();
         return;
@@ -441,6 +457,7 @@ export class AddAssetPage implements OnInit {
       this.img3 = random;
       this.formData.delete('asset_img3');
       this.formData.append('asset_img3', blob, random);
+      this.addAsset.get('asset_img3')?.setValue(blob);
       this.presentLoading().then(preLoad => {
         this.dismissloading();
         return;
@@ -451,6 +468,8 @@ export class AddAssetPage implements OnInit {
       this.img4 = random;
       this.formData.delete('pur_invoice');
       this.formData.append('pur_invoice', blob, random);
+      console.log(blob);
+      this.addAsset.get('pur_invoice')?.setValue(blob);
       this.presentLoading().then(preLoad => {
         this.dismissloading();
         return;
@@ -1045,33 +1064,52 @@ export class AddAssetPage implements OnInit {
     }
 
     this.addAsset.get('ext_asset_id')?.setValue(fullbarcode);
+    this.addAssetOffline(this.addAsset.value);
+    this.httpCommon.checkInternet().then(res => {
+      if (res) {
+        this.saveAssetServer();
+      } else {
+        this.httpCommon.presentToast('Asset Saved in Offline Mode', 'tertiary');
+        this.parentAssetObj = { };
+        this.formData = new FormData();
+        this.clearField();
+      }
+    })
+
+  }
+
+  saveAssetServer() {
     this.stopRequest();
     this.presentLoading().then(preLoad => {
+      this.addAsset.get('x_cor')?.setValue(this.coordinate.x);
+      this.addAsset.get('y_cor')?.setValue(this.coordinate.y);
       for(let key in this.addAsset.value) {
         this.formData.delete(key);
         this.formData.append(key, this.addAsset.value[key])
       }
-      // x_cor: [''],
-      //   y_cor: [''],
-      this.formData.delete('x_cor');
-      this.formData.delete('y_cor');
-      this.formData.append('x_cor', this.coordinate.x)
-      this.formData.append('y_cor', this.coordinate.y)
+      // this.formData.delete('x_cor');
+      // this.formData.delete('y_cor');
+      // this.formData.append('x_cor', this.coordinate.x)
+      // this.formData.append('y_cor', this.coordinate.y)
+      // this.addAssetOffline(this.addAsset.value);
+      // this.dismissloading();
+      // return;
       this.pendingApi = this.httpAsset.submitAsset(this.formData).subscribe({
         next:(data) => {
           this.pendingApi = null;
           this.clrTime();
-          console.log(data);
           if (data.status) {
             this.httpCommon.presentToast(data.msg, 'success');
             this.parentAssetObj = { };
             this.formData = new FormData();
             this.clearField();
+            this.deleteAssetOffline(this.addAsset.value.ext_asset_id);
           } else {
             this.httpCommon.presentToast(data.msg, 'warning');
           }
         },
         error:() => {
+          // this.addAssetOffline(this.addAsset.value);
           this.pendingApi = null;
           this.dismissloading();
           this.httpCommon.presentToast(environment.errMsg, 'danger');
@@ -1081,6 +1119,15 @@ export class AddAssetPage implements OnInit {
         }
       });
     })
+  }
+
+  async addAssetOffline(assetData: any) {
+    console.log(assetData);
+    await db.asset.add(assetData)
+  }
+
+  async deleteAssetOffline(ext_asset_id: any) {
+    await db.asset.where({ext_asset_id: ext_asset_id}).delete();
   }
 
   stopRequest() {

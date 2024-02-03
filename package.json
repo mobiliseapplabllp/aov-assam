@@ -39,6 +39,7 @@
     "angular-user-idle": "^4.0.0",
     "angular2-signaturepad": "^2.11.0",
     "cordova-sqlite-storage": "^6.1.0",
+    "dexie": "^3.2.4",
     "ionicons": "^6.0.3",
     "moment": "^2.29.4",
     "ng-otp-input": "^1.7.1",
