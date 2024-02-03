@@ -51,7 +51,7 @@
             <ion-item >
               <ion-label color="primary" position="floating">Blocks</ion-label>
               <ion-select interface="action-sheet"  mode="ios" formControlName="block_id" (ionChange)="changeBlock($event)">
-                <ion-select-option *ngFor="let dat of myBlocks" [value]="dat.value">{{dat.label}}</ion-select-option>
+                <ion-select-option *ngFor="let dat of myBlocks" [value]="dat.block_id">{{dat.label}}</ion-select-option>
               </ion-select>
             </ion-item>
           </ion-col>
@@ -59,7 +59,7 @@
             <ion-item>
               <ion-label color="primary" position="floating">Building </ion-label>
               <ion-select interface="action-sheet" mode="ios" formControlName="bldg_id" ><!--(ionChange)="changeBuilding($event)"-->
-                <ion-select-option *ngFor="let dat of myBuildingArr" [value]="dat.value">{{dat.label}}</ion-select-option>
+                <ion-select-option *ngFor="let dat of myBuildingArr" [value]="dat.building_id">{{dat.label}}</ion-select-option>
               </ion-select>
             </ion-item>
           </ion-col>
@@ -246,7 +246,7 @@
             <ion-item>
               <ion-label color="primary" position="floating">Ownership <ion-text color="danger">*</ion-text></ion-label>
               <ion-select interface="action-sheet" mode="ios" formControlName="ownership_id">
-                <ion-select-option *ngFor="let dat of myOwnership" [value]="dat.id">{{dat.label}}</ion-select-option>
+                <ion-select-option *ngFor="let dat of myOwnership" [value]="dat.value">{{dat.label}}</ion-select-option>
               </ion-select>
             </ion-item>
           </ion-col>

@@ -554,7 +554,8 @@ export class AddAssetPage implements OnInit {
     } else {
       this.myBlocks = [{
         label: "NA",
-        value : 1
+        block_id : 1,
+        pc_id: 1
       }]
     }
 
@@ -647,13 +648,14 @@ export class AddAssetPage implements OnInit {
         this.dismissloading();
         this.myBuildingArr = [{
           "label": "TPF",
-          "value": 1
+          "building_id": 1,
+
         },{
           "label": "UNATTI",
-          "value": 2
+          "building_id": 2
         },{
           "label": "CWH",
-          "value": 3
+          "building_id": 3
         }];
       }
 
@@ -698,7 +700,7 @@ export class AddAssetPage implements OnInit {
       if (disModal.role) {
         this.floorImage = disModal.data.floor_img;
         this.addAsset.get('floor_id_desc')?.setValue(disModal.data.label);
-        this.addAsset.get('floor_id')?.setValue(disModal.data.value);
+        this.addAsset.get('floor_id')?.setValue(disModal.data.floor_id);
         this.addAsset.get('loc_id')?.setValue('');
         this.addAsset.get('loc_id_desc')?.setValue('')
       }
@@ -724,7 +726,7 @@ export class AddAssetPage implements OnInit {
       if (disModal.role) {
         // this.floorImage = disModal.data.floor_img;
         this.addAsset.get('loc_id_desc')?.setValue(disModal.data.label);
-        this.addAsset.get('loc_id')?.setValue(disModal.data.value);
+        this.addAsset.get('loc_id')?.setValue(disModal.data.location_id);
       }
 
     });
@@ -887,7 +889,7 @@ export class AddAssetPage implements OnInit {
       if (disModal.role) {
         this.floorImage = disModal.data.floor_img;
         this.addAsset.get('grp_id_desc')?.setValue(disModal.data.label);
-        this.addAsset.get('grp_id')?.setValue(disModal.data.value);
+        this.addAsset.get('grp_id')?.setValue(disModal.data.grp_id);
         this.addAsset.get('subgrp_id_desc')?.setValue('');
         this.addAsset.get('subgrp_id')?.setValue('');
       }
