@@ -15,6 +15,7 @@ import { FloorComponent } from 'src/app/shared/floor/floor.component';
 import { LocationComponent } from 'src/app/shared/location/location.component';
 import { DeviceGroupComponent } from 'src/app/shared/device-group/device-group.component';
 import { CostCenterComponent } from 'src/app/shared/cost-center/cost-center.component';
+import { AssetSqliteService } from 'src/app/provider/asset-sqlite/asset-sqlite.service';
 @Component({
   selector: 'app-add-asset',
   templateUrl: './add-asset.page.html',
@@ -79,7 +80,8 @@ export class AddAssetPage implements OnInit {
     private modalController: ModalController,
     private httpCommon: CommonService,
     private loadingController: LoadingController,
-    private router: Router) {
+    private router: Router,
+    private assetSqlite: AssetSqliteService) {
     this.addAsset = this.formbuilder.group({
       faciity_type: [''],
       site_id_description:[''],
@@ -132,25 +134,44 @@ export class AddAssetPage implements OnInit {
     this.pinPointStyleFun();
     // this.getFacilityType();
     // this.getDeviceGroup();
-    this.getOwnership();
-    this.getEquipStatus();
-    this.getTechnology();
-    this.getWarranty();
+
   }
 
   ngOnInit() {
     this.httpCommon.setBarcode('');
-    this.httpAsset.getAssetMasterData('0000-00-00 00:00:00').subscribe({
-      next:(data) => {
-        console.log(data);
-      },
-      error:() => {
-
-      },
-      complete:() => {
-
+    this.httpCommon.checkInternet().then(res => {
+      if (res) {
+        this.checkAndUpdateMaster();
       }
-    })
+    });
+  }
+
+  checkAndUpdateMaster() {
+    let lastAssetTime = localStorage.getItem('lastAssetTime');
+    if (!lastAssetTime) {
+      this.presentLoading().then(preLoad => {
+        this.httpAsset.getAssetMasterData('0000-00-00 00:00:00').subscribe({
+          next:(data) => {
+            this.httpAsset.insertAssetAction(data).then(insRes => {
+              if (insRes) {
+                alert('All Master Saved Succ');
+                localStorage.setItem('lastAssetTime', moment().format('YYYY-MM-DD H:mm:ss'));
+                this.getOwnership();
+                this.getEquipStatus();
+                this.getTechnology();
+                this.getWarranty();
+              }
+            });
+          },
+          error:() => {
+            this.dismissloading();
+          },
+          complete:() => {
+            this.dismissloading();
+          }
+        })
+      });
+    }
   }
 
   get input_asset_id() {
@@ -275,7 +296,7 @@ export class AddAssetPage implements OnInit {
             let temp, firstDigit,lastDigit;
             temp = data.data.text;
             firstDigit = temp.slice(0, 4);
-            lastDigit = temp.slice(-6);
+            lastDigit = temp.slice(-4);
             if (firstDigit === this.addAsset.value.ext_asset_id_pre) {
               this.addAsset.get('input_asset_id')?.setValue(lastDigit);
             } else {
@@ -398,10 +419,6 @@ export class AddAssetPage implements OnInit {
 
 
   async openSiteModal() {
-    // if (!this.addAsset.value.faciity_type) {
-    //   alert('Please Select Facilty Type');
-    //   return;
-    // }
     const modal = await this.modalController.create({
       component: CostCenterComponent,
       cssClass: 'my-modal',
@@ -420,38 +437,45 @@ export class AddAssetPage implements OnInit {
         this.addAsset.get('loc_id_desc')?.setValue('');
         this.addAsset.get('ext_asset_id_pre')?.setValue('');
         this.addAsset.get('input_asset_id')?.setValue('');
-        this.presentLoading().then(preLoad => {
-          this.httpAsset.getBlock(disModal.data.pc_id).subscribe({
-            next:(data) => {
-              if (data.status) {
-                this.myBlocks = data.data;
-              }
-            },
-            error:() => {
-              this.dismissloading();
-              this.httpCommon.presentToast(environment.errMsg + ' Block Err', 'danger');
-            },
-            complete:() => {
-              this.dismissloading();
-            }
-          });
-        })
+        this.getBlockFromSqlite();
+        // this.presentLoading().then(preLoad => {
+        //   this.httpAsset.getBlock(disModal.data.pc_id).subscribe({
+        //     next:(data) => {
+        //       if (data.status) {
+        //         this.myBlocks = data.data;
+        //       }
+        //     },
+        //     error:() => {
+        //       this.dismissloading();
+        //       this.httpCommon.presentToast(environment.errMsg + ' Block Err', 'danger');
+        //     },
+        //     complete:() => {
+        //       this.dismissloading();
+        //     }
+        //   });
+        // })
 
-        this.httpAsset.getPrefixBarcode(disModal.data.pc_id).subscribe(data => {
-          console.log(data);
-          if (data.status) {
-            this.prefixBarcode = data.data.barcode_prefix;
-            this.segmentType = data.data.seg_desc;
-            this.city = data.data.ct_name;
-            this.sub_segment = data.data.subseg_desc;
-            this.addAsset.get('ext_asset_id_pre')?.setValue(this.prefixBarcode);
-          }
-        });
+        // this.httpAsset.getPrefixBarcode(disModal.data.pc_id).subscribe(data => {
+        //   console.log(data);
+        //   if (data.status) {
+        //     this.prefixBarcode = data.data.barcode_prefix;
+        //     this.segmentType = data.data.seg_desc;
+        //     this.city = data.data.ct_name;
+        //     this.sub_segment = data.data.subseg_desc;
+        //     this.addAsset.get('ext_asset_id_pre')?.setValue(this.prefixBarcode);
+        //   }
+        // });
 
       } else {
       }
     });
     return await modal.present();
+  }
+
+  getBlockFromSqlite(){
+    this.assetSqlite.getBlockFromSqlite().then(res => {
+      this.myBlocks = res;
+    })
   }
 
   async openDepartment() {
@@ -524,52 +548,41 @@ export class AddAssetPage implements OnInit {
       return;
     }
     this.presentLoading().then(preLoad => {
-      this.httpAsset.getBuildingList(ev.target.value).subscribe({
-        next:(data) => {
-          if (data.status) {
-            this.myBuildingArr = data.data;
-            this.addAsset.get('bldg_id')?.setValue('');
-            this.addAsset.get('floor_id')?.setValue('');
-            this.addAsset.get('floor_id_desc')?.setValue('');
-            this.addAsset.get('loc_id')?.setValue('');
-            this.addAsset.get('loc_id_desc')?.setValue('')
+      this.assetSqlite.getBuildingFromSqlite().then(res => {
+        this.myBuildingArr = res;
+        this.addAsset.get('bldg_id')?.setValue('');
+        this.addAsset.get('floor_id')?.setValue('');
+        this.addAsset.get('floor_id_desc')?.setValue('');
+        this.addAsset.get('loc_id')?.setValue('');
+        this.addAsset.get('loc_id_desc')?.setValue('');
+        this.dismissloading();
+      }, err => {
+        alert(JSON.stringify(err));
+        this.dismissloading();
+      })
+      // this.httpAsset.getBuildingList(ev.target.value).subscribe({
+      //   next:(data) => {
+      //     if (data.status) {
+      //       this.myBuildingArr = data.data;
+      //       this.addAsset.get('bldg_id')?.setValue('');
+      //       this.addAsset.get('floor_id')?.setValue('');
+      //       this.addAsset.get('floor_id_desc')?.setValue('');
+      //       this.addAsset.get('loc_id')?.setValue('');
+      //       this.addAsset.get('loc_id_desc')?.setValue('')
 
-          }
-        },
-        error:() => {
-          this.dismissloading();
-          this.httpCommon.presentToast(environment.errMsg, 'danger');
-        },
-        complete:() => {
-          this.dismissloading();
-        }
-      });
+      //     }
+      //   },
+      //   error:() => {
+      //     this.dismissloading();
+      //     this.httpCommon.presentToast(environment.errMsg, 'danger');
+      //   },
+      //   complete:() => {
+      //     this.dismissloading();
+      //   }
+      // });
     })
   }
 
-  // changeBuilding(ev: any) {
-  //   if (!ev.target.value) {
-  //     return;
-  //   }
-  //   this.presentLoading().then(preLoad => {
-  //     this.httpAsset.getFloorList(ev.target.value).subscribe({
-  //       next:(data) => {
-  //         if (data.status) {
-  //           this.myFloor = data.data;
-  //           this.addAsset.get('floor_id')?.setValue('');
-  //           this.addAsset.get('loc_id')?.setValue('');
-  //         }
-  //       },
-  //       error:() => {
-  //         this.dismissloading();
-  //         this.httpCommon.presentToast(environment.errMsg, 'danger');
-  //       },
-  //       complete:() => {
-  //         this.dismissloading();
-  //       }
-  //     });
-  //   })
-  // }
 
   async openFloorModal() {
     if (!this.addAsset.value.bldg_id) {
@@ -728,16 +741,22 @@ export class AddAssetPage implements OnInit {
 
   changeDepartment(id: any) {
     this.presentLoading().then(preLoad => {
-      this.httpAsset.getSubDepartment(id).subscribe(data => {
-        console.log(data);
+      this.assetSqlite.getSubDepartmentFromSqlite(id).then(res => {
+        this.mySubDepartment = res;
         this.dismissloading();
-        if (data.status) {
-          this.mySubDepartment = data.data
-        }
       }, err => {
         this.dismissloading();
-        this.httpCommon.presentToast(environment.errMsg, 'danger');
-      });
+      })
+      // this.httpAsset.getSubDepartment(id).subscribe(data => {
+      //   console.log(data);
+      //   this.dismissloading();
+      //   if (data.status) {
+      //     this.mySubDepartment = data.data
+      //   }
+      // }, err => {
+      //   this.dismissloading();
+      //   this.httpCommon.presentToast(environment.errMsg, 'danger');
+      // });
     })
   }
 
@@ -811,39 +830,52 @@ export class AddAssetPage implements OnInit {
   }
 
   getOwnership() {
-    this.httpAsset.getOwnership().subscribe(data => {
-      console.log(data);
-      if (data.status) {
-        this.myOwnership = data.data;
-      }
-    });
+    // this.httpAsset.getOwnership().subscribe(data => {
+    //   console.log(data);
+    //   if (data.status) {
+    //     this.myOwnership = data.data;
+    //   }
+    // });
+    this.assetSqlite.getOwnerShipFromSqlite().then(res => {
+      this.myOwnership = res;
+    })
   }
 
   getEquipStatus() {
-    this.httpAsset.getEquipmentStatus().subscribe(data => {
-      console.log(data);
-      if (data.status) {
-        this.myEquipStatus = data.data
-      }
+    // this.httpAsset.getEquipmentStatus().subscribe(data => {
+    //   console.log(data);
+    //   if (data.status) {
+    //     this.myEquipStatus = data.data
+    //   }
+    // });
+
+    this.assetSqlite.getEquipStatusFromSqlite().then(res => {
+      this.myEquipStatus = res;
     });
   }
 
   getTechnology() {
-    this.httpAsset.getTechnology().subscribe(data => {
-      console.log(data);
-      if (data.status) {
-        this.myTechnology = data.data
-      }
-    });
+    // this.httpAsset.getTechnology().subscribe(data => {
+    //   console.log(data);
+    //   if (data.status) {
+    //     this.myTechnology = data.data
+    //   }
+    // });
+    this.assetSqlite.getTechnologyFromSqlite().then(res => {
+      this.myTechnology = res;
+    })
   }
 
   getWarranty() {
-    this.httpAsset.getWarranty().subscribe(data => {
-      console.log(data);
-      if (data.status) {
-        this.myWarranty = data.data;
-      }
-    });
+    // this.httpAsset.getWarranty().subscribe(data => {
+    //   console.log(data);
+    //   if (data.status) {
+    //     this.myWarranty = data.data;
+    //   }
+    // });
+    this.assetSqlite.getWarrantyFromSqlite().then(res => {
+      this.myWarranty = res;
+    })
   }
 
   async presentLoading() {

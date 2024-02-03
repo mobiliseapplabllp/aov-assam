@@ -42,9 +42,26 @@ export class AppComponent {
     this.initIdle();
     const isLogin = localStorage.getItem('isAlreadyLogin');
     if (!isLogin) {
-      this.router.navigateByUrl('/login', { replaceUrl: true });
+      if (this.platform.is('capacitor')) {
+        this.common.getTableStructureFromJson().then(tableStructure => {
+          this.common.createAllTable(tableStructure).then(resPonse => {
+            if (resPonse === true) {
+              this.router.navigateByUrl('/login', { replaceUrl: true });
+            }
+          });
+        });
+      } else {
+        this.router.navigateByUrl('/login', { replaceUrl: true });
+      }
     } else {
-      this.refreshToken();
+      this.common.checkInternet().then(res => {
+        if (res) {
+          this.refreshToken();
+        } else {
+          this.router.navigateByUrl('/list-master', { replaceUrl: true });
+          this.common.presentToast('You are in Offline Mode', 'danger');
+        }
+      });
     }
   }
 

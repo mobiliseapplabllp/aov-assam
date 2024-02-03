@@ -50,14 +50,6 @@ export class ListMasterPage implements OnInit {
   }
 
   ngOnInit() {
-    // setTimeout(() => {
-    //   this.listMaster.sendMessage('pizza').subscribe({
-    //     next:() => {},
-    //     error:() => {},
-    //     complete:() => {}
-    //   });
-    // }, 3000);
-
     this.common.checkInternet().then(res => {
       if (res) {
         this.isInternet = true;

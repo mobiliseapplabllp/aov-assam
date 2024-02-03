@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, ModalController } from '@ionic/angular';
+import { AssetSqliteService } from 'src/app/provider/asset-sqlite/asset-sqlite.service';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { MyAssetGetService } from 'src/app/provider/my-asset-get/my-asset-get.service';
 import { environment } from 'src/environments/environment';
@@ -18,11 +19,20 @@ export class LocationComponent  implements OnInit {
     private httpCommon: CommonService,
     private loadingController: LoadingController,
     private httpAsset: MyAssetGetService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private assetSqlite: AssetSqliteService
   ) { }
 
   ngOnInit() {
-    this.getLocation();
+    // this.getLocation();
+    this.getLocaionFromSqlite();
+  }
+
+  getLocaionFromSqlite() {
+    this.assetSqlite.getLocationFromSqlite().then(res => {
+      this.myLocation = res;
+      this.myLocationCopy = res;
+    });
   }
 
   getLocation() {

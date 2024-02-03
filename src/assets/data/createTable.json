@@ -1,37 +1,47 @@
 [
   {
-    "table":"create table IF NOT EXISTS update_track(srno,activity_id,activity,version_code,mobile_refresh,updatedatetime)"
+    "table":"create table IF NOT EXISTS site_detail(barcode_prefix,label,pc_desc, pc_ext_id,pc_id, value)"
   },
   {
-    "table":"create table IF NOT EXISTS assetOwnerShip(id, label, ownership, value)"
+    "table":"create table IF NOT EXISTS blocks(label,value)"
   },
   {
-    "table":"create table IF NOT EXISTS assetStatusDrop(id, label, status_name, value)"
+    "table":"create table IF NOT EXISTS building(label,value)"
   },
   {
-    "table":"create table IF NOT EXISTS building(building_id, building_name, status)"
+    "table":"create table IF NOT EXISTS floor(floor_img,label,value)"
   },
   {
-    "table":"create table IF NOT EXISTS department(dept_desc, dept_ext_id, dept_id)"
+    "table":"create table IF NOT EXISTS location(label,value)"
   },
   {
-    "table":"create table IF NOT EXISTS floor(floor_id, floor_name, status)"
+    "table":"create table IF NOT EXISTS department(dept_desc,dept_ext_id,dept_id)"
   },
   {
-    "table":"create table IF NOT EXISTS group1(label, value)"
+    "table":"create table IF NOT EXISTS sub_department(dept_desc,dept_ext_id,dept_id,sub_dept_desc,sub_dept_id)"
   },
   {
-    "table":"create table IF NOT EXISTS manufacturerMaster(mnfctrer_desc, mnfctrer_ext_id, mnfctrer_id)"
+    "table":"create table IF NOT EXISTS device_group(label,rate_of_dprctn,value)"
   },
   {
-    "table":"create table IF NOT EXISTS pcCate(id, pc_cat, pc_cat_ext_id)"
+    "table":"create table IF NOT EXISTS device_name(label,subgrp_class,value)"
   },
   {
-    "table":"create table IF NOT EXISTS tech(label, value)"
+    "table":"create table IF NOT EXISTS device_sub_group(label,subgrp_class,value)"
   },
   {
-    "table":"create table IF NOT EXISTS warranty(label, value)"
+    "table":"create table IF NOT EXISTS manufacturer(mnfctrer_desc,mnfctrer_ext_id,mnfctrer_id)"
+  },
+  {
+    "table":"create table IF NOT EXISTS ownership(id,label,ownership,value)"
+  },
+  {
+    "table":"create table IF NOT EXISTS equip_status(id,label,status_name,value)"
+  },
+  {
+    "table":"create table IF NOT EXISTS technology_status(label,value)"
+  },
+  {
+    "table":"create table IF NOT EXISTS warranty(id,status,warranty)"
   }
 ]
-
-

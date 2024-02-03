@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, ModalController } from '@ionic/angular';
+import { AssetSqliteService } from 'src/app/provider/asset-sqlite/asset-sqlite.service';
 import { MyAssetGetService } from 'src/app/provider/my-asset-get/my-asset-get.service';
 
 @Component({
@@ -13,14 +14,23 @@ export class AssetDevicenameComponent  implements OnInit {
   loading:any;
   grp_id: any;
   constructor(
-    public modalCtrl: ModalController,
-    public loadingController: LoadingController,
-    public httpAsset: MyAssetGetService,
+    private modalCtrl: ModalController,
+    private loadingController: LoadingController,
+    private httpAsset: MyAssetGetService,
+    private assetSqlite: AssetSqliteService
   ) { }
 
   ngOnInit() {
     console.log(this.grp_id);
-    this.getDeviceName();
+    // this.getDeviceName();
+    this.getDeviceNameFromSqlite();
+  }
+
+  getDeviceNameFromSqlite() {
+    this.assetSqlite.getDeviceNameFromSqlite().then(res => {
+      this.myDeviceName = res;
+      this.myDeviceNameCopy = res;
+    })
   }
 
   getDeviceName() {

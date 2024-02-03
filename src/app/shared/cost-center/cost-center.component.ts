@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, ModalController } from '@ionic/angular';
+import { AssetSqliteService } from 'src/app/provider/asset-sqlite/asset-sqlite.service';
 import { ComplaintService } from 'src/app/provider/complaint/complaint.service';
 @Component({
   selector: 'app-cost-center',
@@ -11,13 +12,23 @@ export class CostCenterComponent  implements OnInit {
   allCostCenter: any = [];
   allCostCenterCopy: any = [];
   constructor(
-    public loadingController: LoadingController,
-    public httpComplaint: ComplaintService,
-    public modalCtrl: ModalController
+    private loadingController: LoadingController,
+    private httpComplaint: ComplaintService,
+    private modalCtrl: ModalController,
+    private assetSqlite: AssetSqliteService
   ) { }
 
   ngOnInit() {
-    this.getCostCenter();
+    // this.getCostCenter();
+    this.getCostCenterSqlite();
+  }
+
+  getCostCenterSqlite() {
+    this.assetSqlite.getSiteDetailFromSqlite().then(res => {
+      console.log(res);
+      this.allCostCenter = res;
+      this.allCostCenterCopy = res
+    })
   }
 
   closeModal(val: any, status: any) {

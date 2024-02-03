@@ -68,6 +68,12 @@
       "dept_id": 1,
       "sub_dept_desc" : "ACCONTANT ROOM",
       "sub_dept_id" : 1
+    },{
+      "dept_desc" :  "ACCONTANT ROOM2",
+      "dept_ext_id" :  null,
+      "dept_id": 2,
+      "sub_dept_desc" : "ACCONTANT ROOM2",
+      "sub_dept_id" : 2
     }],
     "device_group": [{
       "label" :  "Analyzer",
@@ -81,6 +87,15 @@
       "label" :  "Aspirators",
       "rate_of_dprctn" : 0,
       "value" : 3
+    }],
+    "device_name": [{
+      "label" : "ANALYZERS, LABORATORY, BLOOD GAS",
+      "subgrp_class" : "Non-Critical" ,
+      "value" : 1
+    },{
+      "label" : "ANALYZERS, LABORATORY, BLOOD GAS/PH",
+      "subgrp_class" :  "Non-Critical",
+      "value" :2
     }],
     "device_sub_group": [{
       "label" :  "ANALYZERS, LABORATORY, BLOOD GAS",

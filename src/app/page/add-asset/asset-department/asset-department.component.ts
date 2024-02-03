@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, ModalController } from '@ionic/angular';
+import { AssetSqliteService } from 'src/app/provider/asset-sqlite/asset-sqlite.service';
 import { MyAssetGetService } from 'src/app/provider/my-asset-get/my-asset-get.service';
 
 @Component({
@@ -12,13 +13,22 @@ export class AssetDepartmentComponent  implements OnInit {
   myDepartmentCopy: any = [];
   loading: any;
   constructor(
-    public modalCtrl: ModalController,
-    public httpAsset: MyAssetGetService,
-    public loadingController: LoadingController
+    private modalCtrl: ModalController,
+    private httpAsset: MyAssetGetService,
+    private loadingController: LoadingController,
+    private assetSqlite: AssetSqliteService
   ) { }
 
   ngOnInit() {
-    this.getDepartment();
+    // this.getDepartment();
+    this.getDepartmentFromSqlite();
+  }
+
+  getDepartmentFromSqlite() {
+    this.assetSqlite.getDepartmentFromSqlite().then(res => {
+      this.myDepartment = res;
+      this.myDepartmentCopy = res;
+    })
   }
 
   closeModal(val: any, status: any) {

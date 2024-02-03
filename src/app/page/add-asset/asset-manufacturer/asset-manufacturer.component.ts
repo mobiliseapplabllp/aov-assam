@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, ModalController } from '@ionic/angular';
+import { AssetSqliteService } from 'src/app/provider/asset-sqlite/asset-sqlite.service';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { MyAssetGetService } from 'src/app/provider/my-asset-get/my-asset-get.service';
 import { environment } from 'src/environments/environment';
@@ -17,10 +18,19 @@ export class AssetManufacturerComponent  implements OnInit {
     private modalCtrl: ModalController,
     private httpAsset: MyAssetGetService,
     private loadingController: LoadingController,
-    private common: CommonService) { }
+    private common: CommonService,
+    private assetSqlite: AssetSqliteService) { }
 
   ngOnInit() {
-    this.getManufacturer();
+    // this.getManufacturer();
+    this.getManufacturerFromSqlite();
+  }
+
+  getManufacturerFromSqlite() {
+    this.assetSqlite.getManufacturerFromSqlite().then(res => {
+      this.manufacturer = res;
+      this.manufacturerCopy = res;
+    })
   }
 
   ionViewDidLeave() {

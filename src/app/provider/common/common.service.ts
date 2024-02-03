@@ -1,14 +1,21 @@
 import { Injectable } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { Network } from '@capacitor/network';
+import { HttpClient } from '@angular/common/http';
+import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
+import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 
 export class CommonService {
   public barcode!: string;
+  db = environment.db;
+  dbLocation = environment.db_location;
   constructor(
-    private toastController: ToastController
+    private toastController: ToastController,
+    public http: HttpClient,
+    private sqlite: SQLite
   ) { }
 
   setBarcode(barcode: string) {
@@ -63,8 +70,41 @@ export class CommonService {
   async checkInternet() {
     return new Promise(async resolve => {
       const status = await Network.getStatus();
-      console.log('Network status:', status.connected);
       resolve(status.connected);
+    });
+  }
+
+  getTableStructureFromJson() {
+    return new Promise(resolve => {
+      this.http.get('assets/data/createTable.json').subscribe({
+        next:(data) => {
+          resolve(data);
+        },
+        error:() => {
+          alert('Err Table Structure');
+          resolve(false);
+        }
+      })
+    });
+  }
+
+  createAllTable(tablestructure: any) {
+    return new Promise(resolve => {
+      this.sqlite.create({name: this.db, location: this.dbLocation}).then((db: SQLiteObject) => {
+        // tslint:disable-next-line: prefer-for-of
+        for (let i = 0 ; i < tablestructure.length; i ++) {
+          db.executeSql(tablestructure[i].table, []).then(userdata => {
+            if (i === (tablestructure.length - 1)) {
+              alert('Create all Table');
+              resolve(true);
+            }
+          }, err => {
+            alert(JSON.stringify(err));
+          });
+        }
+      }, err => {
+        alert('Sqlite:-' + JSON.stringify(err));
+      });
     });
   }
 }

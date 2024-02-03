@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, ModalController } from '@ionic/angular';
+import { AssetSqliteService } from 'src/app/provider/asset-sqlite/asset-sqlite.service';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { MyAssetGetService } from 'src/app/provider/my-asset-get/my-asset-get.service';
 import { environment } from 'src/environments/environment';
@@ -18,12 +19,22 @@ export class FloorComponent  implements OnInit {
     private httpCommon: CommonService,
     private loadingController: LoadingController,
     private httpAsset: MyAssetGetService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private assetSqlite: AssetSqliteService
   ) { }
 
   ngOnInit() {
     console.log(this.bldg_id);
-    this.getFloor();
+    // this.getFloor();
+    this.getFloorFromSqlite();
+  }
+
+
+  getFloorFromSqlite() {
+    this.assetSqlite.getFloorFromSqlite().then(res => {
+      this.myFloor = res;
+      this.myFloorCopy = res;
+    })
   }
 
   getFloor() {
@@ -33,8 +44,6 @@ export class FloorComponent  implements OnInit {
           if (data.status) {
             this.myFloor = data.data;
             this.myFloorCopy = data.data;
-            // this.addAsset.get('floor_id')?.setValue('');
-            // this.addAsset.get('loc_id')?.setValue('');
           }
         },
         error:() => {

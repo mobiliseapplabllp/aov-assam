@@ -2,13 +2,15 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { AssetSqliteService } from '../asset-sqlite/asset-sqlite.service';
 @Injectable({
   providedIn: 'root'
 })
 export class MyAssetGetService {
 
   constructor(
-    public https: HttpClient,
+    private https: HttpClient,
+    private assetSqlite: AssetSqliteService
   ) { }
 
   // getAssetMasterData(lastdatetime: any) {
@@ -26,6 +28,96 @@ export class MyAssetGetService {
 
   getAssetMasterData(lastdatetime: any): Observable<any> {
     return this.https.get('assets/data/asset_master.json')
+  }
+
+  insertAssetAction(data: any) {
+    console.log('insert action');
+    console.log(data);
+    return new Promise(resolve => {
+      let siteDetail: any = [], blocks: any = [], building: any = [], floor: any = [], location: any = [], department: any = [], sub_department: any = [],device_group: any = [],
+      device_name: any = [], device_sub_group: any = [], manufacturer: any = [],ownership: any = [],equip_status: any = [],technology_status: any = [],warranty: any = [];
+      if (data[0].site_detail) {
+        siteDetail = data[0].site_detail;
+      }
+      if (data[0].blocks) {
+        blocks = data[0].blocks;
+      }
+      if (data[0].building) {
+        building = data[0].building;
+      }
+      if (data[0].floor) {
+        floor = data[0].floor;
+      }
+      if (data[0].location) {
+        location = data[0].location;
+      }
+      if (data[0].department) {
+        department = data[0].department;
+      }
+      if (data[0].sub_department) {
+        sub_department = data[0].sub_department;
+      }
+      if (data[0].device_group) {
+        device_group = data[0].device_group;
+      }
+      if (data[0].device_name) {
+        device_name = data[0].device_name;
+      }
+      if (data[0].device_sub_group) {
+        device_sub_group = data[0].device_sub_group;
+      }
+      if (data[0].manufacturer) {
+        manufacturer = data[0].manufacturer;
+      }
+      if (data[0].ownership) {
+        ownership = data[0].ownership;
+      }
+      if (data[0].equip_status) {
+        equip_status = data[0].equip_status;
+      }
+      if (data[0].technology_status) {
+        technology_status = data[0].technology_status;
+      }
+      if (data[0].technology_status) {
+        technology_status = data[0].technology_status;
+      }
+      if (data[0].warranty) {
+        warranty = data[0].warranty;
+      }
+
+      this.assetSqlite.insertIntoSiteDetail(siteDetail).then(res => {
+        this.assetSqlite.insertIntoBlock(blocks).then(res => {
+          this.assetSqlite.insertIntoBuilding(building).then(res => {
+            this.assetSqlite.insertIntoFloor(floor).then(res => {
+              this.assetSqlite.insertIntoLocation(location).then(res => {
+                this.assetSqlite.insertIntoDepartment(department).then(res => {
+                  this.assetSqlite.insertIntoSubDepartment(sub_department).then(res => {
+                    this.assetSqlite.insertIntoDeviceGroup(device_group).then(res => {
+                      this.assetSqlite.insertIntoDeviceName(device_name).then(res => {
+                        this.assetSqlite.insertIntoDeviceSubGroup(device_sub_group).then(res => {
+                          this.assetSqlite.insertIntoManufacturer(manufacturer).then  (res => {
+                            this.assetSqlite.insertIntoOwnership(ownership).then(res => {
+                              this.assetSqlite.insertIntoEquipStatus(equip_status).then(res => {
+                                this.assetSqlite.insertIntoTechnologyStatus(technology_status).then(res => {
+                                  this.assetSqlite.insertIntoWarranty(warranty).then(res => {
+                                    console.log('all saved');
+                                    resolve(true);
+                                  });
+                                });
+                              });
+                            });
+                          });
+                        });
+                      });
+                    });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
   }
 
   getDecBarcode(enc_barcode: string): Observable<any> {
