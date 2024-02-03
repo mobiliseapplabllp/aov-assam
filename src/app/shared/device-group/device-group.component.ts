@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { LoadingController, ModalController } from '@ionic/angular';
+import { LoadingController, ModalController, Platform } from '@ionic/angular';
 import { AssetSqliteService } from 'src/app/provider/asset-sqlite/asset-sqlite.service';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { MyAssetGetService } from 'src/app/provider/my-asset-get/my-asset-get.service';
@@ -19,12 +19,30 @@ export class DeviceGroupComponent  implements OnInit {
     private modalCtrl: ModalController,
     private loadingController: LoadingController,
     private common: CommonService,
-    private assetSqlite: AssetSqliteService
+    private assetSqlite: AssetSqliteService,
+    private platform: Platform
   ) { }
 
   ngOnInit() {
     // this.getDeviceGroup();
-    this.getDeviceGroupFromSqlite();
+    if (this.platform.is('capacitor')) {
+      this.getDeviceGroupFromSqlite();
+    } else {
+      this.myDeviceGroup = [{
+        label :  "Analyzer",
+        rate_of_dprctn : 0,
+        value : 1
+      },{
+        label :  "Ventilator",
+        rate_of_dprctn : 0,
+        value : 2
+      },{
+        label :  "Aspirators",
+        rate_of_dprctn : 0,
+        value : 3
+      }]
+    }
+
   }
 
   getDeviceGroupFromSqlite() {

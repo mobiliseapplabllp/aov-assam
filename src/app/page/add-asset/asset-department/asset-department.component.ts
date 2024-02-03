@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { LoadingController, ModalController } from '@ionic/angular';
+import { LoadingController, ModalController, Platform } from '@ionic/angular';
 import { AssetSqliteService } from 'src/app/provider/asset-sqlite/asset-sqlite.service';
 import { MyAssetGetService } from 'src/app/provider/my-asset-get/my-asset-get.service';
 
@@ -16,12 +16,26 @@ export class AssetDepartmentComponent  implements OnInit {
     private modalCtrl: ModalController,
     private httpAsset: MyAssetGetService,
     private loadingController: LoadingController,
-    private assetSqlite: AssetSqliteService
+    private assetSqlite: AssetSqliteService,
+    private platform: Platform
   ) { }
 
   ngOnInit() {
     // this.getDepartment();
-    this.getDepartmentFromSqlite();
+    if (this.platform.is('capacitor')) {
+      this.getDepartmentFromSqlite();
+    } else {
+      this.myDepartment = [{
+        dept_desc : "ACCONTANT ROOM",
+        dept_ext_id : null,
+        dept_id : 1
+      },{
+        dept_desc : "ADMINISTRATOR ROOM" ,
+        dept_ext_id :  null,
+        dept_id : 2
+      }]
+    }
+
   }
 
   getDepartmentFromSqlite() {

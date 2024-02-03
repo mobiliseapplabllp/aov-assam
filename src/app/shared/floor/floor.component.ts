@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { LoadingController, ModalController } from '@ionic/angular';
+import { LoadingController, ModalController, Platform } from '@ionic/angular';
 import { AssetSqliteService } from 'src/app/provider/asset-sqlite/asset-sqlite.service';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { MyAssetGetService } from 'src/app/provider/my-asset-get/my-asset-get.service';
@@ -20,13 +20,31 @@ export class FloorComponent  implements OnInit {
     private loadingController: LoadingController,
     private httpAsset: MyAssetGetService,
     private modalCtrl: ModalController,
-    private assetSqlite: AssetSqliteService
+    private assetSqlite: AssetSqliteService,
+    private platform: Platform
   ) { }
 
   ngOnInit() {
     console.log(this.bldg_id);
     // this.getFloor();
-    this.getFloorFromSqlite();
+    if (this.platform.is('capacitor')) {
+      this.getFloorFromSqlite();
+    } else {
+      this.myFloor = [{
+        floor_img: "",
+        label: "GROUND-FLOOR",
+        value:1
+      },{
+        floor_img: "",
+        label: "FIRST-FLOOR",
+        value:2
+      },{
+        floor_img: "",
+        label: "SECOND-FLOOR",
+        value:2
+      }]
+    }
+
   }
 
 

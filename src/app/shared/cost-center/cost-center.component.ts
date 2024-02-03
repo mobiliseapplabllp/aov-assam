@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { LoadingController, ModalController } from '@ionic/angular';
+import { LoadingController, ModalController, Platform } from '@ionic/angular';
 import { AssetSqliteService } from 'src/app/provider/asset-sqlite/asset-sqlite.service';
 import { ComplaintService } from 'src/app/provider/complaint/complaint.service';
 @Component({
@@ -15,12 +15,25 @@ export class CostCenterComponent  implements OnInit {
     private loadingController: LoadingController,
     private httpComplaint: ComplaintService,
     private modalCtrl: ModalController,
-    private assetSqlite: AssetSqliteService
+    private assetSqlite: AssetSqliteService,
+    private platform: Platform
   ) { }
 
   ngOnInit() {
     // this.getCostCenter();
-    this.getCostCenterSqlite();
+    if(this.platform.is('capacitor')) {
+      this.getCostCenterSqlite();
+    } else {
+      this.allCostCenter = [{
+        barcode_prefix : "110002",
+        label : "110002 BPHC,NIZ KAURBAHA",
+        pc_desc :  "110002 BPHC,NIZ KAURBAHA",
+        pc_ext_id : "110002",
+        pc_id : 2,
+        value : 2
+      }]
+    }
+
   }
 
   getCostCenterSqlite() {

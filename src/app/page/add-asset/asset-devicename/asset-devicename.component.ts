@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { LoadingController, ModalController } from '@ionic/angular';
+import { LoadingController, ModalController, Platform } from '@ionic/angular';
 import { AssetSqliteService } from 'src/app/provider/asset-sqlite/asset-sqlite.service';
 import { MyAssetGetService } from 'src/app/provider/my-asset-get/my-asset-get.service';
 
@@ -17,13 +17,26 @@ export class AssetDevicenameComponent  implements OnInit {
     private modalCtrl: ModalController,
     private loadingController: LoadingController,
     private httpAsset: MyAssetGetService,
-    private assetSqlite: AssetSqliteService
+    private assetSqlite: AssetSqliteService,
+    private platform: Platform
   ) { }
 
   ngOnInit() {
     console.log(this.grp_id);
     // this.getDeviceName();
-    this.getDeviceNameFromSqlite();
+    if (this.platform.is('capacitor')) {
+      this.getDeviceNameFromSqlite();
+    } else {
+      this.myDeviceName = [{
+        label : "ANALYZERS, LABORATORY, BLOOD GAS",
+        subgrp_class : "Non-Critical" ,
+        value : 1
+      },{
+        label : "ANALYZERS, LABORATORY, BLOOD GAS/PH",
+        subgrp_class : "Non-Critical",
+        value :2
+      }]
+    }
   }
 
   getDeviceNameFromSqlite() {

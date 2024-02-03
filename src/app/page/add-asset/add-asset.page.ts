@@ -81,7 +81,8 @@ export class AddAssetPage implements OnInit {
     private httpCommon: CommonService,
     private loadingController: LoadingController,
     private router: Router,
-    private assetSqlite: AssetSqliteService) {
+    private assetSqlite: AssetSqliteService,
+    private platform: Platform) {
     this.addAsset = this.formbuilder.group({
       faciity_type: [''],
       site_id_description:[''],
@@ -141,7 +142,60 @@ export class AddAssetPage implements OnInit {
     this.httpCommon.setBarcode('');
     this.httpCommon.checkInternet().then(res => {
       if (res) {
-        this.checkAndUpdateMaster();
+        if (this.platform.is('capacitor')) {
+          this.checkAndUpdateMaster();
+        } else {
+          this.myOwnership = [{
+            id : 1,
+            label : "Customer/Client",
+            ownership : "Customer/Client",
+            value : 1
+          },{
+            id : 2,
+            label : "OEM",
+            ownership : "OEM",
+            value :  2
+          },{
+            id : 3,
+            label : "AOV",
+            ownership : "AOV",
+            value :  3
+          }],
+          this.myEquipStatus = [{
+            id : 1,
+            label : "Physical Damage",
+            status_name : "Physical Damage",
+            value : 1
+          },{
+            id :  2,
+            label : "Condemned",
+            status_name :  "Condemned",
+            value : 2
+          }],
+          this.myTechnology = [{
+            label :  "New",
+            value: 1
+          },{
+            label :  "OLD",
+            value: 2
+          },{
+            label :  "Obsolete",
+            value: 3
+          }],
+          this.myWarranty = [{
+            id : 1,
+            status : 1,
+            warranty : "UNDER WARRANTY"
+          },{
+            id : 2,
+            status : 1,
+            warranty : "UNDER AMC"
+          },{
+            id : 3,
+            status : 1,
+            warranty : "UNDER CMC"
+          }]
+        }
       }
     });
   }
@@ -427,6 +481,7 @@ export class AddAssetPage implements OnInit {
     modal.onWillDismiss().then(disModal => {
       console.log(disModal);
       if (disModal.data) {
+        this.addAsset.get('ext_asset_id_pre')?.setValue(disModal.data.barcode_prefix);
         this.addAsset.get('site_id_description')?.setValue(disModal.data.pc_desc);
         this.addAsset.get('site_id')?.setValue(disModal.data.pc_id);
         this.addAsset.get('block_id')?.setValue('');
@@ -435,7 +490,7 @@ export class AddAssetPage implements OnInit {
         this.addAsset.get('floor_id_desc')?.setValue('');
         this.addAsset.get('loc_id')?.setValue('');
         this.addAsset.get('loc_id_desc')?.setValue('');
-        this.addAsset.get('ext_asset_id_pre')?.setValue('');
+        // this.addAsset.get('ext_asset_id_pre')?.setValue('');
         this.addAsset.get('input_asset_id')?.setValue('');
         this.getBlockFromSqlite();
         // this.presentLoading().then(preLoad => {
@@ -466,16 +521,23 @@ export class AddAssetPage implements OnInit {
         //   }
         // });
 
-      } else {
       }
     });
     return await modal.present();
   }
 
   getBlockFromSqlite(){
-    this.assetSqlite.getBlockFromSqlite().then(res => {
-      this.myBlocks = res;
-    })
+    if (this.platform.is('capacitor')) {
+      this.assetSqlite.getBlockFromSqlite().then(res => {
+        this.myBlocks = res;
+      })
+    } else {
+      this.myBlocks = [{
+        label: "NA",
+        value : 1
+      }]
+    }
+
   }
 
   async openDepartment() {
@@ -548,18 +610,33 @@ export class AddAssetPage implements OnInit {
       return;
     }
     this.presentLoading().then(preLoad => {
-      this.assetSqlite.getBuildingFromSqlite().then(res => {
-        this.myBuildingArr = res;
-        this.addAsset.get('bldg_id')?.setValue('');
-        this.addAsset.get('floor_id')?.setValue('');
-        this.addAsset.get('floor_id_desc')?.setValue('');
-        this.addAsset.get('loc_id')?.setValue('');
-        this.addAsset.get('loc_id_desc')?.setValue('');
+      if (this.platform.is('capacitor')) {
+        this.assetSqlite.getBuildingFromSqlite().then(res => {
+          this.myBuildingArr = res;
+          this.addAsset.get('bldg_id')?.setValue('');
+          this.addAsset.get('floor_id')?.setValue('');
+          this.addAsset.get('floor_id_desc')?.setValue('');
+          this.addAsset.get('loc_id')?.setValue('');
+          this.addAsset.get('loc_id_desc')?.setValue('');
+          this.dismissloading();
+        }, err => {
+          alert(JSON.stringify(err));
+          this.dismissloading();
+        })
+      } else {
         this.dismissloading();
-      }, err => {
-        alert(JSON.stringify(err));
-        this.dismissloading();
-      })
+        this.myBuildingArr = [{
+          "label": "TPF",
+          "value": 1
+        },{
+          "label": "UNATTI",
+          "value": 2
+        },{
+          "label": "CWH",
+          "value": 3
+        }];
+      }
+
       // this.httpAsset.getBuildingList(ev.target.value).subscribe({
       //   next:(data) => {
       //     if (data.status) {
@@ -740,24 +817,41 @@ export class AddAssetPage implements OnInit {
   }
 
   changeDepartment(id: any) {
-    this.presentLoading().then(preLoad => {
-      this.assetSqlite.getSubDepartmentFromSqlite(id).then(res => {
-        this.mySubDepartment = res;
-        this.dismissloading();
-      }, err => {
-        this.dismissloading();
+    if (this.platform.is('capacitor')) {
+      this.presentLoading().then(preLoad => {
+        this.assetSqlite.getSubDepartmentFromSqlite(id).then(res => {
+          this.mySubDepartment = res;
+          this.dismissloading();
+        }, err => {
+          this.dismissloading();
+        })
+        // this.httpAsset.getSubDepartment(id).subscribe(data => {
+        //   console.log(data);
+        //   this.dismissloading();
+        //   if (data.status) {
+        //     this.mySubDepartment = data.data
+        //   }
+        // }, err => {
+        //   this.dismissloading();
+        //   this.httpCommon.presentToast(environment.errMsg, 'danger');
+        // });
       })
-      // this.httpAsset.getSubDepartment(id).subscribe(data => {
-      //   console.log(data);
-      //   this.dismissloading();
-      //   if (data.status) {
-      //     this.mySubDepartment = data.data
-      //   }
-      // }, err => {
-      //   this.dismissloading();
-      //   this.httpCommon.presentToast(environment.errMsg, 'danger');
-      // });
-    })
+    } else {
+      this.mySubDepartment = [{
+        dept_desc :  "ACCONTANT ROOM",
+        dept_ext_id :  null,
+        dept_id: 1,
+        sub_dept_desc : "ACCONTANT ROOM",
+        sub_dept_id : 1
+      },{
+        dept_desc :  "ACCONTANT ROOM2",
+        dept_ext_id :  null,
+        dept_id: 2,
+        sub_dept_desc : "ACCONTANT ROOM2",
+        sub_dept_id : 2
+      }]
+    }
+
   }
 
   async openDeviceGroupModal() {
