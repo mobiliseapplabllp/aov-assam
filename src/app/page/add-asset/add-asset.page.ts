@@ -221,7 +221,7 @@ export class AddAssetPage implements OnInit {
       this.presentLoading().then(preLoad => {
         this.httpAsset.getAssetMasterData('0000-00-00 00:00:00').subscribe({
           next:(data) => {
-            this.httpAsset.insertAssetAction(data).then(insRes => {
+            this.httpAsset.insertAssetAction(data.data).then(insRes => {
               if (insRes) {
                 alert('All Master Saved Succ');
                 localStorage.setItem('lastAssetTime', moment().format('YYYY-MM-DD H:mm:ss'));
@@ -1162,9 +1162,9 @@ export class AddAssetPage implements OnInit {
     }
 
 
-    let firstDigit = this.addAsset.value.parent_asset_id.slice(0, 4);
+    let firstDigit = this.addAsset.value.parent_asset_id.slice(0, 7);
     if (firstDigit !== this.addAsset.value.ext_asset_id_pre) {
-      this.httpCommon.presentToastWithOk('Incorrect barcode!!  Starting 4 digits of the barcode does not match with the selected site ' + this.addAsset.value.site_id_description + '. The barcodes for the site begin with ' + firstDigit + '.' , 'warning');
+      this.httpCommon.presentToastWithOk('Incorrect barcode!!  Starting 7 digits of the barcode does not match with the selected site ' + this.addAsset.value.site_id_description + '. The barcodes for the site begin with ' + firstDigit + '.' , 'warning');
       return;
     }
     // lastDigit = temp.slice(-6);

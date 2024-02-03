@@ -3,16 +3,16 @@
     "table":"create table IF NOT EXISTS site_detail(barcode_prefix,label,pc_desc, pc_ext_id,pc_id, value)"
   },
   {
-    "table":"create table IF NOT EXISTS blocks(label,value)"
+    "table":"create table IF NOT EXISTS blocks(block_id,label,pc_id)"
   },
   {
-    "table":"create table IF NOT EXISTS building(label,value)"
+    "table":"create table IF NOT EXISTS building(block_id,building_id,label)"
   },
   {
-    "table":"create table IF NOT EXISTS floor(floor_img,label,value)"
+    "table":"create table IF NOT EXISTS floor(building_id, floor_id, floor_img, label)"
   },
   {
-    "table":"create table IF NOT EXISTS location(label,value)"
+    "table":"create table IF NOT EXISTS location(floor_id,label,location_id)"
   },
   {
     "table":"create table IF NOT EXISTS department(dept_desc,dept_ext_id,dept_id)"
@@ -21,13 +21,13 @@
     "table":"create table IF NOT EXISTS sub_department(dept_desc,dept_ext_id,dept_id,sub_dept_desc,sub_dept_id)"
   },
   {
-    "table":"create table IF NOT EXISTS device_group(label,rate_of_dprctn,value)"
+    "table":"create table IF NOT EXISTS device_group(label,rate_of_dprctn,grp_id)"
   },
   {
-    "table":"create table IF NOT EXISTS device_name(label,subgrp_class,value)"
+    "table":"create table IF NOT EXISTS device_name(grp_id,label,subgrp_class,subgrp_id)"
   },
   {
-    "table":"create table IF NOT EXISTS device_sub_group(label,subgrp_class,value)"
+    "table":"create table IF NOT EXISTS device_sub_group(grp_id,label, subgrp_class, subgrp_id)"
   },
   {
     "table":"create table IF NOT EXISTS manufacturer(mnfctrer_desc,mnfctrer_ext_id,mnfctrer_id)"

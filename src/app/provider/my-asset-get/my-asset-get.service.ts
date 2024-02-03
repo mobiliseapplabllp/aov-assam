@@ -79,9 +79,6 @@ export class MyAssetGetService {
       if (data[0].technology_status) {
         technology_status = data[0].technology_status;
       }
-      if (data[0].technology_status) {
-        technology_status = data[0].technology_status;
-      }
       if (data[0].warranty) {
         warranty = data[0].warranty;
       }

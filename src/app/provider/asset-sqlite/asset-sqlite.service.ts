@@ -49,8 +49,8 @@ export class AssetSqliteService {
           this.insDataTemp = [];
           for (let i = 0 ; i < d.length ; i++) {
             this.insDataTemp.push([
-              'insert into blocks(label,value) values(?,?)',
-              [d[i].label,d[i].value]
+              'insert into blocks(block_id,label,pc_id) values(?,?,?)',
+              [d[i].block_id,d[i].label,d[i].pc_id]
             ]);
           }
           db.sqlBatch(this.insDataTemp).then(res => {
@@ -74,8 +74,8 @@ export class AssetSqliteService {
           this.insDataTemp = [];
           for (let i = 0 ; i < d.length ; i++) {
             this.insDataTemp.push([
-              'insert into building(label,value) values(?,?)',
-              [d[i].label,d[i].value]
+              'insert into building(block_id,building_id,label) values(?,?,?)',
+              [d[i].block_id,d[i].building_id,d[i].label]
             ]);
           }
           db.sqlBatch(this.insDataTemp).then(res => {
@@ -99,8 +99,8 @@ export class AssetSqliteService {
           this.insDataTemp = [];
           for (let i = 0 ; i < d.length ; i++) {
             this.insDataTemp.push([
-              'insert into floor(floor_img,label,value) values(?,?,?)',
-              [d[i].floor_img,d[i].label,d[i].value]
+              'insert into floor(building_id, floor_id, floor_img, label) values(?,?,?,?)',
+              [d[i].building_id, d[i].floor_id, d[i].floor_img, d[i].label]
             ]);
           }
           db.sqlBatch(this.insDataTemp).then(res => {
@@ -124,8 +124,8 @@ export class AssetSqliteService {
           this.insDataTemp = [];
           for (let i = 0 ; i < d.length ; i++) {
             this.insDataTemp.push([
-              'insert into location(label,value) values(?,?)',
-              [d[i].label,d[i].value]
+              'insert into location(floor_id,label,location_id) values(?,?,?)',
+              [d[i].floor_id,d[i].label,d[i].location_id]
             ]);
           }
           db.sqlBatch(this.insDataTemp).then(res => {
@@ -199,7 +199,7 @@ export class AssetSqliteService {
           this.insDataTemp = [];
           for (let i = 0 ; i < d.length ; i++) {
             this.insDataTemp.push([
-              'insert into device_group(label,rate_of_dprctn,value) values(?,?,?)',
+              'insert into device_group(label,rate_of_dprctn,grp_id) values(?,?,?)',
               [d[i].label,d[i].rate_of_dprctn,d[i].value]
             ]);
           }
@@ -224,8 +224,8 @@ export class AssetSqliteService {
           this.insDataTemp = [];
           for (let i = 0 ; i < d.length ; i++) {
             this.insDataTemp.push([
-              'insert into device_name(label,subgrp_class,value) values(?,?,?)',
-              [d[i].label,d[i].subgrp_class,d[i].value]
+              'insert into device_name(grp_id,label,subgrp_class,subgrp_id) values(?,?,?)',
+              [d[i].grp_id,d[i].label,d[i].subgrp_class,d[i].subgrp_id]
             ]);
           }
           db.sqlBatch(this.insDataTemp).then(res => {
@@ -250,8 +250,8 @@ export class AssetSqliteService {
           this.insDataTemp = [];
           for (let i = 0 ; i < d.length ; i++) {
             this.insDataTemp.push([
-              'insert into device_sub_group(label,subgrp_class,value) values(?,?,?)',
-              [d[i].label,d[i].subgrp_class,d[i].value]
+              'insert into device_sub_group(grp_id,label, subgrp_class, subgrp_id) values(?,?,?)',
+              [d[i].grp_id,d[i].label, d[i].subgrp_class, d[i].subgrp_id]
             ]);
           }
           db.sqlBatch(this.insDataTemp).then(res => {
