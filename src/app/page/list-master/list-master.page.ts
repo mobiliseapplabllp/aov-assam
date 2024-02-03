@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoadingController, ModalController, Platform, ToastController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController, Platform, ToastController } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { ListMasterService } from 'src/app/provider/list-master/list-master.service';
 import { LoginService } from 'src/app/provider/login/login.service';
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import { SpeechRecognition } from "@capacitor-community/speech-recognition";
+import { db } from '../../provider/local-db/local-db.service';
+import { liveQuery } from 'dexie';
 @Component({
   selector: 'app-list-master',
   templateUrl: './list-master.page.html',
@@ -40,7 +42,8 @@ export class ListMasterPage implements OnInit {
     private loadingController: LoadingController,
     private common: CommonService,
     private router: Router,
-    private platform: Platform
+    private platform: Platform,
+    private alertController: AlertController
   ) {
     const user = localStorage.getItem('user');
     if (user) {
@@ -57,6 +60,7 @@ export class ListMasterPage implements OnInit {
         this.userData = this.loginPro.getLoginUserValue();
         this.getMenuDetail();
         this.getDashboard();
+        this.getOffLineAssetList()
       } else {
         let menu, MENU_TEMP = localStorage.getItem('home_menu');
         if (MENU_TEMP) {
@@ -80,6 +84,43 @@ export class ListMasterPage implements OnInit {
       }
     });
   }
+
+  async getOffLineAssetList() {
+    const friendsObservable = liveQuery (() => db.asset.toArray());
+    const sub = friendsObservable.subscribe({
+      next:(data) => {
+        console.log(data);
+        if (data.length > 0) {
+          this.presentAlertConfirm();
+        }
+        setTimeout(() => {
+          sub.unsubscribe();
+        }, 1000);
+      }
+    });
+  }
+
+  async presentAlertConfirm() {
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Offline Data',
+      message: 'You have some offline Data Save, do you want to push to server',
+      mode: 'ios',
+      buttons: [{
+        text: 'Cancel',
+          handler: (data) => {
+            console.log("Cancel");
+          }
+        },{
+          text: 'YES',
+          handler: (data) => {
+            this.router.navigateByUrl('/list-master/offline-data');
+          }
+        }]
+    });
+    await alert.present();
+  }
+
 
   speak() {
     const speak = async () => {

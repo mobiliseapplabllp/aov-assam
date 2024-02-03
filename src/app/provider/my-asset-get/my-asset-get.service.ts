@@ -200,7 +200,7 @@ export class MyAssetGetService {
   }
 
   submitAsset(formData: any): Observable<any> {
-    return this.https.post(environment.url + 'assets/reporting/add_assets_action_aman', formData);
+    return this.https.post(environment.url + 'assets/reporting/add_assets_action', formData);
   }
 
   getDataTest(): Observable<any> {

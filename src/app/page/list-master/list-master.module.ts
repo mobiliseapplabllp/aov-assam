@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { ListMasterPageRoutingModule } from './list-master-routing.module';
 
 import { ListMasterPage } from './list-master.page';
+import { OfflineDataComponent } from './offline-data/offline-data.component';
 // import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
@@ -17,6 +18,8 @@ import { ListMasterPage } from './list-master.page';
     ListMasterPageRoutingModule,
     // SharedModule
   ],
-  declarations: [ListMasterPage]
+  declarations: [
+    ListMasterPage,
+    OfflineDataComponent]
 })
 export class ListMasterPageModule {}
