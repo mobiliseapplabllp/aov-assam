@@ -153,6 +153,7 @@ export class AddAssetPage implements OnInit {
         if (this.platform.is('capacitor')) {
           this.checkAndUpdateMaster();
         } else {
+          this.checkAndUpdateMaster();
           this.dummyData();
         }
       } else {

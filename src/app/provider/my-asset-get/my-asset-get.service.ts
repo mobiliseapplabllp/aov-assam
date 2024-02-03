@@ -27,7 +27,8 @@ export class MyAssetGetService {
   // }
 
   getAssetMasterData(lastdatetime: any): Observable<any> {
-    return this.https.get('assets/data/asset_master.json')
+    // return this.https.get('assets/data/asset_master.json')
+    return this.https.get(environment.url + 'shared/get-user-pc-offline')
   }
 
   insertAssetAction(data: any) {
@@ -201,6 +202,7 @@ export class MyAssetGetService {
 
   submitAsset(formData: any): Observable<any> {
     return this.https.post(environment.url + 'assets/reporting/add_assets_action', formData);
+    // return this.https.post('https://aovsshdashboard.com/Webservices/test_image.php', formData);
   }
 
   getDataTest(): Observable<any> {

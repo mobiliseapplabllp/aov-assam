@@ -39,9 +39,15 @@ export class OfflineDataComponent  implements OnInit {
 
   saveToServer(dat: any) {
     console.log(dat);
-    let formData = new FormData();
+    const formData = new FormData();
+    let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg'
     for (let key in dat) {
-      formData.append(key, dat[key])
+      if (key === 'pur_invoice' || key === 'asset_img' || key === 'asset_img2' || key === 'asset_img3') {
+        formData.append(key, dat[key], random)
+      } else {
+        formData.append(key, dat[key])
+      }
+
     }
     this.submitAsset(formData, dat);
   }

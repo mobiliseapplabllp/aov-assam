@@ -50,10 +50,10 @@ export interface asset {
   source: string,
   x_cor: string,
   y_cor: string,
-  pur_invoice: Blob,
-  asset_img: Blob,
-  asset_img2: Blob,
-  asset_img3: Blob
+  pur_invoice: any,
+  asset_img: any,
+  asset_img2: any,
+  asset_img3: any
 }
 
 export class AppDB extends Dexie {
