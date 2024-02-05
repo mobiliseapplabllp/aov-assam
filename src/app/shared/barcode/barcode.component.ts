@@ -46,7 +46,7 @@ export class BarcodeComponent  implements OnInit {
         BarcodeScanner.prepare();
         BarcodeScanner.hideBackground();
         document.querySelector('body')?.classList.add('scanner-active');
-        const result = await BarcodeScanner.startScan({ targetedFormats: [SupportedFormat.QR_CODE] });
+        const result = await BarcodeScanner.startScan({ targetedFormats: [SupportedFormat.CODE_128] });
         if (result.hasContent) {
           this.barcodeNo = result.content
           console.log(result.content);

@@ -38,7 +38,7 @@ export class LocationComponent  implements OnInit {
   }
 
   getLocaionFromSqlite() {
-    this.assetSqlite.getLocationFromSqlite().then(res => {
+    this.assetSqlite.getLocationFromSqlite(this.floor_id).then(res => {
       this.myLocation = res;
       this.myLocationCopy = res;
     });

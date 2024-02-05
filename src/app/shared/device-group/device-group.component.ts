@@ -12,7 +12,7 @@ import { environment } from 'src/environments/environment';
 })
 export class DeviceGroupComponent  implements OnInit {
   myDeviceGroup: any = [];
-  myDeviceGroupCopy: any = [];
+  // myDeviceGroupCopy: any = [];
   loading: any;
   constructor(
     private httpAsset: MyAssetGetService,
@@ -48,7 +48,7 @@ export class DeviceGroupComponent  implements OnInit {
   getDeviceGroupFromSqlite() {
     this.assetSqlite.getDeviceGroupFromSqlite().then(res => {
       this.myDeviceGroup = res;
-      this.myDeviceGroupCopy = res;
+      // this.myDeviceGroupCopy = res;
     }, err => {
       alert(alert(JSON.stringify(err)));
     })
@@ -60,7 +60,7 @@ export class DeviceGroupComponent  implements OnInit {
         next:(data) => {
           if (data.status) {
             this.myDeviceGroup = data.data;
-            this.myDeviceGroupCopy = data.data;
+            // this.myDeviceGroupCopy = data.data;
           } else {
             this.common.presentToast(data.msg, 'warning');
           }
@@ -96,15 +96,29 @@ export class DeviceGroupComponent  implements OnInit {
   }
 
   search(ev: any) {
-    this.myDeviceGroup = this.myDeviceGroupCopy;
-    if (ev.target.value && ev.target.value.trim() !== '') {
-      this.myDeviceGroup = this.myDeviceGroup.filter((dat: any) => {
-        if ((dat.label.toString().toLowerCase().indexOf(ev.target.value.toLowerCase()) > -1)) {
-          return (dat.label.toString().toLowerCase().indexOf(ev.target.value.toLowerCase()) > -1);
-        }
-        return
-      });
+    // this.myDeviceGroup = this.myDeviceGroupCopy;
+    // if (ev.target.value && ev.target.value.trim() !== '') {
+    //   this.myDeviceGroup = this.myDeviceGroup.filter((dat: any) => {
+    //     if ((dat.label.toString().toLowerCase().indexOf(ev.target.value.toLowerCase()) > -1)) {
+    //       return (dat.label.toString().toLowerCase().indexOf(ev.target.value.toLowerCase()) > -1);
+    //     }
+    //     return
+    //   });
+    // }
+    let label = ev.target.value;
+    if (label) {
+      this.getDeviceGroupBySqlite(label);
+    } else {
+      this.getDeviceGroupFromSqlite();
     }
+  }
+
+  getDeviceGroupBySqlite(label: string) {
+    this.assetSqlite.getDeviceGroupBySearch(label).then(res => {
+      console.log(res);
+      this.myDeviceGroup = res;
+      // this.allCostCenterCopy = res
+    })
   }
 
 }

@@ -10,7 +10,7 @@ import { ComplaintService } from 'src/app/provider/complaint/complaint.service';
 export class CostCenterComponent  implements OnInit {
   loading: any;
   allCostCenter: any = [];
-  allCostCenterCopy: any = [];
+  // allCostCenterCopy: any = [];
   constructor(
     private loadingController: LoadingController,
     private httpComplaint: ComplaintService,
@@ -40,7 +40,7 @@ export class CostCenterComponent  implements OnInit {
     this.assetSqlite.getSiteDetailFromSqlite().then(res => {
       console.log(res);
       this.allCostCenter = res;
-      this.allCostCenterCopy = res
+      // this.allCostCenterCopy = res
     })
   }
 
@@ -54,7 +54,7 @@ export class CostCenterComponent  implements OnInit {
         this.dismissloading();
         if (data.status) {
           this.allCostCenter = data.data;
-          this.allCostCenterCopy = data.data
+          // this.allCostCenterCopy = data.data
         }
       });
     });
@@ -75,15 +75,29 @@ export class CostCenterComponent  implements OnInit {
   }
 
   search(ev: any) {
-    this.allCostCenter = this.allCostCenterCopy;
-    if (ev.target.value && ev.target.value.trim() !== '') {
-      this.allCostCenter = this.allCostCenter.filter((dat: any) => {
-        if ((dat.label.toString().toLowerCase().indexOf(ev.target.value.toLowerCase()) > -1)) {
-          return (dat.label.toString().toLowerCase().indexOf(ev.target.value.toLowerCase()) > -1);
-        }
-        return
-      });
+    // this.allCostCenter = this.allCostCenterCopy;
+    // if (ev.target.value && ev.target.value.trim() !== '') {
+    //   this.allCostCenter = this.allCostCenter.filter((dat: any) => {
+    //     if ((dat.label.toString().toLowerCase().indexOf(ev.target.value.toLowerCase()) > -1)) {
+    //       return (dat.label.toString().toLowerCase().indexOf(ev.target.value.toLowerCase()) > -1);
+    //     }
+    //     return
+    //   });
+    // }
+    let label = ev.target.value;
+    if (label) {
+      this.getCostCenterBySearch(label);
+    } else {
+      this.getCostCenterSqlite();
     }
+
   }
 
+  getCostCenterBySearch(label: string) {
+    this.assetSqlite.getSiteDetailBySearch(label).then(res => {
+      console.log(res);
+      this.allCostCenter = res;
+      // this.allCostCenterCopy = res
+    })
+  }
 }

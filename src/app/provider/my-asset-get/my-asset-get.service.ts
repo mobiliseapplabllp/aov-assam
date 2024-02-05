@@ -37,50 +37,50 @@ export class MyAssetGetService {
     return new Promise(resolve => {
       let siteDetail: any = [], blocks: any = [], building: any = [], floor: any = [], location: any = [], department: any = [], sub_department: any = [],device_group: any = [],
       device_name: any = [], device_sub_group: any = [], manufacturer: any = [],ownership: any = [],equip_status: any = [],technology_status: any = [],warranty: any = [];
-      if (data[0].site_detail) {
-        siteDetail = data[0].site_detail;
+      if (data.site_detail) {
+        siteDetail = data.site_detail;
       }
-      if (data[0].blocks) {
-        blocks = data[0].blocks;
+      if (data.blocks) {
+        blocks = data.blocks;
       }
-      if (data[0].building) {
-        building = data[0].building;
+      if (data.building) {
+        building = data.building;
       }
-      if (data[0].floor) {
-        floor = data[0].floor;
+      if (data.floor) {
+        floor = data.floor;
       }
-      if (data[0].location) {
-        location = data[0].location;
+      if (data.location) {
+        location = data.location;
       }
-      if (data[0].department) {
-        department = data[0].department;
+      if (data.department) {
+        department = data.department;
       }
-      if (data[0].sub_department) {
-        sub_department = data[0].sub_department;
+      if (data.sub_department) {
+        sub_department = data.sub_department;
       }
-      if (data[0].device_group) {
-        device_group = data[0].device_group;
+      if (data.device_group) {
+        device_group = data.device_group;
       }
-      if (data[0].device_name) {
-        device_name = data[0].device_name;
+      if (data.device_name) {
+        device_name = data.device_name;
       }
-      if (data[0].device_sub_group) {
-        device_sub_group = data[0].device_sub_group;
+      if (data.device_sub_group) {
+        device_sub_group = data.device_sub_group;
       }
-      if (data[0].manufacturer) {
-        manufacturer = data[0].manufacturer;
+      if (data.manufacturer) {
+        manufacturer = data.manufacturer;
       }
-      if (data[0].ownership) {
-        ownership = data[0].ownership;
+      if (data.ownership) {
+        ownership = data.ownership;
       }
-      if (data[0].equip_status) {
-        equip_status = data[0].equip_status;
+      if (data.equip_status) {
+        equip_status = data.equip_status;
       }
-      if (data[0].technology_status) {
-        technology_status = data[0].technology_status;
+      if (data.technology_status) {
+        technology_status = data.technology_status;
       }
-      if (data[0].warranty) {
-        warranty = data[0].warranty;
+      if (data.warranty) {
+        warranty = data.warranty;
       }
 
       this.assetSqlite.insertIntoSiteDetail(siteDetail).then(res => {

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { db } from '../../../provider/local-db/local-db.service';
 import { liveQuery } from 'dexie';
 import { MyAssetGetService } from 'src/app/provider/my-asset-get/my-asset-get.service';
-import { LoadingController } from '@ionic/angular';
+import { LoadingController, NavController } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { environment } from 'src/environments/environment';
 
@@ -17,7 +17,8 @@ export class OfflineDataComponent  implements OnInit {
   constructor(
     private httpAsset: MyAssetGetService,
     private loadingController: LoadingController,
-    private common: CommonService
+    private common: CommonService,
+    private navCtrl: NavController
   ) { }
 
   ngOnInit() {
@@ -38,16 +39,14 @@ export class OfflineDataComponent  implements OnInit {
   }
 
   saveToServer(dat: any) {
-    console.log(dat);
     const formData = new FormData();
-    let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg'
     for (let key in dat) {
-      if (key === 'pur_invoice' || key === 'asset_img' || key === 'asset_img2' || key === 'asset_img3') {
+      let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg'
+      if ((key === 'pur_invoice' || key === 'asset_img' || key === 'asset_img2' || key === 'asset_img3') && dat[key]) {
         formData.append(key, dat[key], random)
       } else {
         formData.append(key, dat[key])
       }
-
     }
     this.submitAsset(formData, dat);
   }
@@ -63,7 +62,6 @@ export class OfflineDataComponent  implements OnInit {
           } else {
             this.common.presentToast(data.msg, 'warning');
           }
-
         },
         error:() => {
           this.common.presentToast(environment.errMsg, 'danger');
@@ -82,6 +80,9 @@ export class OfflineDataComponent  implements OnInit {
     console.log(ext_asset_id);
     this.offlineAssetList = this.offlineAssetList.filter((val: any) => val.ext_asset_id != ext_asset_id)
     this.deleteAssetOffline(ext_asset_id);
+    if (this.offlineAssetList.length == 0) {
+      this.navCtrl.pop();
+    }
   }
 
   async deleteAssetOffline(ext_asset_id: any) {

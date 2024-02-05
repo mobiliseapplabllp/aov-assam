@@ -200,7 +200,7 @@ export class AssetSqliteService {
           for (let i = 0 ; i < d.length ; i++) {
             this.insDataTemp.push([
               'insert into device_group(label,rate_of_dprctn,grp_id) values(?,?,?)',
-              [d[i].label,d[i].rate_of_dprctn,d[i].value]
+              [d[i].label,d[i].rate_of_dprctn,d[i].grp_id]
             ]);
           }
           db.sqlBatch(this.insDataTemp).then(res => {
@@ -224,7 +224,7 @@ export class AssetSqliteService {
           this.insDataTemp = [];
           for (let i = 0 ; i < d.length ; i++) {
             this.insDataTemp.push([
-              'insert into device_name(grp_id,label,subgrp_class,subgrp_id) values(?,?,?)',
+              'insert into device_name(grp_id,label,subgrp_class,subgrp_id) values(?,?,?,?)',
               [d[i].grp_id,d[i].label,d[i].subgrp_class,d[i].subgrp_id]
             ]);
           }
@@ -250,7 +250,7 @@ export class AssetSqliteService {
           this.insDataTemp = [];
           for (let i = 0 ; i < d.length ; i++) {
             this.insDataTemp.push([
-              'insert into device_sub_group(grp_id,label, subgrp_class, subgrp_id) values(?,?,?)',
+              'insert into device_sub_group(grp_id,label, subgrp_class, subgrp_id) values(?,?,?,?)',
               [d[i].grp_id,d[i].label, d[i].subgrp_class, d[i].subgrp_id]
             ]);
           }
@@ -393,7 +393,7 @@ export class AssetSqliteService {
   getSiteDetailFromSqlite() {
     return new Promise(resolve => {
       this.sqlite.create({name: this.db, location: this.dbLocation}).then((db: SQLiteObject) => {
-        db.executeSql('select * from site_detail', []).then(res => {
+        db.executeSql('select * from site_detail limit ?', [100]).then(res => {
           this.tempVar = [];
           for (let i = 0; i < res.rows.length; i++) {
             this.data = res.rows;
@@ -407,10 +407,27 @@ export class AssetSqliteService {
     });
   }
 
-  getBlockFromSqlite() {
+  getSiteDetailBySearch(label: string) {
     return new Promise(resolve => {
       this.sqlite.create({name: this.db, location: this.dbLocation}).then((db: SQLiteObject) => {
-        db.executeSql('select * from blocks', []).then(res => {
+        db.executeSql(`select * from site_detail where label LIKE '%${label}%' COLLATE NOCASE limit ?`, [10]).then(res => {
+          this.tempVar = [];
+          for (let i = 0; i < res.rows.length; i++) {
+            this.data = res.rows;
+            this.tempVar.push(this.data.item(i));
+          }
+          resolve(this.tempVar);
+        } , err => {
+          alert(JSON.stringify(err) + 'Err Site');
+        });
+      });
+    });
+  }
+
+  getBlockFromSqlite(pc_id: any) {
+    return new Promise(resolve => {
+      this.sqlite.create({name: this.db, location: this.dbLocation}).then((db: SQLiteObject) => {
+        db.executeSql('select * from blocks where pc_id = ?', [pc_id]).then(res => {
           this.tempVar = [];
           for (let i = 0; i < res.rows.length; i++) {
             this.data = res.rows;
@@ -424,10 +441,10 @@ export class AssetSqliteService {
     });
   }
 
-  getBuildingFromSqlite() {
+  getBuildingFromSqlite(block_id: any) {
     return new Promise(resolve => {
       this.sqlite.create({name: this.db, location: this.dbLocation}).then((db: SQLiteObject) => {
-        db.executeSql('select * from building', []).then(res => {
+        db.executeSql('select * from building where block_id = ?', [block_id]).then(res => {
           this.tempVar = [];
           for (let i = 0; i < res.rows.length; i++) {
             this.data = res.rows;
@@ -441,10 +458,10 @@ export class AssetSqliteService {
     });
   }
 
-  getFloorFromSqlite() {
+  getFloorFromSqlite(bldg_id: any) {
     return new Promise(resolve => {
       this.sqlite.create({name: this.db, location: this.dbLocation}).then((db: SQLiteObject) => {
-        db.executeSql('select * from floor', []).then(res => {
+        db.executeSql('select * from floor where building_id = ?', [bldg_id]).then(res => {
           this.tempVar = [];
           for (let i = 0; i < res.rows.length; i++) {
             this.data = res.rows;
@@ -458,10 +475,10 @@ export class AssetSqliteService {
     });
   }
 
-  getLocationFromSqlite() {
+  getLocationFromSqlite(floor_id: any) {
     return new Promise(resolve => {
       this.sqlite.create({name: this.db, location: this.dbLocation}).then((db: SQLiteObject) => {
-        db.executeSql('select * from location', []).then(res => {
+        db.executeSql('select * from location where floor_id = ?', [floor_id]).then(res => {
           this.tempVar = [];
           for (let i = 0; i < res.rows.length; i++) {
             this.data = res.rows;
@@ -478,7 +495,7 @@ export class AssetSqliteService {
   getDepartmentFromSqlite() {
     return new Promise(resolve => {
       this.sqlite.create({name: this.db, location: this.dbLocation}).then((db: SQLiteObject) => {
-        db.executeSql('select * from department', []).then(res => {
+        db.executeSql('select * from department limit ? ', [100]).then(res => {
           this.tempVar = [];
           for (let i = 0; i < res.rows.length; i++) {
             this.data = res.rows;
@@ -491,6 +508,40 @@ export class AssetSqliteService {
       });
     });
   }
+
+  getDepartmentBySearch(label: string) {
+    return new Promise(resolve => {
+      this.sqlite.create({name: this.db, location: this.dbLocation}).then((db: SQLiteObject) => {
+        db.executeSql(`select * from department where dept_desc LIKE '%${label}%' COLLATE NOCASE limit ?`, [10]).then(res => {
+          this.tempVar = [];
+          for (let i = 0; i < res.rows.length; i++) {
+            this.data = res.rows;
+            this.tempVar.push(this.data.item(i));
+          }
+          resolve(this.tempVar);
+        } , err => {
+          alert(JSON.stringify(err) + 'Err department Search');
+        });
+      });
+    });
+  }
+
+  // getSiteDetailBySearch(label: string) {
+  //   return new Promise(resolve => {
+  //     this.sqlite.create({name: this.db, location: this.dbLocation}).then((db: SQLiteObject) => {
+  //       db.executeSql(`select * from site_detail where label LIKE '%${label}%' COLLATE NOCASE limit ?`, [10]).then(res => {
+  //         this.tempVar = [];
+  //         for (let i = 0; i < res.rows.length; i++) {
+  //           this.data = res.rows;
+  //           this.tempVar.push(this.data.item(i));
+  //         }
+  //         resolve(this.tempVar);
+  //       } , err => {
+  //         alert(JSON.stringify(err) + 'Err Site');
+  //       });
+  //     });
+  //   });
+  // }
 
   getSubDepartmentFromSqlite(dept_id: any) {
     return new Promise(resolve => {
@@ -503,7 +554,7 @@ export class AssetSqliteService {
           }
           resolve(this.tempVar);
         } , err => {
-          alert(JSON.stringify(err) + 'Err department');
+          alert(JSON.stringify(err) + 'Err Sub department');
         });
       });
     });
@@ -512,7 +563,7 @@ export class AssetSqliteService {
   getDeviceGroupFromSqlite() {
     return new Promise(resolve => {
       this.sqlite.create({name: this.db, location: this.dbLocation}).then((db: SQLiteObject) => {
-        db.executeSql('select * from device_group', []).then(res => {
+        db.executeSql('select * from device_group limit ? ', [100]).then(res => {
           this.tempVar = [];
           for (let i = 0; i < res.rows.length; i++) {
             this.data = res.rows;
@@ -526,10 +577,27 @@ export class AssetSqliteService {
     });
   }
 
-  getDeviceNameFromSqlite() {
+  getDeviceGroupBySearch(label: string) {
     return new Promise(resolve => {
       this.sqlite.create({name: this.db, location: this.dbLocation}).then((db: SQLiteObject) => {
-        db.executeSql('select * from device_name', []).then(res => {
+        db.executeSql(`select * from device_group where label LIKE '%${label}%' COLLATE NOCASE limit ?`, [10]).then(res => {
+          this.tempVar = [];
+          for (let i = 0; i < res.rows.length; i++) {
+            this.data = res.rows;
+            this.tempVar.push(this.data.item(i));
+          }
+          resolve(this.tempVar);
+        } , err => {
+          alert(JSON.stringify(err) + 'Err Device Group Search');
+        });
+      });
+    });
+  }
+
+  getDeviceNameFromSqlite(grp_id: any) {
+    return new Promise(resolve => {
+      this.sqlite.create({name: this.db, location: this.dbLocation}).then((db: SQLiteObject) => {
+        db.executeSql('select * from device_name where grp_id = ?', [grp_id]).then(res => {
           this.tempVar = [];
           for (let i = 0; i < res.rows.length; i++) {
             this.data = res.rows;
@@ -546,7 +614,7 @@ export class AssetSqliteService {
   getManufacturerFromSqlite() {
     return new Promise(resolve => {
       this.sqlite.create({name: this.db, location: this.dbLocation}).then((db: SQLiteObject) => {
-        db.executeSql('select * from manufacturer', []).then(res => {
+        db.executeSql('select * from manufacturer limit ?', [100]).then(res => {
           this.tempVar = [];
           for (let i = 0; i < res.rows.length; i++) {
             this.data = res.rows;
@@ -559,6 +627,26 @@ export class AssetSqliteService {
       });
     });
   }
+
+
+  getManufacturerBySearch(label: string) {
+    return new Promise(resolve => {
+      this.sqlite.create({name: this.db, location: this.dbLocation}).then((db: SQLiteObject) => {
+        db.executeSql(`select * from manufacturer where mnfctrer_desc LIKE '%${label}%' COLLATE NOCASE limit ?`, [10]).then(res => {
+          this.tempVar = [];
+          for (let i = 0; i < res.rows.length; i++) {
+            this.data = res.rows;
+            this.tempVar.push(this.data.item(i));
+          }
+          resolve(this.tempVar);
+        } , err => {
+          alert(JSON.stringify(err) + 'Err manufacturer Search');
+        });
+      });
+    });
+  }
+
+
 
   getOwnerShipFromSqlite() {
     return new Promise(resolve => {

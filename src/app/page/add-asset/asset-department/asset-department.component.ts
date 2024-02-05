@@ -10,7 +10,7 @@ import { MyAssetGetService } from 'src/app/provider/my-asset-get/my-asset-get.se
 })
 export class AssetDepartmentComponent  implements OnInit {
   myDepartment: any = [];
-  myDepartmentCopy: any = [];
+  // myDepartmentCopy: any = [];
   loading: any;
   constructor(
     private modalCtrl: ModalController,
@@ -41,7 +41,7 @@ export class AssetDepartmentComponent  implements OnInit {
   getDepartmentFromSqlite() {
     this.assetSqlite.getDepartmentFromSqlite().then(res => {
       this.myDepartment = res;
-      this.myDepartmentCopy = res;
+      // this.myDepartmentCopy = res;
     })
   }
 
@@ -55,7 +55,7 @@ export class AssetDepartmentComponent  implements OnInit {
         this.dismissloading();
         if (data.status) {
           this.myDepartment = data.data;
-          this.myDepartmentCopy = data.data;
+          // this.myDepartmentCopy = data.data;
         }
       });
     })
@@ -63,22 +63,39 @@ export class AssetDepartmentComponent  implements OnInit {
   }
 
   search(ev: any) {
-    let val: any;
-    console.log(ev.target.value);
-    val = ev.target.value;
-    this.myDepartment = this.myDepartmentCopy;
-    if (val && val.trim() !== '') {
-      this.myDepartment = this.myDepartment.filter((dat: any) => {
-        if ((dat.dept_desc.toLowerCase().indexOf(val.toLowerCase()) > -1)) {
-          return (dat.dept_desc.toLowerCase().indexOf(val.toLowerCase()) > -1);
-        }
-        return
-      });
+    // let val: any;
+    // console.log(ev.target.value);
+    // val = ev.target.value;
+    // this.myDepartment = this.myDepartmentCopy;
+    // if (val && val.trim() !== '') {
+    //   this.myDepartment = this.myDepartment.filter((dat: any) => {
+    //     if ((dat.dept_desc.toLowerCase().indexOf(val.toLowerCase()) > -1)) {
+    //       return (dat.dept_desc.toLowerCase().indexOf(val.toLowerCase()) > -1);
+    //     }
+    //     return
+    //   });
+    // }
+    let label = ev.target.value;
+    if (label) {
+      this.getDepartmentBySearch(label);
+    } else {
+      this.getDepartmentFromSqlite();
     }
   }
 
+  getDepartmentBySearch(label: string) {
+    this.assetSqlite.getDepartmentBySearch(label).then(res => {
+      console.log(res);
+      this.myDepartment = res;
+      // this.allCostCenterCopy = res
+    })
+  }
+
+
+
   async presentLoading() {
-    this.loading = await this.loadingController.create({      cssClass: 'my-custom-class',
+    this.loading = await this.loadingController.create({
+      cssClass: 'my-custom-class',
       message: 'Please wait...'
     });
     await this.loading.present();

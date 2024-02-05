@@ -12,7 +12,7 @@ import { environment } from 'src/environments/environment';
 })
 export class AssetManufacturerComponent  implements OnInit {
   manufacturer: any = [];
-  manufacturerCopy: any = [];
+  // manufacturerCopy: any = [];
   loading: any;
   constructor(
     private modalCtrl: ModalController,
@@ -43,7 +43,7 @@ export class AssetManufacturerComponent  implements OnInit {
   getManufacturerFromSqlite() {
     this.assetSqlite.getManufacturerFromSqlite().then(res => {
       this.manufacturer = res;
-      this.manufacturerCopy = res;
+      // this.manufacturerCopy = res;
     })
   }
 
@@ -61,7 +61,7 @@ export class AssetManufacturerComponent  implements OnInit {
         next:(data) => {
           if (data.status) {
             this.manufacturer = data.data;
-            this.manufacturerCopy = data.data;
+            // this.manufacturerCopy = data.data;
           } else {
             this.common.presentToast(data.msg, 'warning');
           }
@@ -92,18 +92,31 @@ export class AssetManufacturerComponent  implements OnInit {
   }
 
   search(ev: any) {
-    let val: any;
-    console.log(ev.target.value);
-    val = ev.target.value;
-    this.manufacturer = this.manufacturerCopy;
-    if (val && val.trim() !== '') {
-      this.manufacturer = this.manufacturer.filter((dat: any) => {
-        if ((dat.mnfctrer_desc.toLowerCase().indexOf(val.toLowerCase()) > -1)) {
-          return (dat.mnfctrer_desc.toLowerCase().indexOf(val.toLowerCase()) > -1);
-        }
-        return
-      });
+    // let val: any;
+    // console.log(ev.target.value);
+    // val = ev.target.value;
+    // this.manufacturer = this.manufacturerCopy;
+    // if (val && val.trim() !== '') {
+    //   this.manufacturer = this.manufacturer.filter((dat: any) => {
+    //     if ((dat.mnfctrer_desc.toLowerCase().indexOf(val.toLowerCase()) > -1)) {
+    //       return (dat.mnfctrer_desc.toLowerCase().indexOf(val.toLowerCase()) > -1);
+    //     }
+    //     return
+    //   });
+    // }
+    let label = ev.target.value;
+    if (!label) {
+      this.getManufacturerFromSqlite();
+    } else {
+      this.getManufacturerBySearch(label);
     }
   }
 
+  getManufacturerBySearch(label: string) {
+    this.assetSqlite.getManufacturerBySearch(label).then(res => {
+      console.log(res);
+      this.manufacturer = res;
+      // this.allCostCenterCopy = res
+    })
+  }
 }

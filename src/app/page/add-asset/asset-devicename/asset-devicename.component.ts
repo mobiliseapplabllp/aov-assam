@@ -40,7 +40,7 @@ export class AssetDevicenameComponent  implements OnInit {
   }
 
   getDeviceNameFromSqlite() {
-    this.assetSqlite.getDeviceNameFromSqlite().then(res => {
+    this.assetSqlite.getDeviceNameFromSqlite(this.grp_id).then(res => {
       this.myDeviceName = res;
       this.myDeviceNameCopy = res;
     })

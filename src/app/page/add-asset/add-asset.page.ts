@@ -147,17 +147,21 @@ export class AddAssetPage implements OnInit {
   }
 
   ngOnInit() {
+    // this.checkAndUpdateMaster();
+    // return;
     this.httpCommon.setBarcode('');
     this.httpCommon.checkInternet().then(res => {
       if (res) {
         if (this.platform.is('capacitor')) {
           this.checkAndUpdateMaster();
         } else {
-          this.checkAndUpdateMaster();
           this.dummyData();
         }
       } else {
-        this.dummyData();
+        this.getOwnership();
+        this.getEquipStatus();
+        this.getTechnology();
+        this.getWarranty();
       }
     });
   }
@@ -223,7 +227,7 @@ export class AddAssetPage implements OnInit {
           next:(data) => {
             this.httpAsset.insertAssetAction(data.data).then(insRes => {
               if (insRes) {
-                alert('All Master Saved Succ');
+                this.httpCommon.presentToast('All Master Saved Successfully', 'success');
                 localStorage.setItem('lastAssetTime', moment().format('YYYY-MM-DD H:mm:ss'));
                 this.getOwnership();
                 this.getEquipStatus();
@@ -240,6 +244,11 @@ export class AddAssetPage implements OnInit {
           }
         })
       });
+    } else {
+      this.getOwnership();
+      this.getEquipStatus();
+      this.getTechnology();
+      this.getWarranty();
     }
   }
 
@@ -512,7 +521,7 @@ export class AddAssetPage implements OnInit {
         this.addAsset.get('loc_id_desc')?.setValue('');
         // this.addAsset.get('ext_asset_id_pre')?.setValue('');
         this.addAsset.get('input_asset_id')?.setValue('');
-        this.getBlockFromSqlite();
+        this.getBlockFromSqlite(disModal.data.pc_id);
         // this.presentLoading().then(preLoad => {
         //   this.httpAsset.getBlock(disModal.data.pc_id).subscribe({
         //     next:(data) => {
@@ -546,9 +555,9 @@ export class AddAssetPage implements OnInit {
     return await modal.present();
   }
 
-  getBlockFromSqlite(){
+  getBlockFromSqlite(pc_id: any){
     if (this.platform.is('capacitor')) {
-      this.assetSqlite.getBlockFromSqlite().then(res => {
+      this.assetSqlite.getBlockFromSqlite(pc_id).then(res => {
         this.myBlocks = res;
       })
     } else {
@@ -596,7 +605,7 @@ export class AddAssetPage implements OnInit {
     modal.onWillDismiss().then(disModal => {
       console.log(disModal);
       if (disModal.role) {
-        this.addAsset.get('subgrp_id')?.setValue(disModal.data.value);
+        this.addAsset.get('subgrp_id')?.setValue(disModal.data.subgrp_id);
         this.addAsset.get('subgrp_id_desc')?.setValue(disModal.data.label);
         setTimeout(() => {
           console.log(disModal.data.subgrp_class);
@@ -630,9 +639,10 @@ export class AddAssetPage implements OnInit {
     if (!ev.target.value) {
       return;
     }
+    let block_id = ev.target.value;
     this.presentLoading().then(preLoad => {
       if (this.platform.is('capacitor')) {
-        this.assetSqlite.getBuildingFromSqlite().then(res => {
+        this.assetSqlite.getBuildingFromSqlite(block_id).then(res => {
           this.myBuildingArr = res;
           this.addAsset.get('bldg_id')?.setValue('');
           this.addAsset.get('floor_id')?.setValue('');
@@ -1034,13 +1044,22 @@ export class AddAssetPage implements OnInit {
     return
   }
 
+  checkImageCondition() {
+    if (this.img1 && this.img2 && this.img3) {
+      return true;
+    } else {
+      this.httpCommon.presentToast('Image 1, Image 2 and Image 3 is Mandatory', 'warning');
+      return false
+    }
+  }
+
   changeWarranty() {
     this.addAsset.get('warranty_start_date')?.setValue('');
     this.addAsset.get('warranty_end_date')?.setValue('');
   }
 
   saveAsset() {
-    if (this.checkWarrantyCondition() && this.checkParentCondition()) {
+    if (this.checkWarrantyCondition() && this.checkParentCondition() && this.checkImageCondition()) {
       this.submitAsset();
     }
   }
@@ -1087,8 +1106,14 @@ export class AddAssetPage implements OnInit {
       this.addAsset.get('x_cor')?.setValue(this.coordinate.x);
       this.addAsset.get('y_cor')?.setValue(this.coordinate.y);
       for(let key in this.addAsset.value) {
-        this.formData.delete(key);
-        this.formData.append(key, this.addAsset.value[key])
+        // this.formData.delete(key);
+        // this.formData.append(key, this.addAsset.value[key])
+        let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg'
+        if ((key === 'pur_invoice' || key === 'asset_img' || key === 'asset_img2' || key === 'asset_img3') &&  this.addAsset.value[key]) {
+          this.formData.append(key, this.addAsset.value[key], random)
+        } else {
+          this.formData.append(key, this.addAsset.value[key])
+        }
       }
       // this.formData.delete('x_cor');
       // this.formData.delete('y_cor');
@@ -1102,11 +1127,11 @@ export class AddAssetPage implements OnInit {
           this.pendingApi = null;
           this.clrTime();
           if (data.status) {
+            this.deleteAssetOffline(this.addAsset.value.ext_asset_id);
             this.httpCommon.presentToast(data.msg, 'success');
             this.parentAssetObj = { };
             this.formData = new FormData();
             this.clearField();
-            this.deleteAssetOffline(this.addAsset.value.ext_asset_id);
           } else {
             this.httpCommon.presentToast(data.msg, 'warning');
           }

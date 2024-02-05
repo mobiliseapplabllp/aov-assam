@@ -28,7 +28,7 @@ export class FloorComponent  implements OnInit {
     console.log(this.bldg_id);
     // this.getFloor();
     if (this.platform.is('capacitor')) {
-      this.getFloorFromSqlite();
+      this.getFloorFromSqlite(this.bldg_id);
     } else {
       this.myFloor = [{
         floor_img: "",
@@ -48,8 +48,8 @@ export class FloorComponent  implements OnInit {
   }
 
 
-  getFloorFromSqlite() {
-    this.assetSqlite.getFloorFromSqlite().then(res => {
+  getFloorFromSqlite(bldg_id: any) {
+    this.assetSqlite.getFloorFromSqlite(bldg_id).then(res => {
       this.myFloor = res;
       this.myFloorCopy = res;
     })
