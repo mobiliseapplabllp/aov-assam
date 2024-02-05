@@ -30,9 +30,7 @@ export class LoginPage implements OnInit {
     private router: Router,
     private loginPro: LoginService,
     private common: CommonService,
-
     private httpDigi: DigitalChecklistService
-
   ) {
     this.loginForms = formbuilder.group({
       userid: ['', Validators.required],
