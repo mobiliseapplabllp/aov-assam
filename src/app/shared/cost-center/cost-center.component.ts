@@ -25,10 +25,10 @@ export class CostCenterComponent  implements OnInit {
       this.getCostCenterSqlite();
     } else {
       this.allCostCenter = [{
-        barcode_prefix : "110002",
+        barcode_prefix : "1100002",
         label : "110002 BPHC,NIZ KAURBAHA",
         pc_desc :  "110002 BPHC,NIZ KAURBAHA",
-        pc_ext_id : "110002",
+        pc_ext_id : "1100002",
         pc_id : 2,
         value : 2
       }]

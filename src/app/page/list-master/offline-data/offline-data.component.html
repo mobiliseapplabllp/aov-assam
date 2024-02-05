@@ -32,20 +32,11 @@
     </ion-row>
     <ion-row>
       <ion-col size="6">
-        <ion-button expand="block" shape="round" class="ion-text-capitalize" fill="outline" (click)="deleteAssetCondition(dat.ext_asset_id)">DELETE <ion-icon name="trash-outline" slot="end"></ion-icon></ion-button>
+        <ion-button expand="block" shape="round" class="ion-text-capitalize" fill="outline" (click)="presentAlertConfirm(dat.ext_asset_id)">DELETE <ion-icon name="trash-outline" slot="end"></ion-icon></ion-button>
       </ion-col>
       <ion-col size="6">
         <ion-button expand="block" shape="round" class="ion-text-capitalize" (click)="saveToServer(dat)">SUBMIT <ion-icon name="save-outline" slot="end"></ion-icon></ion-button>
       </ion-col>
     </ion-row>
   </ion-card>
-  <!-- <ion-item *ngFor="let dat of offlineAssetList">
-    <ion-label class="ion-text-wrap">
-      <h2>{{dat.ext_asset_id}}</h2>
-      <p>{{dat.manufacturer_id_desc}}</p>
-      <p>{{dat.subgrp_id_desc}}</p>
-      <p>{{dat.remark}}</p>
-    </ion-label>
-    <ion-button slot="end" size="small" fill="outline" (click)="saveToServer(dat)">Save</ion-button>
-  </ion-item> -->
 </ion-content>

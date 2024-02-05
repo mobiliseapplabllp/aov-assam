@@ -23,18 +23,17 @@ export class AssetDevicenameComponent  implements OnInit {
 
   ngOnInit() {
     console.log(this.grp_id);
-    // this.getDeviceName();
     if (this.platform.is('capacitor')) {
       this.getDeviceNameFromSqlite();
     } else {
       this.myDeviceName = [{
         label : "ANALYZERS, LABORATORY, BLOOD GAS",
         subgrp_class : "Non-Critical" ,
-        value : 1
+        subgrp_id : 1
       },{
         label : "ANALYZERS, LABORATORY, BLOOD GAS/PH",
         subgrp_class : "Non-Critical",
-        value :2
+        subgrp_id :2
       }]
     }
   }
@@ -98,6 +97,4 @@ export class AssetDevicenameComponent  implements OnInit {
       });
     }
   }
-
-
 }

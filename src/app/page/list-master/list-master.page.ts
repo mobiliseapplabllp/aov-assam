@@ -156,15 +156,6 @@ export class ListMasterPage implements OnInit {
     }).then(res => {
       console.log(res);
     })
-    // SpeechRecognition.addListener("partialResults", (data: any) => {
-    //   console.log("partialResults was fired", data.matches);
-    //   // if (data.matches[0] == 'open asset tagging') {
-    //   //   const data = {
-    //   //     link: '/add-asset'
-    //   //   }
-    //   //   this.openPage(data);
-    //   // }
-    // });
   }
 
   removeListen() {
@@ -214,29 +205,22 @@ export class ListMasterPage implements OnInit {
   }
 
   openPage(data: any) {
-    if (data.link == 'not') {
-      this.common.presentToast('Not activated yet', 'warning' );
-      return;
-    }
-    this.router.navigateByUrl(data.link);
-    return;
-    // this.common.checkInternet().then(res => {
-    //   if (res) {
-    //     if (data.link == 'not') {
-    //       this.common.presentToast('Not activated yet', 'warning' );
-    //       return;
-    //     }
-    //     this.router.navigateByUrl(data.link);
-    //     return;
-    //   } else {
-    //     console.log(data);
-    //     if (data.smnu_id == 403) {
-    //       this.router.navigateByUrl('/digital-checklist-offline');
-    //     } else {
-    //       this.common.presentToast(data.smnu_desc + ' Not Working on Offline Mode.', 'warning')
-    //     }
-    //   }
-    // })
-
+    this.common.checkInternet().then(res => {
+      if (res) {
+        if (data.link == 'not') {
+          this.common.presentToast('Not activated yet', 'warning' );
+          return;
+        }
+        this.router.navigateByUrl(data.link);
+        return;
+      } else {
+        console.log(data);
+        if (data.smnu_id !== 314) {
+          this.common.presentToast(data.smnu_desc + ' Not Working on Offline Mode.', 'warning')
+          return;
+        }
+        this.router.navigateByUrl(data.link);
+      }
+    });
   }
 }

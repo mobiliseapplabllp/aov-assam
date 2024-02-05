@@ -3,7 +3,11 @@
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title (click)="deleteAssetOffline('1100025555')">Add Asset</ion-title>
+    <ion-title>Add Asset</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="ion-text-capitalize" *ngIf="isOfflineDataAvailable" (click)="openPage('/list-master/offline-data')">OFFLINE</ion-button>
+      <ion-button (click)="syncMaster()" *ngIf="isInternet">SYNC <ion-icon name="sync-outline" slot="end"></ion-icon></ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content class="contents">
@@ -139,7 +143,7 @@
           <ion-col *ngIf="addAsset.value.is_child_asset === '1'">
             <ion-item>
               <ion-label color="primary" position="floating">Asset Parent ID <ion-text color="danger">*</ion-text></ion-label>
-              <ion-input inputmode="tel" formControlName="parent_asset_id" maxlength="10" (ionChange)="changeAssetParent()"></ion-input>
+              <ion-input inputmode="tel" formControlName="parent_asset_id" maxlength="11" (ionChange)="changeAssetParent()"></ion-input>
               <ion-button slot="end" fill="outline" color="danger" (click)="searchAssetId()">
                 <ion-icon name="search-outline"></ion-icon>
               </ion-button>

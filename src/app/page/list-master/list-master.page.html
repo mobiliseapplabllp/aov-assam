@@ -1,22 +1,13 @@
 <ion-header>
   <ion-toolbar color="dark">
-    <ion-buttons slot="start">
+    <ion-buttons slot="start" *ngIf="isInternet">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title (click)="listen()"> {{userName}} </ion-title>
-    <!-- <ion-buttons slot="end" >
-      <ion-button (click)="openPageTest('/menu-roaster')">Roaster</ion-button>
-      <ion-button (click)="openPageTest('/digital-checklist')">Digital</ion-button>
-      <ion-button (click)="openPageTest('/manuals')">Manuals</ion-button>
-      <ion-button (click)="openPageTest('/meal-checking')">Manuals</ion-button>
-    </ion-buttons> -->
   </ion-toolbar>
 
 </ion-header>
 <ion-content>
-  <!-- <ion-button (click)="listen()">Listen</ion-button>
-  <ion-button (click)="removeListen()">Remove Listen</ion-button>
-  <ion-button (click)="permission()">Permission</ion-button> -->
   <ion-row *ngIf="isInternet">
     <ion-col class="ion-text-center" > <!-- (click)="speak()"-->
       <ion-text color="primary"><b>Working Summary</b></ion-text>

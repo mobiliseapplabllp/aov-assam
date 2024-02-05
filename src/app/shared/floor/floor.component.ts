@@ -33,15 +33,15 @@ export class FloorComponent  implements OnInit {
       this.myFloor = [{
         floor_img: "",
         label: "GROUND-FLOOR",
-        value:1
+        floor_id:1
       },{
         floor_img: "",
         label: "FIRST-FLOOR",
-        value:2
+        floor_id:2
       },{
         floor_img: "",
         label: "SECOND-FLOOR",
-        value:2
+        floor_id:2
       }]
     }
 

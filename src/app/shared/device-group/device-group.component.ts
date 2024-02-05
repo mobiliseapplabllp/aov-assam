@@ -31,15 +31,15 @@ export class DeviceGroupComponent  implements OnInit {
       this.myDeviceGroup = [{
         label :  "Analyzer",
         rate_of_dprctn : 0,
-        value : 1
+        grp_id : 1
       },{
         label :  "Ventilator",
         rate_of_dprctn : 0,
-        value : 2
+        grp_id : 2
       },{
         label :  "Aspirators",
         rate_of_dprctn : 0,
-        value : 3
+        grp_id : 3
       }]
     }
 

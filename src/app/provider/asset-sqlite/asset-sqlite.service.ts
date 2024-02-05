@@ -56,7 +56,7 @@ export class AssetSqliteService {
           db.sqlBatch(this.insDataTemp).then(res => {
             resolve(true);
           } , err => {
-            alert(JSON.stringify(err) + 'Err:- Site Group');
+            alert(JSON.stringify(err) + 'Err:- Blocks');
           });
         } , err => {
           alert(JSON.stringify(err));
@@ -81,7 +81,7 @@ export class AssetSqliteService {
           db.sqlBatch(this.insDataTemp).then(res => {
             resolve(true);
           } , err => {
-            alert(JSON.stringify(err) + 'Err:- Site Group');
+            alert(JSON.stringify(err) + 'Err:- Building');
           });
         } , err => {
           alert(JSON.stringify(err));
@@ -712,6 +712,16 @@ export class AssetSqliteService {
         } , err => {
           alert(JSON.stringify(err) + 'Err warranty');
         });
+      });
+    });
+  }
+
+  deleteSqlite() {
+    return new Promise(resolve => {
+      this.sqlite.deleteDatabase({name: this.db, location: this.dbLocation}).then((db: SQLiteObject) => {
+        resolve(true);
+      }, err => {
+        alert(JSON.stringify(err));
       });
     });
   }

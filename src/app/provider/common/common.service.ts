@@ -95,7 +95,6 @@ export class CommonService {
         for (let i = 0 ; i < tablestructure.length; i ++) {
           db.executeSql(tablestructure[i].table, []).then(userdata => {
             if (i === (tablestructure.length - 1)) {
-              alert('Create all Table');
               resolve(true);
             }
           }, err => {

@@ -76,6 +76,8 @@ export class AddAssetPage implements OnInit {
   segmentType!: string;
   city!: string;
   sub_segment!: string;
+  isOfflineDataAvailable!: boolean;
+  isInternet!: boolean;
   constructor(
     private formbuilder: FormBuilder,
     private httpAsset: MyAssetGetService,
@@ -143,25 +145,48 @@ export class AddAssetPage implements OnInit {
     this.pinPointStyleFun();
     // this.getFacilityType();
     // this.getDeviceGroup();
-
   }
 
   ngOnInit() {
-    // this.checkAndUpdateMaster();
-    // return;
     this.httpCommon.setBarcode('');
     this.httpCommon.checkInternet().then(res => {
       if (res) {
         if (this.platform.is('capacitor')) {
+          this.isInternet = true;
           this.checkAndUpdateMaster();
         } else {
           this.dummyData();
         }
       } else {
-        this.getOwnership();
-        this.getEquipStatus();
-        this.getTechnology();
-        this.getWarranty();
+        if (this.platform.is('capacitor')) {
+          this.getBasicMaster();
+        } else {
+          this.dummyData();
+        }
+      }
+    });
+  }
+
+  getBasicMaster() {
+    this.getOwnership();
+    this.getEquipStatus();
+    this.getTechnology();
+    this.getWarranty();
+  }
+
+  async getOffLineAssetList() {
+    const friendsObservable = liveQuery (() => db.asset.toArray());
+    const sub = friendsObservable.subscribe({
+      next:(data) => {
+        console.log(data);
+        if (data.length > 0) {
+          this.isOfflineDataAvailable = true;
+        } else {
+          this.isOfflineDataAvailable = false;
+        }
+        setTimeout(() => {
+          sub.unsubscribe();
+        }, 1000);
       }
     });
   }
@@ -219,6 +244,25 @@ export class AddAssetPage implements OnInit {
     }]
   }
 
+  syncMaster() {
+    this.presentLoading().then(preLoad => {
+      localStorage.setItem('lastAssetTime', '');
+      this.assetSqlite.deleteSqlite().then(res => {
+        if (res) {
+          this.httpCommon.getTableStructureFromJson().then(tableStructure => {
+            this.httpCommon.createAllTable(tableStructure).then(resPonse => {
+              if (resPonse === true) {
+                this.dismissloading();
+                this.checkAndUpdateMaster();
+              }
+            });
+          });
+        }
+      });
+    })
+
+  }
+
   checkAndUpdateMaster() {
     let lastAssetTime = localStorage.getItem('lastAssetTime');
     if (!lastAssetTime) {
@@ -229,26 +273,18 @@ export class AddAssetPage implements OnInit {
               if (insRes) {
                 this.httpCommon.presentToast('All Master Saved Successfully', 'success');
                 localStorage.setItem('lastAssetTime', moment().format('YYYY-MM-DD H:mm:ss'));
-                this.getOwnership();
-                this.getEquipStatus();
-                this.getTechnology();
-                this.getWarranty();
+                this.getBasicMaster();
+                this.dismissloading();
               }
             });
           },
           error:() => {
             this.dismissloading();
-          },
-          complete:() => {
-            this.dismissloading();
           }
         })
       });
     } else {
-      this.getOwnership();
-      this.getEquipStatus();
-      this.getTechnology();
-      this.getWarranty();
+      this.getBasicMaster();
     }
   }
 
@@ -346,23 +382,58 @@ export class AddAssetPage implements OnInit {
     this.pinPointStyleFun();
   }
 
+  // ionViewDidEnter() {
+  //   this.currentDate = moment().format('YYYY-MM-DD');
+  //   let bar = this.httpCommon.getBarcode();
+  //   if (bar) {
+  //     console.log('Your Barcode is ' + bar);
+  //     let temp, temp1;
+  //     temp = bar;
+  //     temp1 = temp.split('/');
+  //     this.httpCommon.setBarcode('');
+  //     if (temp1.length === 6) {
+  //       this.getDecBarcode(temp1[5]);
+  //     } else {
+  //       this.httpCommon.presentToast('This is invalid QR Code', 'warning');
+  //     }
+  //     // this.addAsset.get('input_asset_id')?.setValue(bar);
+  //     // this.httpCommon.setBarcode('');
+  //   }
+  // }
+
   ionViewDidEnter() {
+    this.httpCommon.checkInternet().then(res => {
+      if (res) {
+        this.getOffLineAssetList();
+      }
+    });
+
     this.currentDate = moment().format('YYYY-MM-DD');
     let bar = this.httpCommon.getBarcode();
     if (bar) {
       console.log('Your Barcode is ' + bar);
-      let temp, temp1;
-      temp = bar;
-      temp1 = temp.split('/');
-      this.httpCommon.setBarcode('');
-      if (temp1.length === 6) {
-        this.getDecBarcode(temp1[5]);
+      let myBarcode, first, last
+      myBarcode= bar.slice(-11);
+      first = myBarcode.slice(0, 7);
+      last = myBarcode.slice(-4);
+      if (first === this.addAsset.value.ext_asset_id_pre) {
+        this.addAsset.get('input_asset_id')?.setValue(last);
       } else {
-        this.httpCommon.presentToast('This is invalid QR Code', 'warning');
+        this.httpCommon.presentToastWithOk('Incorrect barcode!!  Starting 7 digits of the barcode does not match with the selected site ' + this.addAsset.value.site_id_description + '. The barcodes for the site begin with ' + first + '.' , 'warning');
       }
+      // let temp, temp1;
+      // temp = bar;
+      // temp1 = temp.split('/');
+      // this.httpCommon.setBarcode('');
+      // if (temp1.length === 6) {
+      //   this.getDecBarcode(temp1[5]);
+      // } else {
+      //   this.httpCommon.presentToast('This is invalid QR Code', 'warning');
+      // }
       // this.addAsset.get('input_asset_id')?.setValue(bar);
       // this.httpCommon.setBarcode('');
     }
+
   }
 
   getDecBarcode(enc_barcode: string) {
@@ -418,6 +489,10 @@ export class AddAssetPage implements OnInit {
     // }).catch(err => {
     //   console.log('Error', err);
     // });
+  }
+
+  openPage(url: string) {
+    this.router.navigateByUrl(url);
   }
 
   // presentActionSheet(val: any) {
@@ -1033,16 +1108,29 @@ export class AddAssetPage implements OnInit {
 
   checkParentCondition() {
     if (this.addAsset.value.is_child_asset === '1') {
-      if (this.addAsset.value.parent_asset_id.length == 10) {
+      if (this.addAsset.value.parent_asset_id.length == 11) {
         return true;
       } else {
-        alert('Asset Parent Id Should have 10 Digit');
+        alert('Asset Parent Id Should have 11 Digit');
       }
     } else {
       return true;
     }
     return
   }
+
+  // checkParentCondition() {
+  //   if (this.addAsset.value.is_child_asset === '1') {
+  //     if (this.addAsset.value.parent_asset_id.length == 10) {
+  //       return true;
+  //     } else {
+  //       alert('Asset Parent Id Should have 10 Digit');
+  //     }
+  //   } else {
+  //     return true;
+  //   }
+  //   return
+  // }
 
   checkImageCondition() {
     if (this.img1 && this.img2 && this.img3) {
@@ -1110,8 +1198,10 @@ export class AddAssetPage implements OnInit {
         // this.formData.append(key, this.addAsset.value[key])
         let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg'
         if ((key === 'pur_invoice' || key === 'asset_img' || key === 'asset_img2' || key === 'asset_img3') &&  this.addAsset.value[key]) {
+          this.formData.delete(key);
           this.formData.append(key, this.addAsset.value[key], random)
         } else {
+          this.formData.delete(key);
           this.formData.append(key, this.addAsset.value[key])
         }
       }
@@ -1216,6 +1306,46 @@ export class AddAssetPage implements OnInit {
     })
 
   }
+
+  // searchAssetId() {
+  //   console.log(this.addAsset.value.parent_asset_id);
+  //   if (!this.addAsset.value.parent_asset_id) {
+  //     alert('Please Enter Asset Parent ID');
+  //     return;
+  //   }
+  //   if (!this.addAsset.value.site_id) {
+  //     alert('Please Select Site');
+  //     return;
+  //   }
+
+
+  //   let firstDigit = this.addAsset.value.parent_asset_id.slice(0, 7);
+  //   if (firstDigit !== this.addAsset.value.ext_asset_id_pre) {
+  //     this.httpCommon.presentToastWithOk('Incorrect barcode!!  Starting 7 digits of the barcode does not match with the selected site ' + this.addAsset.value.site_id_description + '. The barcodes for the site begin with ' + firstDigit + '.' , 'warning');
+  //     return;
+  //   }
+  //   // lastDigit = temp.slice(-6);
+
+  //   this.parentAssetObj = {};
+  //   this.presentLoading().then(preLoad => {
+  //     this.httpAsset.getAssetParentId(this.addAsset.value.parent_asset_id, this.addAsset.value.site_id).subscribe({
+  //       next:(data) => {
+  //         if (data.status) {
+  //           this.parentAssetObj = data.data;
+  //         } else {
+  //           alert(data.msg);
+  //         }
+  //       },
+  //       error:() => {
+  //         this.dismissloading();
+  //       },
+  //       complete:() => {
+  //         this.dismissloading();
+  //       }
+  //     });
+  //   })
+
+  // }
 
   changeAssetParent() {
     this.parentAssetObj = {};
