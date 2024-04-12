@@ -65,6 +65,12 @@
           <ion-label color="primary" position="floating">Address Remark</ion-label>
           <ion-input type="text" formControlName="prop1"></ion-input>
         </ion-item>
+        <ion-item>
+          <ion-label color="primary" position="floating">MR Type <ion-text color="danger">*</ion-text></ion-label>
+          <ion-select interface="action-sheet" mode="ios" formControlName="type_id">
+            <ion-select-option *ngFor="let dat of MRTypeArr" [value]="dat.value">{{dat.label}}</ion-select-option>
+          </ion-select>
+        </ion-item>
       </ion-card-content>
     </ion-card>
   </form>
@@ -82,13 +88,19 @@
         <ion-col size="6">
           <ion-item >
             <ion-label color="primary" position="floating">Qty <ion-text color="danger">*</ion-text></ion-label>
-            <ion-input type="text" [(ngModel)]="materialArr[i].qty"></ion-input>
+            <ion-input type="number" [(ngModel)]="materialArr[i].qty"></ion-input>
           </ion-item>
         </ion-col>
         <ion-col size="6">
           <ion-item >
             <ion-label color="primary" position="floating">Make <ion-text color="danger">*</ion-text></ion-label>
             <ion-input type="text" [(ngModel)]="materialArr[i].make"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="6">
+          <ion-item >
+            <ion-label color="primary" position="floating">Model <ion-text color="danger">*</ion-text></ion-label>
+            <ion-input type="text" [(ngModel)]="materialArr[i].model"></ion-input>
           </ion-item>
         </ion-col>
         <ion-col size="6">
@@ -130,12 +142,7 @@
             <ion-input type="text"  [(ngModel)]="materialArr[i].uom_id_desc" ></ion-input>
           </ion-item>
         </ion-col>
-        <ion-col size="6">
-          <ion-item >
-            <ion-label color="primary" position="floating">Model <ion-text color="danger">*</ion-text></ion-label>
-            <ion-input type="text" [(ngModel)]="materialArr[i].model"></ion-input>
-          </ion-item>
-        </ion-col>
+
         <ion-col size="6">
           <ion-item >
             <ion-label color="primary" position="floating">Dimension <ion-text color="danger">*</ion-text></ion-label>
@@ -163,24 +170,6 @@
       </ion-row>
     </ion-card-content>
   </ion-card>
-
-
-  <!-- <ion-card *ngFor="let dat of materialArr;let i = index">
-    <ion-item >
-      <ion-label color="primary" position="floating">mtrl_desc <ion-text color="danger">*</ion-text></ion-label>
-      <ion-input type="text" [(ngModel)]="dat.mtrl_desc"> </ion-input>
-    </ion-item>
-    <ion-item >
-      <ion-label color="primary" position="floating">qty <ion-text color="danger">*</ion-text></ion-label>
-      <ion-input type="text" [(ngModel)]="dat.qty"> </ion-input>
-    </ion-item>
-    <ion-item >
-      <ion-label color="primary" position="floating">make <ion-text color="danger">*</ion-text></ion-label>
-      <ion-input type="text" [(ngModel)]="dat.make"> </ion-input>
-    </ion-item>
-    <ion-button (click)="presentActionSheet(i)">Attachment</ion-button>
-  </ion-card> -->
-
   <ion-row>
     <ion-col>
       <ion-button expand="block" (click)="submit()" [disabled]="forms.invalid">Submit</ion-button>

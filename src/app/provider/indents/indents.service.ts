@@ -17,6 +17,10 @@ export class IndentsService {
     return this.https.get(environment.url + 'setups/organisation/get_warehouse_by_pc?pc_id=' + pd_id);
   }
 
+  getMrType(): Observable<any> {
+    return this.https.get(environment.url + 'get_type');
+  }
+
   // getPendingData(data): Observable<any> {
   //   let param = new HttpParams();
   //   for (const key in data) {

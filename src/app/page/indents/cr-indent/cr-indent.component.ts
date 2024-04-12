@@ -29,6 +29,7 @@ export class CrIndentComponent  implements OnInit {
   isDisabled = true;
   assetObj: any = {};
   isSearch = false;
+  MRTypeArr: any = [];
   constructor(
     private formbuilder: FormBuilder,
     private modalController: ModalController,
@@ -54,6 +55,7 @@ export class CrIndentComponent  implements OnInit {
     if (this.platform.is('capacitor')) {
       this.checkAndUpdateMaster();
     }
+    this.getMRType();
   }
 
   ionViewDidLeave() {
@@ -82,6 +84,24 @@ export class CrIndentComponent  implements OnInit {
     }
   }
 
+  getMRType() {
+    this.httpIndent.getMrType().subscribe({
+      next:(data) => {
+        if (data.status) {
+          this.MRTypeArr = data.data;
+        } else {
+          this.common.presentToast(data.msg, 'warning');
+        }
+      },
+      error:() => {
+        this.common.presentToast(environment.errMsg + ' MR Type', 'danger');
+      },
+      complete:() => {
+
+      }
+    })
+  }
+
   initForm() {
     this.forms = this.formbuilder.group({
       pc_id: ['', Validators.required],
@@ -91,6 +111,7 @@ export class CrIndentComponent  implements OnInit {
       is_ticket: ['',Validators.required],
       ticket_id: [''],
       asset_id: [''],
+      type_id: ['', Validators.required]
     });
     if(this.requestedData.pc_id) {
       this.forms.get('pc_id')?.setValue(this.requestedData.pc_id);
@@ -208,6 +229,8 @@ export class CrIndentComponent  implements OnInit {
       if (disModal.data) {
         this.materialArr[index].mtrl_desc = disModal.data.label;
         this.materialArr[index].mtrl_id = disModal.data.value;
+        this.materialArr[index].uom_id_desc = disModal.data.uom_desc;
+        this.materialArr[index].uom_id = disModal.data.uom_id;
       }
     });
     return await modal.present();
@@ -294,6 +317,61 @@ export class CrIndentComponent  implements OnInit {
       formData.append(key, this.forms.value[key]);
     }
     for (var i = 0; i < this.materialArr.length; i++) {
+      if (!this.materialArr[i].qty || this.materialArr[i].qty == 0) {
+        this.common.presentToast(`Qty Can't be less than 1 at index ${i+1}`, 'warning');
+        return;
+      }
+
+      if (!this.materialArr[i].mtrl_desc) {
+        this.common.presentToast(`Please Select Material at index ${i+1}`, 'warning');
+        return;
+      }
+
+      if (!this.materialArr[i].make) {
+        this.common.presentToast(`Please Select Make at index ${i+1}`, 'warning');
+        return;
+      }
+
+      if (!this.materialArr[i].model) {
+        this.common.presentToast(`Please Select Model at index ${i+1}`, 'warning');
+        return;
+      }
+
+      if (!this.materialArr[i].reqd_by_date) {
+        this.common.presentToast(`Please Select Reqd By Date at index ${i+1}`, 'warning');
+        return;
+      }
+
+      if (!this.materialArr[i].remark) {
+        this.common.presentToast(`Please Select Remark at index ${i+1}`, 'warning');
+        return;
+      }
+
+      if (!this.materialArr[i].user_id_desc) {
+        this.common.presentToast(`Please Select Requestee at index ${i+1}`, 'warning');
+        return;
+      }
+
+      if (!this.materialArr[i].priority) {
+        this.common.presentToast(`Please Select Priority at index ${i+1}`, 'warning');
+        return;
+      }
+
+      if (!this.materialArr[i].uom_id_desc) {
+        this.common.presentToast(`Please Select Unit at index ${i+1}`, 'warning');
+        return;
+      }
+
+      if (!this.materialArr[i].dimension) {
+        this.common.presentToast(`Please Dimension at index ${i+1}`, 'warning');
+        return;
+      }
+
+      if (!this.materialArr[i].del_loc) {
+        this.common.presentToast(`Please Select Delivery Location at index ${i+1}`, 'warning');
+        return;
+      }
+
       let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg'
       formData.append(`material[${i}][del_loc]`, this.materialArr[i].del_loc);
       formData.append(`material[${i}][dimension]`, this.materialArr[i].dimension);
@@ -358,7 +436,11 @@ export class CrIndentComponent  implements OnInit {
     if (this.forms.value.is_ticket === 'Yes' && (!this.forms.value.ticket_id || !this.forms.value.asset_id)) {
       this.common.presentToast('Please Enter Ticket Id or Barcode No', 'warning');
       return false;
-    } else {
+    } else if(this.forms.value.is_ticket === 'No' && (!this.forms.value.asset_id)) {
+      this.common.presentToast('Please Enter Barcode No', 'warning');
+      return false;
+    }
+    else {
       return true;
     }
   }
