@@ -6,105 +6,84 @@
     <ion-row>
       <ion-col size="6">
         <ion-text color="primary">Request Id</ion-text><br>
-        <ion-text color="dark">{{data.rqst_id}}</ion-text>
+        <ion-text color="medium">{{data.rqst_id}}</ion-text>
       </ion-col>
       <ion-col size="6">
         <ion-text color="primary">Creation Date</ion-text><br>
-        <ion-text color="dark">{{data.created_at}}</ion-text>
+        <ion-text color="medium">{{data.created_at}}</ion-text>
       </ion-col>
-    </ion-row>
-    <ion-row>
       <ion-col size="6">
         <ion-text color="primary">Billabe Category</ion-text><br>
-        <ion-text color="dark">{{data.billable_ctgry}}</ion-text>
+        <ion-text color="medium">{{data.billable_ctgry}}</ion-text>
       </ion-col>
       <ion-col size="6">
         <ion-text color="primary">Status</ion-text><br>
-        <ion-text [color]="data.status_desc === 'Approved'? 'success': 'dark'">
+        <ion-text color="danger">
           {{data.status_desc}}
         </ion-text>
       </ion-col>
-    </ion-row>
-    <ion-row>
       <ion-col size="6">
         <ion-text color="primary">Plant</ion-text><br>
-        <ion-text color="dark">{{data.pc_desc}}</ion-text>
+        <ion-text color="medium">{{data.pc_desc}}</ion-text>
       </ion-col>
       <ion-col size="6">
         <ion-text color="primary">PC</ion-text><br>
-        <ion-text color="dark">{{data.pc_name}}</ion-text>
+        <ion-text color="medium">{{data.pc_name}}</ion-text>
       </ion-col>
-    </ion-row>
-    <ion-row>
       <ion-col size="6">
         <ion-text color="primary">WH</ion-text><br>
-        <ion-text color="dark">{{data.wh_desc}}</ion-text>
+        <ion-text color="medium">{{data.wh_desc}}</ion-text>
       </ion-col>
       <ion-col size="6">
         <ion-text color="primary">Address Remark</ion-text><br>
-        <ion-text color="dark">{{data.prop1}}</ion-text>
+        <ion-text color="medium">{{data.prop1}}</ion-text>
       </ion-col>
-    </ion-row>
-    <ion-row>
       <ion-col size="6">
         <ion-text color="primary">Code</ion-text><br>
-        <ion-text color="dark">{{data.sku}}</ion-text>
+        <ion-text color="medium">{{data.sku}}</ion-text>
       </ion-col>
       <ion-col size="6">
         <ion-text color="primary">Description</ion-text><br>
-        <ion-text color="dark">{{data.mtrl_desc}}</ion-text>
+        <ion-text color="medium">{{data.mtrl_desc}}</ion-text>
       </ion-col>
-    </ion-row>
-    <ion-row>
       <ion-col size="6">
         <ion-text color="primary">Req Date</ion-text><br>
-        <ion-text color="dark">{{data.reqd_by_date1}}</ion-text>
+        <ion-text color="medium">{{data.reqd_by_date1}}</ion-text>
       </ion-col>
       <ion-col size="6">
         <ion-text color="primary">Dimension</ion-text><br>
-        <ion-text color="dark">{{data.dimension}}</ion-text>
+        <ion-text color="medium">{{data.dimension}}</ion-text>
       </ion-col>
-    </ion-row>
-    <ion-row>
       <ion-col size="6">
         <ion-text color="primary">WH Qty</ion-text><br>
-        <ion-text color="dark">{{data.wh_qty}}</ion-text>
+        <ion-text color="medium">{{data.wh_qty}}</ion-text>
       </ion-col>
       <ion-col size="6">
         <ion-text color="primary">Make</ion-text><br>
-        <ion-text color="dark">{{data.make}}</ion-text>
+        <ion-text color="medium">{{data.make}}</ion-text>
       </ion-col>
-    </ion-row>
-    <ion-row>
       <ion-col size="6">
         <ion-text color="primary">Model</ion-text><br>
-        <ion-text color="dark">{{data.model}}</ion-text>
+        <ion-text color="medium">{{data.model}}</ion-text>
       </ion-col>
-      <ion-col size="6">
-        <ion-text color="primary">Requestee</ion-text><br>
-        <ion-text color="dark">{{data.requestor_username}}-{{data.requestor}}</ion-text>
-      </ion-col>
-    </ion-row>
-    <ion-row>
       <ion-col size="6">
         <ion-text color="primary">Remark</ion-text><br>
-        <ion-text color="dark">{{data.remark}}</ion-text>
+        <ion-text color="medium">{{data.remark}}</ion-text>
       </ion-col>
       <ion-col size="6">
         <ion-text color="primary">Requestee</ion-text><br>
-        <ion-text color="dark">{{data.requestor_username}}-{{data.requestor}}</ion-text>
+        <ion-text color="medium">{{data.requestor_username}}-{{data.requestor}}</ion-text>
       </ion-col>
-    </ion-row>
-    <ion-row>
       <ion-col size="6">
         <ion-text color="primary">Link to Ticket</ion-text><br>
-        <ion-text color="dark">{{data.is_ticket}}</ion-text>
+        <ion-text color="medium">{{data.is_ticket}}</ion-text>
       </ion-col>
       <ion-col size="6">
         <ion-text color="primary">Ticket No</ion-text><br>
-        <ion-text color="dark">{{data.ticket_id}}</ion-text>
+        <ion-text color="medium">{{data.ticket_id}}</ion-text>
       </ion-col>
     </ion-row>
+
     <ion-row >
       <ion-col class="ion-text-right">
         <ion-button *ngIf="data.attachment1" fill="outline" size="small" fill="outline" color="danger" (click)="openDoc(data.attachment1)" >Attachment</ion-button>

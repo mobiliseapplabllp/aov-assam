@@ -1,0 +1,18 @@
+.myGrid {
+  margin-top:0px;
+  ion-card {
+    margin: 0;
+    ion-img {
+      height:55px;
+      width:45px;
+      margin: auto;
+      margin-top: 10px;
+    }
+    p {
+      font-size: 11px;
+      color: var(--ion-color-primary);
+      font-weight: 600;
+      text-align:center;
+    }
+  }
+}

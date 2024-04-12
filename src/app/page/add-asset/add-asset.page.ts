@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { IonDatetime, LoadingController, ModalController, Platform } from '@ionic/angular';
+import { ActionSheetController, IonDatetime, LoadingController, ModalController, Platform } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { MyAssetGetService } from 'src/app/provider/my-asset-get/my-asset-get.service';
 import { environment } from 'src/environments/environment';
@@ -8,7 +8,7 @@ import { AssetPlantComponent } from './asset-plant/asset-plant.component';
 import { AssetDepartmentComponent } from './asset-department/asset-department.component';
 import { AssetDevicenameComponent } from './asset-devicename/asset-devicename.component';
 import { AssetManufacturerComponent } from './asset-manufacturer/asset-manufacturer.component';
-import { Camera, CameraResultType } from '@capacitor/camera';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
 import { FloorComponent } from 'src/app/shared/floor/floor.component';
@@ -18,6 +18,7 @@ import { CostCenterComponent } from 'src/app/shared/cost-center/cost-center.comp
 import { AssetSqliteService } from 'src/app/provider/asset-sqlite/asset-sqlite.service';
 import { db } from '../../provider/local-db/local-db.service';
 import { liveQuery } from 'dexie';
+import { CameraComponent } from 'src/app/shared/camera/camera.component';
 @Component({
   selector: 'app-add-asset',
   templateUrl: './add-asset.page.html',
@@ -86,7 +87,9 @@ export class AddAssetPage implements OnInit {
     private loadingController: LoadingController,
     private router: Router,
     private assetSqlite: AssetSqliteService,
-    private platform: Platform) {
+    private platform: Platform,
+    private actionSheetController: ActionSheetController,
+    private modalCtrl: ModalController) {
     this.addAsset = this.formbuilder.group({
       faciity_type: [''],
       site_id_description:[''],
@@ -98,7 +101,7 @@ export class AddAssetPage implements OnInit {
       loc_id: [''],
       loc_id_desc: [''],
       dept_id: [''],
-      dept_id_desc: [''],
+      dept_id_desc: ['', Validators.required],
       sub_dept_id:[''],
       ext_asset_id_pre: [''],
       input_asset_id: ['',[Validators.required , Validators.minLength(4)]],
@@ -478,17 +481,6 @@ export class AddAssetPage implements OnInit {
       return;
     }
     this.router.navigateByUrl('/barcode');
-    // this.barcodeScanner.scan().then(barcodeData => {
-    //   console.log('Barcode data', barcodeData);
-    //   let barcode = barcodeData.text;
-    //   if (barcode.length == 6) {
-    //     this.addAsset.get('input_asset_id').setValue(barcode)
-    //   } else {
-    //     alert(barcode + ' Barcode Should have 6 Digit Only');
-    //   }
-    // }).catch(err => {
-    //   console.log('Error', err);
-    // });
   }
 
   openPage(url: string) {
@@ -500,22 +492,79 @@ export class AddAssetPage implements OnInit {
   // }
 
   async presentActionSheet(val: any) {
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Choose Option',
+      cssClass: 'my-custom-class',
+      buttons: [{
+        text: 'Camera',
+        icon: 'camera-outline',
+        handler: () => {
+          this.openCamera('camera', val);
+        }
+      }, {
+        text: 'Gallery',
+        icon: 'image-outline',
+        handler: () => {
+          this.openCamera('gallery', val);
+        }
+      }, {
+        text: 'Camera Preview',
+        icon: 'camera-reverse-outline',
+        handler: () => {
+          this.openCamera('preview', val);
+        }
+      }]
+    });
+    await actionSheet.present();
+  }
+
+  async openCustomCamera(imageno: any) {
+    const modal = await this.modalCtrl.create({
+      component: CameraComponent,
+      backdropDismiss:false,
+      componentProps: { }
+    });
+    modal.onWillDismiss().then(disModal => {
+      if (disModal.role) {
+        let blob, random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg'
+        console.log(disModal.data);
+        blob = disModal.data;
+       this.appendImgInFormData(imageno, blob, random);
+      }
+    });
+    modal.present();
+  }
+
+  async openCamera(source: any, val: any) {
+    const obj: any = {
+      quality: 80,
+      allowEditing: false,
+      resultType: CameraResultType.Uri,
+    }
+    if (source == 'camera') {
+      obj.source = CameraSource.Camera;
+    } else if (source == 'gallery') {
+      obj.source = CameraSource.Photos;
+    } else if (source == 'preview') {
+      this.openCustomCamera(val);
+      return
+    }
     const takePicture = async () => {
-      const image = await Camera.getPhoto({
-        quality: 80,
-        allowEditing: false,
-        resultType: CameraResultType.Uri,
-      });
+      const image = await Camera.getPhoto(obj);
       this.readImg(image, val)
     };
     takePicture();
   }
 
   async readImg(photo: any, imageno: any) {
-    let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg'
     const response = await fetch(photo.webPath);
     const blob = await response.blob();
+    console.log(blob);
+    let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg'
+    this.appendImgInFormData(imageno, blob, random)
+  }
 
+  appendImgInFormData(imageno: any, blob: any, random: any) {
     if (imageno === 1) {
       this.img1 = random;
       this.formData.delete('asset_img');
@@ -561,20 +610,7 @@ export class AddAssetPage implements OnInit {
       });
       return;
     }
-    let barcode, formData
-    barcode = this.addAsset.value.unique_no;
-    formData = new FormData();
-    formData.append('photo', blob, random);
-    formData.append('barcodeno', barcode);
-
-
-    this.presentLoading().then(preLoad => {
-      setTimeout(() => {
-        this.dismissloading();
-      }, 500)
-    });
   }
-
 
   async openSiteModal() {
     const modal = await this.modalController.create({
@@ -594,37 +630,8 @@ export class AddAssetPage implements OnInit {
         this.addAsset.get('floor_id_desc')?.setValue('');
         this.addAsset.get('loc_id')?.setValue('');
         this.addAsset.get('loc_id_desc')?.setValue('');
-        // this.addAsset.get('ext_asset_id_pre')?.setValue('');
         this.addAsset.get('input_asset_id')?.setValue('');
         this.getBlockFromSqlite(disModal.data.pc_id);
-        // this.presentLoading().then(preLoad => {
-        //   this.httpAsset.getBlock(disModal.data.pc_id).subscribe({
-        //     next:(data) => {
-        //       if (data.status) {
-        //         this.myBlocks = data.data;
-        //       }
-        //     },
-        //     error:() => {
-        //       this.dismissloading();
-        //       this.httpCommon.presentToast(environment.errMsg + ' Block Err', 'danger');
-        //     },
-        //     complete:() => {
-        //       this.dismissloading();
-        //     }
-        //   });
-        // })
-
-        // this.httpAsset.getPrefixBarcode(disModal.data.pc_id).subscribe(data => {
-        //   console.log(data);
-        //   if (data.status) {
-        //     this.prefixBarcode = data.data.barcode_prefix;
-        //     this.segmentType = data.data.seg_desc;
-        //     this.city = data.data.ct_name;
-        //     this.sub_segment = data.data.subseg_desc;
-        //     this.addAsset.get('ext_asset_id_pre')?.setValue(this.prefixBarcode);
-        //   }
-        // });
-
       }
     });
     return await modal.present();
@@ -1194,8 +1201,6 @@ export class AddAssetPage implements OnInit {
       this.addAsset.get('x_cor')?.setValue(this.coordinate.x);
       this.addAsset.get('y_cor')?.setValue(this.coordinate.y);
       for(let key in this.addAsset.value) {
-        // this.formData.delete(key);
-        // this.formData.append(key, this.addAsset.value[key])
         let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg'
         if ((key === 'pur_invoice' || key === 'asset_img' || key === 'asset_img2' || key === 'asset_img3') &&  this.addAsset.value[key]) {
           this.formData.delete(key);
@@ -1205,13 +1210,6 @@ export class AddAssetPage implements OnInit {
           this.formData.append(key, this.addAsset.value[key])
         }
       }
-      // this.formData.delete('x_cor');
-      // this.formData.delete('y_cor');
-      // this.formData.append('x_cor', this.coordinate.x)
-      // this.formData.append('y_cor', this.coordinate.y)
-      // this.addAssetOffline(this.addAsset.value);
-      // this.dismissloading();
-      // return;
       this.pendingApi = this.httpAsset.submitAsset(this.formData).subscribe({
         next:(data) => {
           this.pendingApi = null;

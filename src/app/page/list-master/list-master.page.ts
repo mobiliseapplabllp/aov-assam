@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, LoadingController, ModalController, Platform, ToastController } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
@@ -35,6 +35,8 @@ export class ListMasterPage implements OnInit {
     autoplay: true,
   };
   isInternet!: boolean;
+  // htmlVar!: string;
+  // cssVar!: string;
   constructor(
     private listMaster: ListMasterService,
     private toastController: ToastController,
@@ -42,8 +44,9 @@ export class ListMasterPage implements OnInit {
     private loadingController: LoadingController,
     private common: CommonService,
     private router: Router,
-    private platform: Platform,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private renderer: Renderer2,
+    private el: ElementRef
   ) {
     const user = localStorage.getItem('user');
     if (user) {
@@ -53,6 +56,19 @@ export class ListMasterPage implements OnInit {
   }
 
   ngOnInit() {
+    // this.htmlVar = `<body id="i2dj"><div _ngcontent-ng-c1262125435="" id="drag-here"><div _ngcontent-ng-c1262125435="" id="drag-here-2"><textarea _ngcontent-ng-c1262125435="" rows="3" placeholder="Add Heading" class="textarea1 px-3 py-2"></textarea><textarea _ngcontent-ng-c1262125435="" rows="3" placeholder="Add Heading" class="textarea1 px-3 py-2"></textarea></div></div><div _ngcontent-ng-c1262125435="" id="i9sjy"><img _ngcontent-ng-c1262125435="" src="https://placeimg.com/300/200/nature"alt="Image" id="ifnh"/><img _ngcontent-ng-c1262125435="" src="https://placeimg.com/300/200/nature"alt="Image" id="iztw4"/><div _ngcontent-ng-c1262125435="" id="ifoy"><textarea _ngcontent-ng-c1262125435="" rows="3" placeholder="Add Heading" class="textarea1 px-3 py-2"></textarea><textarea _ngcontent-ng-c1262125435="" rows="3" placeholder="Add Heading" class="textarea1 px-3 py-2"></textarea></div><div _ngcontent-ng-c1262125435="" id="isupx"><textarea _ngcontent-ng-c1262125435="" rows="3" placeholder="Add Heading" class="textarea1 px-3 py-2"></textarea></div></div></body>`;
+    // this.cssVar = "* { box-sizing: border-box; } body {margin: 0;}#ifnh{float:right;height:101px;width:527px;}#iztw4{float:right;height:101px;width:613px;}";
+
+    // // Dynamically create a style element and set its innerHTML to the CSS
+    // const style = this.renderer.createElement('style');
+    // this.renderer.appendChild(this.el.nativeElement, style);
+    // this.renderer.setProperty(style, 'innerHTML', this.cssVar);
+
+    // // Dynamically create a div element and set its innerHTML to the HTML
+    // const div = this.renderer.createElement('div');
+    // this.renderer.appendChild(this.el.nativeElement, div);
+    // this.renderer.setProperty(div, 'innerHTML', this.htmlVar);
+
     this.common.checkInternet().then(res => {
       if (res) {
         this.isInternet = true;
@@ -211,7 +227,11 @@ export class ListMasterPage implements OnInit {
           this.common.presentToast('Not activated yet', 'warning' );
           return;
         }
-        this.router.navigateByUrl(data.link);
+        if (data.smnu_id === 316 || data.smnu_id === 317) {
+          this.router.navigateByUrl(data.link + '/' + data.smnu_id);
+        } else {
+          this.router.navigateByUrl(data.link);
+        }
         return;
       } else {
         console.log(data);
@@ -222,5 +242,9 @@ export class ListMasterPage implements OnInit {
         this.router.navigateByUrl(data.link);
       }
     });
+  }
+
+  routePage(url: string) {
+    this.router.navigateByUrl(url);
   }
 }

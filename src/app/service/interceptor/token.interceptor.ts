@@ -25,7 +25,6 @@ export class TokenInterceptor implements HttpInterceptor {
     if (!localStorage.getItem('token1')) {
       return next.handle(request);
     } else {
-      console.log(request.url);
       if (request.url != 'https://aovsshdashboard.com/Webservices/test_image.php') {
         const userToken = localStorage.getItem('token1');
         const modifiedReq = request.clone({headers: request.headers.set('Authorization', `Bearer ${userToken}`).set('Accept', 'application/json')});

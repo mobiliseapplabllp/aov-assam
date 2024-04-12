@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LoadingController, ModalController, Platform } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { PmCalService } from 'src/app/provider/pm-cal/pm-cal.service';
@@ -49,6 +49,7 @@ export class PmCalPage implements OnInit {
    searchValue: any;searchValueDesc: any;
    fileName1!: string;
    selectedBarcode: any;
+   type: any;
   constructor(
     private loadingController: LoadingController,
     private httpPms: PmCalService,
@@ -56,7 +57,8 @@ export class PmCalPage implements OnInit {
     private modalCtrl: ModalController,
     private router: Router,
     private httpDigital: DigitalChecklistService,
-    private platform: Platform
+    private platform: Platform,
+    private activeRoute: ActivatedRoute
   ) { }
 
   ngOnInit() {
@@ -78,6 +80,7 @@ export class PmCalPage implements OnInit {
       this.verifyBarcode(obj);
       return;
     }
+    this.type  = parseInt(this.activeRoute.snapshot.paramMap.get('id')!, 10);
     this.getPm(this.lastSegment);
   }
 
@@ -109,7 +112,7 @@ export class PmCalPage implements OnInit {
     this.refreshField();
     this.currentPage = 1;
     this.presentLoading().then(() => {
-      this.httpPms.getPm(stage_id, this.currentPage).subscribe({
+      this.httpPms.getPm(stage_id, this.currentPage, this.type).subscribe({
         next:(dat) => {
           if (dat.status) {
             this.pmCal = dat.data.data;
@@ -156,7 +159,8 @@ export class PmCalPage implements OnInit {
       component: ClosePmsComponent,
       cssClass: 'my-modal2',
       componentProps : {
-        data: data
+        data: data,
+        type: this.type
       }
     });
     modal.onWillDismiss().then(disModal => {
@@ -403,7 +407,7 @@ export class PmCalPage implements OnInit {
   }
 
   loadData(event: any, stage_id: any) {
-    this.httpPms.getPm(stage_id, this.currentPage).subscribe({
+    this.httpPms.getPm(stage_id, this.currentPage, this.type).subscribe({
       next:(dat) => {
         if (dat.status) {
           this.pmCal = dat.data.data;

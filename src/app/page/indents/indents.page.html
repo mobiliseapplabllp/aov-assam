@@ -10,8 +10,12 @@
 </ion-header>
 
 <ion-content>
-
-  <ion-segment [(ngModel)]="status">
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" >
+    <ion-fab-button fill="clear" color="primary" (click)="createIndent()">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <ion-segment [(ngModel)]="status" (ionChange)="changeSegment()">
     <ion-segment-button value="pending">
       <ion-label>Pending </ion-label>
     </ion-segment-button>

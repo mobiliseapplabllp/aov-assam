@@ -1,9 +1,12 @@
 <ion-header>
-  <ion-toolbar color="dark">
+  <ion-toolbar color="primary">
     <ion-buttons slot="start" *ngIf="isInternet">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title (click)="listen()"> {{userName}} </ion-title>
+    <ion-title> {{userName}} </ion-title>
+    <!-- <ion-buttons slot="end">
+      <ion-button (click)="routePage('/approval')">APP</ion-button>
+    </ion-buttons> -->
   </ion-toolbar>
 
 </ion-header>
@@ -50,7 +53,7 @@
               </div>
             </ion-col>
           </ion-row>
-          <ion-row >
+          <ion-row class="ion-no-padding">
             <ion-col size="6">
               <div>
                 <section >
@@ -210,7 +213,6 @@
       </ion-row>
     </ion-slide>
   </ion-slides>
-
   <ion-grid class="myGrid">
     <ion-row class="ion-no-padding">
       <ion-col style=" padding-left: 3px;padding-top:0px !important">
@@ -219,12 +221,12 @@
     </ion-row>
     <ion-row>
       <ion-col *ngFor="let dat of myMenu" size="4" size-sm="4" size-md="3" size-xl="2" (click)="openPage(dat)">
-        <ion-card  style="margin: 0;background-color:white;border:1px solid black" mode="ios">
+        <ion-card  style="margin: 0;background-color:white;border:1px solid var(--ion-color-primary)" mode="ios">
           <ion-img [src]="dat.icon_path" *ngIf="isInternet"></ion-img>
           <ion-img src="assets/imgs/leave_approval.svg" *ngIf="!isInternet"></ion-img>
           <ion-row>
             <ion-col class="ion-text-center">
-              <span style="color:white; background-color:black;border-radius:6px;padding:2px"><b>{{dat.smnu_desc}}</b></span>
+              <span style="color:white; background-color:var(--ion-color-primary);border-radius:6px;padding:2px"><b>{{dat.smnu_desc}}</b></span>
             </ion-col>
           </ion-row>
         </ion-card>

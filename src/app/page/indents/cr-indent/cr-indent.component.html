@@ -1,0 +1,190 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Create Indent</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <form [formGroup]="forms">
+    <ion-card>
+      <ion-card-header color="primary"><b>Ticket/Barcode</b></ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label color="primary" position="floating">Link To Ticket <ion-text color="danger">*</ion-text></ion-label>
+          <ion-input type="text" *ngIf="requestedData.pc_id" formControlName="is_ticket" readonly></ion-input>
+          <ion-select interface="action-sheet" mode="ios" formControlName="is_ticket" *ngIf="!requestedData.pc_id" (ionChange)="changeIsTicket()">
+            <ion-select-option value="Yes">Yes</ion-select-option>
+            <ion-select-option value="No">No</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <section *ngIf="forms.value.is_ticket">
+          <ion-item [hidden]="forms.value.is_ticket === 'No'">
+            <ion-label color="primary" position="floating">Enter Ticket No <ion-text color="danger">*</ion-text></ion-label>
+            <ion-input type="text" formControlName="ticket_id" [readonly]="requestedData.pc_id"></ion-input>
+            <ion-button slot="end" (click)="getSpecificTicket()" [disabled]="!forms.value.ticket_id" [hidden]="requestedData.pc_id">
+              Search <ion-icon name="search-outline" slot="end"></ion-icon>
+            </ion-button>
+          </ion-item>
+          <ion-item >
+            <ion-label color="primary" position="floating">Enter Barcode No <ion-text color="danger">*</ion-text></ion-label>
+            <ion-input type="text" formControlName="asset_id" [readonly]="requestedData.pc_id || (forms.value.is_ticket === 'Yes' && isSearch) "></ion-input>
+            <ion-button slot="end" (click)="getAssetDetail()" [disabled]="!forms.value.asset_id" [hidden]="requestedData.pc_id || (forms.value.is_ticket === 'Yes' && isSearch)">
+              Search <ion-icon name="search-outline" slot="end"></ion-icon>
+            </ion-button>
+          </ion-item>
+          <ion-grid *ngIf="assetObj.dev_name">
+            <ion-row >
+              <ion-col size="4">Device Name</ion-col>
+              <ion-col size="8">{{assetObj.dev_name}}</ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="4">Device Model</ion-col>
+              <ion-col size="8">{{assetObj.dev_model}}</ion-col>
+            </ion-row>
+          </ion-grid>
+        </section>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header color="primary"><b>Site/Warehouse</b></ion-card-header>
+      <ion-card-content>
+        <ion-item (click)="openSiteModal()">
+          <ion-label color="primary" position="floating">Select Site <ion-text color="danger">*</ion-text></ion-label>
+          <ion-input type="text" formControlName="pc_id_desc" readonly></ion-input>
+        </ion-item>
+        <ion-item >
+          <ion-label color="primary" position="floating">Warehouse <ion-text color="danger">*</ion-text></ion-label>
+          <ion-select interface="action-sheet" mode="ios" formControlName="wh_id">
+            <ion-select-option *ngFor="let dat of myWarehouse" [value]="dat.wh_id">{{dat.wh_desc}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-label color="primary" position="floating">Address Remark</ion-label>
+          <ion-input type="text" formControlName="prop1"></ion-input>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+  </form>
+
+  <ion-card *ngFor="let dat of materialArr;let i = index">
+    <ion-card-header color="primary"><b>Material Detail({{i+1}})</b></ion-card-header>
+    <ion-card-content>
+      <ion-row>
+        <ion-col size="6">
+          <ion-item  (click)="openMaterialModal(i)">
+            <ion-label color="primary" position="floating">Select Material <ion-text color="danger">*</ion-text></ion-label>
+            <ion-input type="text" [(ngModel)]="materialArr[i].mtrl_desc" readonly></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="6">
+          <ion-item >
+            <ion-label color="primary" position="floating">Qty <ion-text color="danger">*</ion-text></ion-label>
+            <ion-input type="text" [(ngModel)]="materialArr[i].qty"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="6">
+          <ion-item >
+            <ion-label color="primary" position="floating">Make <ion-text color="danger">*</ion-text></ion-label>
+            <ion-input type="text" [(ngModel)]="materialArr[i].make"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="6">
+          <ion-item id="cr-req-by-date{{i}}">
+            <ion-label color="primary" position="floating">Req By Date</ion-label>
+            <ion-input type="text"  [value]="materialArr[i].reqd_by_date | date" placeholder="Select Date"  readonly></ion-input>
+          </ion-item>
+          <ion-popover trigger="cr-req-by-date{{i}}" >
+            <ng-template>
+              <ion-datetime #popoverDatetime max="2099" [(ngModel)]="materialArr[i].reqd_by_date" presentation="date" size="cover" (ionChange)="changeDate()"></ion-datetime>
+            </ng-template>
+          </ion-popover>
+        </ion-col>
+        <ion-col size="6">
+          <ion-item >
+            <ion-label color="primary" position="floating">Remark <ion-text color="danger">*</ion-text></ion-label>
+            <ion-input type="text"  [(ngModel)]="materialArr[i].remark"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="6">
+          <ion-item (click)="openEmpModal(i)">
+            <ion-label color="primary" position="floating">Requestee <ion-text color="danger">*</ion-text></ion-label>
+            <ion-input type="text"  [(ngModel)]="materialArr[i].user_id_desc" readonly ></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="6">
+          <ion-item>
+            <ion-label color="primary" position="floating">Priority <ion-text color="danger">*</ion-text></ion-label>
+            <ion-select interface="action-sheet" mode="ios" [(ngModel)]="materialArr[i].priority">
+              <ion-select-option value="1">High</ion-select-option>
+              <ion-select-option value="2">Medium</ion-select-option>
+              <ion-select-option value="3">Low</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+        <ion-col size="6">
+          <ion-item (click)="openUomModal(i)">
+            <ion-label color="primary" position="floating">Unit <ion-text color="danger">*</ion-text></ion-label>
+            <ion-input type="text"  [(ngModel)]="materialArr[i].uom_id_desc" ></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="6">
+          <ion-item >
+            <ion-label color="primary" position="floating">Model <ion-text color="danger">*</ion-text></ion-label>
+            <ion-input type="text" [(ngModel)]="materialArr[i].model"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="6">
+          <ion-item >
+            <ion-label color="primary" position="floating">Dimension <ion-text color="danger">*</ion-text></ion-label>
+            <ion-input type="text" [(ngModel)]="materialArr[i].dimension"> </ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="12">
+          <ion-item >
+            <ion-label color="primary" position="floating">Delivery Location <ion-text color="danger">*</ion-text></ion-label>
+            <ion-input type="text" [(ngModel)]="materialArr[i].del_loc"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col>
+          <ion-button [color]="materialArr[i].isFile ? 'success': 'warning'" size="small" (click)="presentActionSheet(i)">Attachment</ion-button>
+        </ion-col>
+        <ion-col class="ion-text-right">
+          <ion-button color="primary" size="small" (click)="addMore()">Add More</ion-button>
+          <ion-button color="danger" size="small" (click)="delete(i)" fill="clear" [hidden]="materialArr.length === 1">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-card-content>
+  </ion-card>
+
+
+  <!-- <ion-card *ngFor="let dat of materialArr;let i = index">
+    <ion-item >
+      <ion-label color="primary" position="floating">mtrl_desc <ion-text color="danger">*</ion-text></ion-label>
+      <ion-input type="text" [(ngModel)]="dat.mtrl_desc"> </ion-input>
+    </ion-item>
+    <ion-item >
+      <ion-label color="primary" position="floating">qty <ion-text color="danger">*</ion-text></ion-label>
+      <ion-input type="text" [(ngModel)]="dat.qty"> </ion-input>
+    </ion-item>
+    <ion-item >
+      <ion-label color="primary" position="floating">make <ion-text color="danger">*</ion-text></ion-label>
+      <ion-input type="text" [(ngModel)]="dat.make"> </ion-input>
+    </ion-item>
+    <ion-button (click)="presentActionSheet(i)">Attachment</ion-button>
+  </ion-card> -->
+
+  <ion-row>
+    <ion-col>
+      <ion-button expand="block" (click)="submit()" [disabled]="forms.invalid">Submit</ion-button>
+    </ion-col>
+  </ion-row>
+
+</ion-content>

@@ -9,6 +9,15 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
+  <ion-item id="close-pms-date">
+    <ion-label color="primary" position="floating"> Date</ion-label>
+    <ion-input type="text" [value]="date | date"   placeholder="Select Date"  readonly></ion-input>
+  </ion-item>
+  <ion-popover trigger="close-pms-date" >
+    <ng-template>
+      <ion-datetime #popoverDatetime max="2099" presentation="date" size="cover" [(ngModel)]="date" (ionChange)="changeDate('pur_date')"></ion-datetime>
+    </ng-template>
+  </ion-popover>
   <ion-item>
     <ion-label position="floating">Remark</ion-label>
     <ion-textarea rows="4" [(ngModel)]="remark"></ion-textarea>

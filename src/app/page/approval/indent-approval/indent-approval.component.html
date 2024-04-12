@@ -1,0 +1,111 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>MR Approval</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-segment  [(ngModel)]='segmentStatus' (ionChange)="changeSegment($event)">
+    <ion-segment-button value="pending">
+      <ion-label>Pending </ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="completed">
+      <ion-label>Completed </ion-label>
+    </ion-segment-button>
+  </ion-segment>
+  <div [ngSwitch]='segmentStatus'>
+    <div *ngSwitchCase= "'pending'">
+      <ion-card *ngFor="let dat of pendingIndent;let i = index">
+        <ion-card-header color="primary">({{i+1}})  #{{dat.rqst_id}} {{dat.rqst_no}}</ion-card-header>
+        <ion-card-content>
+          <ion-row>
+            <ion-col size="12">
+              <ion-text color="primary">PC Name</ion-text><br>
+              <ion-text color="medium">{{dat.pc_name}}</ion-text>
+            </ion-col>
+            <ion-col size="6">
+              <ion-text color="primary">Code</ion-text><br>
+              <ion-text color="medium">{{dat.sku}}</ion-text>
+            </ion-col>
+            <ion-col size="6">
+              <ion-text color="primary">Desc</ion-text><br>
+              <ion-text color="medium">{{dat.mtrl_desc}}</ion-text>
+            </ion-col>
+            <ion-col size="6">
+              <ion-text color="primary">UOM</ion-text><br>
+              <ion-text color="medium">{{dat.uom_desc}}</ion-text>
+            </ion-col>
+            <ion-col size="6">
+              <ion-text color="primary">Qty</ion-text><br>
+              <ion-text color="medium">{{dat.qty}}</ion-text>
+            </ion-col>
+            <ion-col size="6">
+              <ion-text color="primary">Requestor</ion-text><br>
+              <ion-text color="medium">{{dat.requestor}}</ion-text>
+            </ion-col>
+            <ion-col size="6" style="display: flex;justify-content: center;" *ngIf="dat.attachment1">
+              <ion-button size="small" color="danger" class="ion-text-capitalize" (click)="openDoc(dat.attachment1)">Attachment <ion-icon name="attach-outline" slot="end"></ion-icon></ion-button>
+            </ion-col>
+            <ion-col style="display: flex;justify-content: center;">
+              <ion-button size="small" color="danger" (click)="openModal(dat)" shape="round">Query</ion-button>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="6">
+              <ion-button expand="block" shape="round" fill="outline" color="primary" (click)="presentAlertConfirm(0, 'Reject', dat)">Reject</ion-button>
+            </ion-col>
+            <ion-col size="6">
+              <ion-button expand="block" shape="round" fill="solid" color="primary" (click)="presentAlertConfirm(1, 'Approve', dat)">Approve</ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-card-content>
+      </ion-card>
+    </div>
+    <div *ngSwitchCase= "'completed'">
+      <ion-card *ngFor="let dat of indentHistory;let i = index">
+        <ion-card-header color="primary">({{i+1}})  #{{dat.rqst_id}} {{dat.rqst_no}}</ion-card-header>
+        <ion-card-content>
+          <ion-row>
+            <ion-col size="12">
+              <ion-text color="primary">PC Name</ion-text><br>
+              <ion-text color="medium">{{dat.pc_name}}</ion-text>
+            </ion-col>
+            <ion-col size="6">
+              <ion-text color="primary">Code</ion-text><br>
+              <ion-text color="medium">{{dat.sku}}</ion-text>
+            </ion-col>
+            <ion-col size="6">
+              <ion-text color="primary">Desc</ion-text><br>
+              <ion-text color="medium">{{dat.mtrl_desc}}</ion-text>
+            </ion-col>
+            <ion-col size="6">
+              <ion-text color="primary">UOM</ion-text><br>
+              <ion-text color="medium">{{dat.uom_desc}}</ion-text>
+            </ion-col>
+            <ion-col size="6">
+              <ion-text color="primary">Qty</ion-text><br>
+              <ion-text color="medium">{{dat.qty}}</ion-text>
+            </ion-col>
+            <ion-col size="6">
+              <ion-text color="primary">Requestor</ion-text><br>
+              <ion-text color="medium">{{dat.requestor}}</ion-text>
+            </ion-col>
+            <ion-col size="6">
+              <ion-text color="primary">Status</ion-text><br>
+              <ion-text color="medium">{{dat.status_desc}}</ion-text>
+            </ion-col>
+            <ion-col size="6" style="display: flex;justify-content: center;" *ngIf="dat.attachment1">
+              <ion-button size="small" color="danger" class="ion-text-capitalize" (click)="openDoc(dat.attachment1)">Attachment <ion-icon name="attach-outline" slot="end"></ion-icon></ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-card-content>
+      </ion-card>
+      <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+        <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data..."> </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </div>
+  </div>
+
+</ion-content>

@@ -14,6 +14,7 @@ import { AssetPlantComponent } from '../page/add-asset/asset-plant/asset-plant.c
 import { FloorComponent } from './floor/floor.component';
 import { LocationComponent } from './location/location.component';
 import { DeviceGroupComponent } from './device-group/device-group.component';
+import { EmpSearchComponent } from './emp-search/emp-search.component';
 @NgModule({
   declarations: [
     SignatureComponent,
@@ -26,7 +27,8 @@ import { DeviceGroupComponent } from './device-group/device-group.component';
     AssetPlantComponent,
     FloorComponent,
     LocationComponent,
-    DeviceGroupComponent
+    DeviceGroupComponent,
+    EmpSearchComponent
   ],
   imports: [
     CommonModule,
@@ -46,7 +48,8 @@ import { DeviceGroupComponent } from './device-group/device-group.component';
     AssetPlantComponent,
     FloorComponent,
     LocationComponent,
-    DeviceGroupComponent
+    DeviceGroupComponent,
+    EmpSearchComponent
   ]
 })
 export class SharedModule { }

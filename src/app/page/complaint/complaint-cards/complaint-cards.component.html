@@ -8,14 +8,14 @@
         <ion-text color="light" class="head">{{data.log_date | date: 'dd/MMM/yyyy H:mm:ss'}}</ion-text>
       </ion-col>
     </ion-row>
-    <ion-row>
+    <!-- <ion-row>
       <ion-col>
         <ion-text class="head" [ngStyle]="{'color': data.attend_remark}">Attend: {{data.remain_attend}}</ion-text>
       </ion-col>
       <ion-col>
         <ion-text class="head" [ngStyle]="{'color': data.resolve_remark}">Resolved: {{data.remain_resolve}}</ion-text>
       </ion-col>
-    </ion-row>
+    </ion-row> -->
     <ion-row>
       <ion-col>
         <ion-text color="light" class="head">{{data.stage_desc}} ({{data.issue_desc}})</ion-text>
@@ -109,7 +109,7 @@
           <ion-button style="width:80%;font-size:xx-small;" color="medium" (click)="history()">History </ion-button>
         </ion-col>
         <ion-col class="ion-text-center" *ngIf="data.canWork" >
-          <ion-button *ngIf="data.stage_id === 4 || data.stage_id === 6; else worknow" style="width:80%;font-size:xx-small;" color="success" (click)="fsr(data.tkts_id)">EFSR</ion-button>
+          <ion-button *ngIf="data.stage_id === 4 || data.stage_id === 6; else worknow" style="width:80%;font-size:xx-small;" color="success" (click)="openDoc(data.ticket_file)">SR</ion-button>
           <ng-template #worknow>
             <ion-button style="width:80%;font-size:xx-small;" color="warning" (click)="work_now()">Work Now</ion-button>
           </ng-template>
@@ -118,7 +118,7 @@
           <ion-button style="width:80%;font-size:xx-small;" color="success" (click)="assignTicket(data.tkts_id, data)">Assign</ion-button>
         </ion-col>
         <ion-col class="ion-text-center"  *ngIf="(data.stage_id === 4 || data.stage_id === 6) && !data.canWork ">
-          <ion-button style="width:80%;font-size:xx-small;" color="success" (click)="fsr(data.tkts_id)">EFSR</ion-button>
+          <ion-button style="width:80%;font-size:xx-small;" color="success" (click)="openDoc(data.ticket_file)">SR</ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>

@@ -49,7 +49,7 @@ const routes: Routes = [
     loadChildren: () => import('./page/menu-roaster/menu-roaster.module').then( m => m.MenuRoasterPageModule)
   },
   {
-    path: 'pm-calibration',
+    path: 'pm-calibration/:id',
     loadChildren: () => import('./page/pm-cal/pm-cal.module').then( m => m.PmCalPageModule)
   },
   {
@@ -71,6 +71,10 @@ const routes: Routes = [
   {
     path: 'digital-checklist-offline',
     loadChildren: () => import('./page/digital-checklist-offline/digital-checklist-offline.module').then( m => m.DigitalChecklistOfflinePageModule)
+  },
+  {
+    path: 'approval',
+    loadChildren: () => import('./page/approval/approval.module').then( m => m.ApprovalPageModule)
   },
 ];
 

@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Material</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close(null, false)">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <!-- <ion-searchbar (ionChange)="search($event)" debounce="1000"></ion-searchbar> -->
+  <ion-item>
+    <ion-input type="text" placeholder="Enter Search Item..." [(ngModel)]="searchValue"></ion-input>
+    <ion-button slot="end" (click)="search()">
+      Search <ion-icon name="search-outline" slot="end"></ion-icon>
+    </ion-button>
+  </ion-item>
+  <ion-list>
+    <ion-item *ngFor="let dat of myMaterial" (click)="close(dat, true)" class="ion-text-wrap">
+      <ion-label class="ion-text-wrap">
+        <h2>{{dat.value}}-{{dat.label}}</h2>
+        <p>{{dat.sku}}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data..."> </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>

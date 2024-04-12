@@ -68,6 +68,8 @@ export class ComplaintCardsComponent  implements OnInit {
   }
 
   async work_now() {
+    this.openTicketWork();
+    return;
     this.presentLoading().then(preLoad => {
       this.httpComplaint.checkTicketConfirm(this.data.tkts_id).subscribe({
         next:(data) => {
@@ -255,6 +257,10 @@ export class ComplaintCardsComponent  implements OnInit {
       }
     });
     modal.present();
+  }
+
+  openDoc(url: string) {
+    this.common.openDoc(url);
   }
 
 

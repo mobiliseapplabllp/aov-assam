@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Camera, CameraResultType } from '@capacitor/camera';
-import { LoadingController, ModalController } from '@ionic/angular';
+import { IonDatetime, LoadingController, ModalController } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { PmCalService } from 'src/app/provider/pm-cal/pm-cal.service';
 import { environment } from 'src/environments/environment';
@@ -11,11 +11,14 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./close-pms.component.scss'],
 })
 export class ClosePmsComponent  implements OnInit {
+  @ViewChild('popoverDatetime')  popoverDatetime!: IonDatetime;
   data: any;
   remark!: string;
   formData = new FormData();
   loading: any;
   imageName!: string;
+  date: any;
+  type: any;
   constructor(
     private loadingController: LoadingController,
     private common: CommonService,
@@ -30,10 +33,19 @@ export class ClosePmsComponent  implements OnInit {
       this.common.presentToast('Remark is Compulsory', 'warning');
       return;
     }
-    this.formData.delete('remark');
-    this.formData.append('remark', this.remark);
+    if (!this.date) {
+      this.common.presentToast('Please Select Date', 'warning');
+      return;
+    }
+    this.formData.delete('tkt_closed_remark');
+    this.formData.delete('source');
+    this.formData.delete('id');
+
+    this.formData.append('tkt_closed_remark', this.remark);
+    this.formData.append('source', environment.source);
+    this.formData.append('id', this.data.id);
     this.presentLoading().then(preLoad => {
-      this.httpPms.closeAction(this.formData).subscribe({
+      this.httpPms.closeAction(this.formData, this.type).subscribe({
         next:(dat) => {
           if (dat.status) {
             this.common.presentToast(dat.msg, 'success');
@@ -54,6 +66,10 @@ export class ClosePmsComponent  implements OnInit {
     })
   }
 
+  changeDate(ev: any) {
+    this.popoverDatetime.confirm(true);
+  }
+
   async presentActionSheet() {
     const takePicture = async () => {
       const image = await Camera.getPhoto({
@@ -70,8 +86,8 @@ export class ClosePmsComponent  implements OnInit {
     let random = Date.now() + Math.floor(Math.random() * 90000) + 10000 + '.jpg'
     const response = await fetch(photo.webPath);
     const blob = await response.blob();
-    this.formData.delete('photo');
-    this.formData.append('photo', blob, random);
+    this.formData.delete('tkt_closed_attach');
+    this.formData.append('tkt_closed_attach', blob, random);
     this.imageName = random
     this.presentLoading().then(preLoad => {
       this.dismissLoading();

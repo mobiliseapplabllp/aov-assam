@@ -48,7 +48,7 @@ export class IndentsPage implements OnInit {
     })
   }
 
-  changeSegment(ev: any) {
+  changeSegment() {
 
     this.indentView = [];
     this.page = 1;
@@ -75,6 +75,10 @@ export class IndentsPage implements OnInit {
   myCustom(ev: any) {
     console.log(ev);
     this.indentView = this.indentView.filter((val: any) => val.rqst_id !== ev.rqst_id);
+  }
+
+  createIndent() {
+    this.router.navigateByUrl('/indents/cr-indent');
   }
 
 }

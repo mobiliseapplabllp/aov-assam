@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Approval</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- <ion-card *ngFor="let dat of approvalList" (click)="openPage(dat)">{{dat.mnu_name}}</ion-card> -->
+  <ion-grid class="myGrid">
+    <ion-row>
+      <ion-col *ngFor="let dat of approvalList" size="4" size-sm="4" size-md="3" size-xl="2" (click)="openPage(dat)">
+        <ion-card  style="margin: 0;background-color:white;border:1px solid var(--ion-color-primary)" mode="ios">
+          <ion-img src="assets/imgs/leave_approval.svg"></ion-img>
+          <ion-row>
+            <ion-col class="ion-text-center">
+              <span style="color:white; background-color:var(--ion-color-primary);border-radius:6px;padding:2px"><b>{{dat.mnu_name}}</b></span>
+            </ion-col>
+          </ion-row>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

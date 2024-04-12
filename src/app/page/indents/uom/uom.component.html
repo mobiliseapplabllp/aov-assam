@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>UOM</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close(null, false)">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-searchbar (ionChange)="search($event)" debounce="1000"></ion-searchbar>
+  <ion-list>
+    <ion-item *ngFor="let dat of myUom" (click)="close(dat, true)" class="ion-text-wrap">
+      {{dat.value}}-{{dat.label}}
+    </ion-item>
+  </ion-list>
+</ion-content>

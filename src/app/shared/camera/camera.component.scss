@@ -1,3 +1,15 @@
 ion-content {
   --background: transparent !important;
 }
+
+.cameraPreview {
+  display: flex;
+  width:100%;
+  height:calc(100% - 100px);
+}
+
+.overlay {
+  position:absolute;
+  z-index: 9999;
+  bottom: 0;
+}

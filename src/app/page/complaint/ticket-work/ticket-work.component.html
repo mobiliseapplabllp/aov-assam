@@ -20,7 +20,7 @@
   </ion-segment>
   <div [ngSwitch]='segmentStatus'>
     <div *ngSwitchCase="'ticket'">
-      <div *ngIf="arr.attend_time || arr.attend_time === 0">
+      <!-- <div *ngIf="arr.attend_time || arr.attend_time === 0">
         <ion-item >
           <ion-label position="floating">Ticket Priority <ion-text color="danger">*</ion-text> </ion-label>
           <ion-select interface="action-sheet"  [disabled]="isPriority === 0 ? true: false " (ionChange)="presentAlert($event)" [(ngModel)]="arr.tkt_priority_id" mode="ios">
@@ -37,7 +37,7 @@
             <ion-text [ngStyle]="{'color': arr.resolve_remark}">{{arr.resolv_time}}</ion-text>
           </ion-col>
         </ion-row>
-      </div>
+      </div> -->
 
       <section *ngIf="!isFormDisabled">
         <form [formGroup]="workSpace">
@@ -52,7 +52,7 @@
                   </ion-select>
                 </ion-item>
               </ion-col>
-              <ion-col size="6" *ngIf="workSpace.value.status === 4">
+              <ion-col size="6" *ngIf="workSpace.value.status === 4 || workSpace.value.status === 9">
                 <ion-item>
                   <ion-label position="floating">Scope of Work <ion-text color="danger">*</ion-text> </ion-label>
                   <ion-select interface="action-sheet" mode="ios" formControlName="scope_of_work">
@@ -67,25 +67,25 @@
                 <ion-label position="floating">Remark <ion-text color="danger">*</ion-text></ion-label>
                 <ion-textarea rows="4" formControlName="remark"></ion-textarea>
               </ion-item>
-              <ion-button  size="small" shape="round" fill="outline" color="danger" [color]="fileName ? 'success': 'danger'"  class="ion-padding-start" (click)="presentActionSheet()">
-                <ion-text *ngIf="arr.hasWIP === 0; else image">Upload PTW</ion-text>
+              <!-- <ion-button  size="small" shape="round" fill="outline" color="danger" [color]="fileName ? 'success': 'danger'"  class="ion-padding-start" (click)="presentActionSheet()">
+                <ion-text *ngIf="arr.hasWIP === 0; else image">Upload Image</ion-text>
                 <ng-template #image>
                   <ion-text>Upload Image</ion-text>
                 </ng-template>
-                <!-- <ion-text *ngIf="isPtwMandatory">Upload PTW</ion-text>
-                <ion-text *ngIf="!isPtwMandatory">Upload Img</ion-text> -->
+                <ion-text *ngIf="isPtwMandatory">Upload PTW</ion-text>
+                <ion-text *ngIf="!isPtwMandatory">Upload Img</ion-text>
                 <ion-icon name="attach-outline" slot="end"> </ion-icon>
-              </ion-button>
+              </ion-button> -->
               <ion-row>
-                <ion-col >
+                <ion-col size="6">
                   <ion-button expand="block" shape="round" (click)="checkHasWip()">Submit <ion-icon name="save-outline" slot="end"></ion-icon> </ion-button>
                 </ion-col>
-                <ion-col>
-                  <ion-button [hidden]="hasWip === 0 || arr.ptwApproved === 0" expand="block" shape="round" color="danger" (click)="createIndent()" >Create Indent <ion-icon name="create-outline" slot="end"></ion-icon></ion-button>
+                <ion-col size="6">
+                  <ion-button expand="block" shape="round" color="danger" (click)="createIndent()" >Create Indent <ion-icon name="create-outline" slot="end"></ion-icon></ion-button>
                 </ion-col>
               </ion-row>
             </div>
-            <div *ngIf="workSpace.value.status === 4">
+            <div *ngIf="workSpace.value.status === 4 || workSpace.value.status === 9">
               <ion-item>
                 <ion-label position="floating">Problem Reported By Customer <ion-text color="danger">*</ion-text></ion-label>
                 <ion-textarea type="text" rows="3" formControlName="problem_reported"></ion-textarea>
@@ -96,7 +96,7 @@
               </ion-item>
               <ion-item>
                 <ion-button size="small" fill="outline" color="{{fileName ? 'success': 'danger'}}"  (click)="presentActionSheet()"> Image </ion-button>
-                <ion-button shape="round" [hidden]="isOtpSent" expand="block" (click)="sendOtp()">Send OTP</ion-button>
+                <!-- <ion-button shape="round" [hidden]="isOtpSent" expand="block" (click)="sendOtp()">Send OTP</ion-button> -->
               </ion-item>
 
               <!-- <ion-item [disabled]="isOtpSent">
@@ -122,7 +122,7 @@
               </ion-row>
             </div>
             <div class="ion-margin-start" [hidden]="fileName || isVerifyOtp">
-              <ion-text color="primary"  *ngIf="workSpace.value.status === 4"><b>Note:</b> You can resolve the ticket with an OPT or by uploading an image.</ion-text>
+              <ion-text color="primary"  *ngIf="workSpace.value.status === 4 || workSpace.value.status === 9"><b>Note:</b> You can resolve the ticket with uploading an image.</ion-text>
             </div>
           </ion-card>
         </form>

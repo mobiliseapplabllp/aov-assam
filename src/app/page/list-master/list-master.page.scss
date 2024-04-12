@@ -7,12 +7,12 @@ ion-slides {
       height:260px;
       div {
         width:100%;border-radius: 16px;
-        border: 2px solid  black;
+        border: 2px solid  var(--ion-color-primary);
         background:white;
         section {
           padding:5px;
           margin:5px;
-          background:black;
+          background:var(--ion-color-primary);
           color:white;
           border-radius: 10px;
           font-size:14px;
@@ -26,16 +26,17 @@ ion-slides {
     }
     ion-col.right {
       height:260px;
+      padding-top:0px;
       ion-row {
         height:130px;
         ion-col {
-          padding-top:0px !important;
+          // padding-top:0px !important;
           div {
             height:100%;
             border-radius: 16px;
             background:white;
             color:white;
-            border:2px solid black;
+            border:2px solid var(--ion-color-primary);
             font-weight: 550;
 
             section {
@@ -49,7 +50,7 @@ ion-slides {
               font-size: 16px !important;
               font-weight: 550;
               span {
-                background-color:black;
+                background-color:var(--ion-color-primary);
                 color:white;
                 border-radius: 5px;
                 padding:2px 4px;

@@ -3,7 +3,12 @@
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>i-FMS</ion-title>
+    <ion-title>i-FMS
+      <ion-text *ngIf="type === 316; else cal">PMS</ion-text>
+      <ng-template #cal>
+        <ion-text>Calibration</ion-text>
+      </ng-template>
+    </ion-title>
   </ion-toolbar>
   <ion-toolbar>
     <ion-segment value="all" [(ngModel)]='status' color="primary" (ionChange)="changeSeg($event)" scrollable="true">

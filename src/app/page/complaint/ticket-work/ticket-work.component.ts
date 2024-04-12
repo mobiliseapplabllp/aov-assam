@@ -279,13 +279,13 @@ export class TicketWorkComponent  implements OnInit {
       this.formData.delete(key);
       this.formData.append(key, this.workSpace.value[key]);
     }
-    if (this.workSpace.value.status == 4) {
-      if (this.arr.tkts_issue_id == 1 && !this.isVerifyOtp) {
-        this.httpCommon.presentToast('OTP is Mandatory for Asset Ticket', 'warning');
-        return;
-      }
+    if (this.workSpace.value.status == 4 || this.workSpace.value.status == 9) {
+      // if (this.arr.tkts_issue_id == 1 && !this.isVerifyOtp) {
+      //   this.httpCommon.presentToast('OTP is Mandatory for Asset Ticket', 'warning');
+      //   return;
+      // }
       if (!this.fileName && !this.isVerifyOtp) {
-        this.httpCommon.presentToast('Please Add Attachment or Verify OTP to resolve Ticket', 'warning');
+        this.httpCommon.presentToast('Please Add Attachment to resolve Ticket', 'warning');
         return
       }
       if (!this.workSpace.value.problem_reported) {
@@ -355,7 +355,7 @@ export class TicketWorkComponent  implements OnInit {
       this.assignTicket();
       return;
     }
-    if (ev.target.value === 4 && this.scopeOfWorkArr.length == 0) {
+    if ((ev.target.value === 4 || ev.target.value === 9) && this.scopeOfWorkArr.length == 0) {
       this.getScopeOfWork();
     }
     this.workSpace.get('remark')?.setValue('');
@@ -480,9 +480,10 @@ export class TicketWorkComponent  implements OnInit {
   }
 
   createIndent() {
-    this.router.navigate(['/create-indent'], {
+    this.router.navigate(['/indents/cr-indent'], {
       queryParams: {
         data: JSON.stringify(this.requestedData),
+        status: true
       }
     });
   }

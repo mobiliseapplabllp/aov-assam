@@ -19,8 +19,8 @@ export class IndentCardComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.data);
-    console.log(this.type);
+    // console.log(this.data);
+    // console.log(this.type);
   }
 
   openDoc(url: string) {

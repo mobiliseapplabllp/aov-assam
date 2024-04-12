@@ -22,8 +22,14 @@ export class PmCalService {
   }
 
 
-  getPm(stage_id: any, current_page: any): Observable<any> {
-    return this.https.get(environment.url + 'pmscal/get_work_order?limit=20&page=' + current_page + '&stage_id=' + stage_id + '&shource_from=app');
+  getPm(stage_id: any, current_page: any, type:any): Observable<any> {
+    console.log(type);
+    if (type == 316 ) {
+      return this.https.get(environment.url + 'pmscal/get_work_order?limit=20&page=' + current_page + '&stage_id=' + stage_id + '&shource_from=app');
+    } else {
+      return this.https.get(environment.url + 'calibration/get_work_order?limit=10&page=' + current_page + '&stage_id=' + stage_id );
+    }
+
   }
 
   searchTicketFromServer(key: any, value: any): Observable<any> {
@@ -106,8 +112,12 @@ export class PmCalService {
     });
   }
 
-  closeAction(formData: any): Observable<any> {
-    return this.https.post(environment.url + 'pmscal/schedule/close_pms_action', formData);
+  closeAction(formData: any, type: any): Observable<any> {
+    if (type === 316) {
+      return this.https.post(environment.url + 'pmscal/add_attach_ticket_closed', formData);
+    } else {
+      return this.https.post(environment.url + 'calibration/add_attach_ticket_closed', formData);
+    }
   }
 
   getPmReportCategory(): Observable<any> {

@@ -60,6 +60,10 @@ export class ComplaintService {
     return this.https.get(environment.url + 'complaints/getSpecificTicket/' + ticket_id);
   }
 
+  getAssetDetail(ext_asset_id: any): Observable<any> {
+    return this.https.get(environment.url + 'assets/reporting/specific_asset?ext_asset_id=' + ext_asset_id);
+  }
+
   changePriority(post: any): Observable<any> {
     return this.https.post(environment.url + 'complaints/change_ticket_priority', post);
   }
