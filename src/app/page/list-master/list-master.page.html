@@ -4,9 +4,9 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title> {{userName}} </ion-title>
-    <!-- <ion-buttons slot="end">
-      <ion-button (click)="routePage('/approval')">APP</ion-button>
-    </ion-buttons> -->
+    <ion-buttons slot="end">
+      <ion-button (click)="syncMaster()">Sync <ion-icon name="sync-outline" slot="end"></ion-icon></ion-button>
+    </ion-buttons>
   </ion-toolbar>
 
 </ion-header>
@@ -219,7 +219,79 @@
         <b>Menu</b>
       </ion-col>
     </ion-row>
-    <ion-row>
+    <ion-card *ngIf="isMenuLoading">
+      <ion-row>
+        <ion-col>
+          <ion-card>
+            <ion-thumbnail >
+              <ion-skeleton-text [animated]="true"></ion-skeleton-text>
+            </ion-thumbnail>
+          </ion-card>
+        </ion-col>
+        <ion-col>
+          <ion-card>
+            <ion-thumbnail >
+              <ion-skeleton-text [animated]="true"></ion-skeleton-text>
+            </ion-thumbnail>
+          </ion-card>
+        </ion-col>
+        <ion-col>
+          <ion-card>
+            <ion-thumbnail >
+              <ion-skeleton-text [animated]="true"></ion-skeleton-text>
+            </ion-thumbnail>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-card>
+            <ion-thumbnail >
+              <ion-skeleton-text [animated]="true"></ion-skeleton-text>
+            </ion-thumbnail>
+          </ion-card>
+        </ion-col>
+        <ion-col>
+          <ion-card>
+            <ion-thumbnail >
+              <ion-skeleton-text [animated]="true"></ion-skeleton-text>
+            </ion-thumbnail>
+          </ion-card>
+        </ion-col>
+        <ion-col>
+          <ion-card>
+            <ion-thumbnail >
+              <ion-skeleton-text [animated]="true"></ion-skeleton-text>
+            </ion-thumbnail>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-card>
+            <ion-thumbnail >
+              <ion-skeleton-text [animated]="true"></ion-skeleton-text>
+            </ion-thumbnail>
+          </ion-card>
+        </ion-col>
+        <ion-col>
+          <ion-card>
+            <ion-thumbnail >
+              <ion-skeleton-text [animated]="true"></ion-skeleton-text>
+            </ion-thumbnail>
+          </ion-card>
+        </ion-col>
+        <ion-col>
+          <ion-card>
+            <ion-thumbnail >
+              <ion-skeleton-text [animated]="true"></ion-skeleton-text>
+            </ion-thumbnail>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-card>
+
+    <ion-row *ngIf="!isMenuLoading">
       <ion-col *ngFor="let dat of myMenu" size="4" size-sm="4" size-md="3" size-xl="2" (click)="openPage(dat)">
         <ion-card  style="margin: 0;background-color:white;border:1px solid var(--ion-color-primary)" mode="ios">
           <ion-img [src]="dat.icon_path" *ngIf="isInternet"></ion-img>

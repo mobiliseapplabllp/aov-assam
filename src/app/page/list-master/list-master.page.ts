@@ -1,13 +1,15 @@
-import { Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, LoadingController, ModalController, Platform, ToastController } from '@ionic/angular';
+import { AlertController, LoadingController, Platform, ToastController } from '@ionic/angular';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { ListMasterService } from 'src/app/provider/list-master/list-master.service';
 import { LoginService } from 'src/app/provider/login/login.service';
-import { TextToSpeech } from '@capacitor-community/text-to-speech';
-import { SpeechRecognition } from "@capacitor-community/speech-recognition";
 import { db } from '../../provider/local-db/local-db.service';
 import { liveQuery } from 'dexie';
+import { AssetSqliteService } from 'src/app/provider/asset-sqlite/asset-sqlite.service';
+import { MyAssetGetService } from 'src/app/provider/my-asset-get/my-asset-get.service';
+import * as moment from 'moment';
+import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-list-master',
   templateUrl: './list-master.page.html',
@@ -35,8 +37,7 @@ export class ListMasterPage implements OnInit {
     autoplay: true,
   };
   isInternet!: boolean;
-  // htmlVar!: string;
-  // cssVar!: string;
+  isMenuLoading!: boolean;
   constructor(
     private listMaster: ListMasterService,
     private toastController: ToastController,
@@ -45,9 +46,9 @@ export class ListMasterPage implements OnInit {
     private common: CommonService,
     private router: Router,
     private alertController: AlertController,
-    private renderer: Renderer2,
-    private el: ElementRef
-  ) {
+    private httpAsset: MyAssetGetService,
+    private assetSqlite: AssetSqliteService,
+    private platform: Platform) {
     const user = localStorage.getItem('user');
     if (user) {
       this.userData = JSON.parse(user);
@@ -56,19 +57,6 @@ export class ListMasterPage implements OnInit {
   }
 
   ngOnInit() {
-    // this.htmlVar = `<body id="i2dj"><div _ngcontent-ng-c1262125435="" id="drag-here"><div _ngcontent-ng-c1262125435="" id="drag-here-2"><textarea _ngcontent-ng-c1262125435="" rows="3" placeholder="Add Heading" class="textarea1 px-3 py-2"></textarea><textarea _ngcontent-ng-c1262125435="" rows="3" placeholder="Add Heading" class="textarea1 px-3 py-2"></textarea></div></div><div _ngcontent-ng-c1262125435="" id="i9sjy"><img _ngcontent-ng-c1262125435="" src="https://placeimg.com/300/200/nature"alt="Image" id="ifnh"/><img _ngcontent-ng-c1262125435="" src="https://placeimg.com/300/200/nature"alt="Image" id="iztw4"/><div _ngcontent-ng-c1262125435="" id="ifoy"><textarea _ngcontent-ng-c1262125435="" rows="3" placeholder="Add Heading" class="textarea1 px-3 py-2"></textarea><textarea _ngcontent-ng-c1262125435="" rows="3" placeholder="Add Heading" class="textarea1 px-3 py-2"></textarea></div><div _ngcontent-ng-c1262125435="" id="isupx"><textarea _ngcontent-ng-c1262125435="" rows="3" placeholder="Add Heading" class="textarea1 px-3 py-2"></textarea></div></div></body>`;
-    // this.cssVar = "* { box-sizing: border-box; } body {margin: 0;}#ifnh{float:right;height:101px;width:527px;}#iztw4{float:right;height:101px;width:613px;}";
-
-    // // Dynamically create a style element and set its innerHTML to the CSS
-    // const style = this.renderer.createElement('style');
-    // this.renderer.appendChild(this.el.nativeElement, style);
-    // this.renderer.setProperty(style, 'innerHTML', this.cssVar);
-
-    // // Dynamically create a div element and set its innerHTML to the HTML
-    // const div = this.renderer.createElement('div');
-    // this.renderer.appendChild(this.el.nativeElement, div);
-    // this.renderer.setProperty(div, 'innerHTML', this.htmlVar);
-
     this.common.checkInternet().then(res => {
       if (res) {
         this.isInternet = true;
@@ -76,7 +64,10 @@ export class ListMasterPage implements OnInit {
         this.userData = this.loginPro.getLoginUserValue();
         this.getMenuDetail();
         this.getDashboard();
-        this.getOffLineAssetList()
+        this.getOffLineAssetList();
+        if (this.platform.is('android')) {
+          this.checkAndUpdateMaster();
+        }
       } else {
         let menu, MENU_TEMP = localStorage.getItem('home_menu');
         if (MENU_TEMP) {
@@ -90,9 +81,52 @@ export class ListMasterPage implements OnInit {
     });
   }
 
+  syncMaster() {
+    if (!this.platform.is('cordova')) {
+      return;
+    }
+    this.presentLoading().then(preLoad => {
+      localStorage.setItem('lastAssetTime', '');
+      this.assetSqlite.deleteSqlite().then(res => {
+        if (res) {
+          this.common.getTableStructureFromJson().then(tableStructure => {
+            this.common.createAllTable(tableStructure).then(resPonse => {
+              if (resPonse === true) {
+                this.dismissloading();
+                this.checkAndUpdateMaster();
+              }
+            });
+          });
+        }
+      });
+    })
+
+  }
+
+  checkAndUpdateMaster() {
+    let lastAssetTime = localStorage.getItem('lastAssetTime');
+    if (!lastAssetTime) {
+      this.presentLoading().then(preLoad => {
+        this.httpAsset.getAssetMasterData('0000-00-00 00:00:00').subscribe({
+          next:(data) => {
+            this.httpAsset.insertAssetAction(data.data).then(insRes => {
+              if (insRes) {
+                this.common.presentToast('All Master Saved Successfully', 'success');
+                localStorage.setItem('lastAssetTime', moment().format('YYYY-MM-DD H:mm:ss'));
+                this.dismissloading();
+              }
+            });
+          },
+          error:() => {
+            this.dismissloading();
+          }
+        })
+      });
+    }
+  }
+
   getDashboard() {
     this.listMaster.getDashboard().subscribe(data => {
-      console.log(data);
       if (data.status) {
         this.breakdown = data.data.breakdown;
         this.pr = data.data.pms;
@@ -138,45 +172,6 @@ export class ListMasterPage implements OnInit {
   }
 
 
-  speak() {
-    const speak = async () => {
-      await TextToSpeech.speak({
-        text: 'This is a sample text.',
-        lang: 'en',
-        rate: 1.0,
-        pitch: 1.0,
-        volume: 1.0,
-        category: 'ambient',
-      });
-    };
-    speak();
-  }
-
-  stopSpeak() {
-    TextToSpeech.stop();
-  }
-
-  permission() {
-    SpeechRecognition.requestPermissions().then(res => {
-      console.log(res);
-    })
-  }
-
-  listen() {
-    SpeechRecognition.start({
-      language: "en-US",
-      maxResults: 2,
-      prompt: "Say something",
-      partialResults: true,
-      popup: true,
-    }).then(res => {
-      console.log(res);
-    })
-  }
-
-  removeListen() {
-    SpeechRecognition.removeAllListeners();
-  }
 
 
   ionViewWillLeave() {
@@ -192,17 +187,17 @@ export class ListMasterPage implements OnInit {
   }
 
   getMenuDetail() {
-    this.presentLoading().then(preLoad => {
-      this.listMaster.getMenuDetail().then(data => {
-        this.dismissloading();
-        this.result = data;
-        if (this.result.status == true) {
-          this.myMenu = this.result.data[0].submenu;
-          localStorage.setItem('home_menu', JSON.stringify(this.myMenu));
-        }
-      }, err => {
-        this.dismissloading();
-      });
+    this.isMenuLoading = true;
+    this.listMaster.getMenuDetail().then(data => {
+      this.result = data;
+      this.isMenuLoading = false;
+      if (this.result.status == true) {
+        this.myMenu = this.result.data[0].submenu;
+        localStorage.setItem('home_menu', JSON.stringify(this.myMenu));
+      }
+    }, err => {
+      this.isMenuLoading = false
+      this.common.presentToast(environment.errMsg + 'Err: Menu Details', 'danger');
     });
   }
 

@@ -23,6 +23,7 @@ export class LoginPage implements OnInit {
   isLogin: any = [];
   mypass = true;
   isAndroid!: boolean;
+  testImg!: string;
   constructor(
     private formbuilder: FormBuilder,
     private platform: Platform,
@@ -31,7 +32,8 @@ export class LoginPage implements OnInit {
     private router: Router,
     private loginPro: LoginService,
     private common: CommonService,
-    private httpDigi: DigitalChecklistService
+    private httpDigi: DigitalChecklistService,
+    private modalCtrl: ModalController
   ) {
     this.loginForms = formbuilder.group({
       userid: ['', Validators.required],

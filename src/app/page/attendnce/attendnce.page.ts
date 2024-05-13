@@ -35,6 +35,8 @@ export class AttendncePage implements OnInit {
   isAndroid!: boolean;
   att_id: any;
   checkLastAttendanceStatus!: boolean;
+  userName: any;
+  isApplicable = true;
   constructor(
     private loadingController: LoadingController,
     private modalController: ModalController,
@@ -42,8 +44,9 @@ export class AttendncePage implements OnInit {
     private navCtrl: NavController,
     private router: Router,
     private httpAttendance: AttendanceService,
-    private platform: Platform
-  ) { }
+    private platform: Platform) {
+
+    }
 
   ngOnInit() {
     this.clrInt = setInterval(() => {
@@ -54,9 +57,16 @@ export class AttendncePage implements OnInit {
     } else {
       this.initMap(28.611213483920366, 77.26949959721436)
     }
+    const user = localStorage.getItem('user');
+    if (user) {
+      this.userData = JSON.parse(user);
+      this.userName = this.userData.user_name
+    }
   }
 
   ionViewDidEnter() {
+    // this.formData.append('pc_id', '');
+    // this.checkAttendance('');
     // this.checkAttendance();
   }
 
@@ -93,7 +103,6 @@ export class AttendncePage implements OnInit {
     this.presentLoading().then(() => {
       this.httpAttendance.checkTodayAttendance(pc_id).subscribe({
         next:(data) => {
-          this.checkLastAttendanceStatus = true;
           if (data.status) {
             if (data.data.att_type === 1) {
               this.att_id = data.data.id;
@@ -106,11 +115,12 @@ export class AttendncePage implements OnInit {
           }
         },
         error:() => {
-          this.checkLastAttendanceStatus = true;
+          this.checkLastAttendanceStatus = false;
           this.dismissloading();
           this.common.presentToast(environment.errMsg, 'danger');
         },
         complete:() => {
+          this.checkLastAttendanceStatus = true;
           this.dismissloading();
         }
       });
@@ -122,7 +132,7 @@ export class AttendncePage implements OnInit {
   }
 
   checkGPSValidation(val: any) {
-    if (!this.costCenter) {
+    if (!this.costCenter && this.isApplicable) {
       alert('Please Select RO');
       return;
     }
@@ -151,7 +161,7 @@ export class AttendncePage implements OnInit {
     const response = await fetch(photo.webPath);
     const blob = await response.blob();
       this.formData.delete('photo',);
-      this.formData.delete('emp_id');
+      this.formData.delete('user_id');
       this.formData.delete('att_date');
       this.formData.delete('att_lattitude');
       this.formData.delete('att_longitude');
@@ -159,12 +169,13 @@ export class AttendncePage implements OnInit {
       this.formData.delete('att_type');
 
       this.formData.append('photo', blob, random);
-      this.formData.append('emp_id', this.userData.id);
+      this.formData.append('user_id', this.userData.id);
       this.formData.append('att_date', moment().format('yyyy-MM-DD'));
       this.formData.append('att_lattitude', this.latitude);
       this.formData.append('att_longitude', this.longitude);
       this.formData.append('att_time', this.currentTime);
       this.formData.append('att_type', val);
+      // this.formData.append('pc_id', '');
       if (val === 'OUT') {
         this.formData.append('id', this.att_id);
       }
@@ -189,7 +200,6 @@ export class AttendncePage implements OnInit {
           }
         });
       });
-
   }
 
 
@@ -346,7 +356,6 @@ export class AttendncePage implements OnInit {
     modal.onWillDismiss().then((disModal: any) => {
       console.log(disModal);
       if (disModal.role) {
-        this.costCenter = disModal.data.label;
         this.formData.delete('pc_ext_id');
         this.formData.delete('pc_desc');
         this.formData.delete('pc_id');
@@ -359,6 +368,18 @@ export class AttendncePage implements OnInit {
       }
     });
     return await modal.present();
+  }
+
+  changeCheckbox() {
+    this.checkLastAttendanceStatus =  false;
+    this.costCenter = '';
+    this.formData.delete('pc_ext_id');
+    this.formData.delete('pc_desc');
+    this.formData.delete('pc_id');
+    if (!this.isApplicable) {
+      this.formData.append('pc_id', '');
+      this.checkAttendance('');
+    }
   }
 
 

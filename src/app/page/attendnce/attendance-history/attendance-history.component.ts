@@ -31,6 +31,7 @@ export class AttendanceHistoryComponent  implements OnInit {
   result: any = [];
   costCenter: any;
   pc_id: any;
+  isApplicable = true;
   constructor(
     private httpAttendance: AttendanceService,
     private httpCommon: CommonService,
@@ -44,12 +45,19 @@ export class AttendanceHistoryComponent  implements OnInit {
     this.dismissloading();
   }
 
+  changeCheckbox() {
+    this.pc_id = '';
+    this.costCenter = '';
+    this.currentMonth = '';
+    this.myAttendance = [];
+  }
+
   ionViewDidEnter() {
     // this.getAttendance(this.currentMonth);
   }
 
   getAttendance() {
-    if (!this.pc_id || !this.currentMonth) {
+    if ((this.isApplicable && (!this.pc_id || !this.currentMonth)) || (!this.isApplicable && !this.currentMonth) ) {
       return;
     }
     this.presentLoading().then(load => {

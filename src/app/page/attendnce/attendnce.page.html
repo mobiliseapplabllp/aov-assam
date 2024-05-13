@@ -26,11 +26,15 @@
   <ion-card class="cards">
     <div class="div2">
       <ion-grid>
-        <ion-item (click)="openRoName()">
+        <ion-item>
+          <ion-checkbox slot="start" [(ngModel)]="isApplicable" (ionChange)="changeCheckbox()"></ion-checkbox>
+          <ion-label >Site Applicable</ion-label>
+        </ion-item>
+        <ion-item (click)="openRoName()" *ngIf="isApplicable">
           <ion-label position="floating">Select Site <ion-text color="danger">*</ion-text></ion-label>
           <ion-input type="text" [(ngModel)]="costCenter" readonly></ion-input>
         </ion-item>
-        <ion-row *ngIf="checkLastAttendanceStatus">
+        <ion-row *ngIf="checkLastAttendanceStatus && ((isApplicable && costCenter) || (!isApplicable)) ">
           <ion-col class="ion-text-center">
             <ion-button (click)="checkGPSValidation('IN')" [disabled]="attendanceStatus">PUNCH IN</ion-button>
           </ion-col>
