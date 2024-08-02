@@ -19,6 +19,7 @@ import { NgOtpInputModule } from  'ng-otp-input';
 import { AssignTicketComponent } from './assign-ticket/assign-ticket.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { InstructionModalComponent } from './instruction-modal/instruction-modal.component';
+import { StandByReleaseComponent } from './stand-by-release/stand-by-release.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -39,6 +40,7 @@ import { InstructionModalComponent } from './instruction-modal/instruction-modal
     TicketTypeComponent,
     TicketWorkComponent,
     AssignTicketComponent,
-    InstructionModalComponent]
+    InstructionModalComponent,
+    StandByReleaseComponent]
 })
 export class ComplaintPageModule {}

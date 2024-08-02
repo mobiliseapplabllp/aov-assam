@@ -9,6 +9,12 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
+  <ion-item>
+    <ion-label position="floating">Closure Option</ion-label>
+    <ion-select interface="popover" [(ngModel)]="tkt_closed_remark">
+      <ion-select-option *ngFor="let dat of optionArr" [value]="dat.label" > {{dat.label}}</ion-select-option>
+    </ion-select>
+  </ion-item>
   <ion-item id="close-pms-date">
     <ion-label color="primary" position="floating"> Date</ion-label>
     <ion-input type="text" [value]="date | date"   placeholder="Select Date"  readonly></ion-input>
@@ -18,13 +24,13 @@
       <ion-datetime #popoverDatetime max="2099" presentation="date" size="cover" [(ngModel)]="date" (ionChange)="changeDate('pur_date')"></ion-datetime>
     </ng-template>
   </ion-popover>
-  <ion-item>
+  <!-- <ion-item>
     <ion-label position="floating">Remark</ion-label>
     <ion-textarea rows="4" [(ngModel)]="remark"></ion-textarea>
-  </ion-item>
-  <ion-button [color]="!imageName ? 'danger': 'success'" size="small" class="ion-margin-start" (click)="presentActionSheet()" >
+  </ion-item> -->
+  <!-- <ion-button [color]="!imageName ? 'danger': 'success'" size="small" class="ion-margin-start" (click)="presentActionSheet()" >
     Image <ion-icon name="checkmark-done-circle-outline" slot="end" *ngIf="imageName"></ion-icon>
-  </ion-button><br>
+  </ion-button><br> -->
   <ion-row>
     <ion-col>
       <ion-button expand="block" (click)="submit()">Submit</ion-button>

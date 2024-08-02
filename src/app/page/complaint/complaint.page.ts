@@ -29,6 +29,7 @@ export class ComplaintPage implements OnInit {
   searchValue!: string;
   searchValueDesc!: string;
   resolveTicket: any = [];
+  standArr: any = []
   constructor(
     private httpCompalint: ComplaintService,
     private httpCommon: CommonService,
@@ -157,14 +158,16 @@ export class ComplaintPage implements OnInit {
     this.loading.dismiss();
   }
   changeSegment(ev: any) {
-    console.log(ev.target.value);
-    if (ev.target.value == 'resolved') {
+    if (this.status == 'resolved' || this.status == 'stand_by') {
+      this.resolveTicket = [];
+      this.standArr = [];
       this.presentLoading().then(preLoad => {
-        this.resolveTicket = [];
         this.httpCompalint.getResolvedTicket().subscribe({
           next:(data) => {
             if (data.status) {
-              this.resolveTicket = data.data.data;
+              const tempdata = data.data.data;
+              this.resolveTicket = tempdata.filter((val: any) => !val.is_standby_engaged );
+              this.standArr = tempdata.filter((val: any) => val.is_standby_engaged);
             } else {
               this.httpCommon.presentToast(data.msg, 'warning');
             }
@@ -263,7 +266,12 @@ export class ComplaintPage implements OnInit {
     this.page = 1;
     this.tickets = [];
     this.ticketsCopy = [];
-    this.getTicketMaster(this.ticketStatus, this.page);
+    if (this.status === 'not_resolved') {
+      this.getTicketMaster(this.ticketStatus, this.page);
+    } else {
+      this.changeSegment('')
+    }
+
   }
 
 }

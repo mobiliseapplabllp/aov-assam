@@ -8,6 +8,7 @@ import { SiteDetailComponent } from '../site-detail/site-detail.component';
 import { TicketHistoryComponent } from '../ticket-history/ticket-history.component';
 import { TicketTypeComponent } from '../ticket-type/ticket-type.component';
 import { AssignTicketComponent } from '../assign-ticket/assign-ticket.component';
+import { StandByReleaseComponent } from '../stand-by-release/stand-by-release.component';
 @Component({
   selector: 'app-complaint-cards',
   templateUrl: './complaint-cards.component.html',
@@ -261,6 +262,23 @@ export class ComplaintCardsComponent  implements OnInit {
 
   openDoc(url: string) {
     this.common.openDoc(url);
+  }
+
+  async openStandBy(tkts_id: any) {
+    const modal = await this.modalCtrl.create({
+      component: StandByReleaseComponent,
+      cssClass: 'my-modal',
+      componentProps: {
+        tkts_id: tkts_id
+      }
+    });
+    modal.onWillDismiss().then(async disModal => {
+      console.log(disModal);
+      if (disModal.role) {
+        this.greetEvent.emit(true);
+      }
+    });
+    modal.present();
   }
 
 

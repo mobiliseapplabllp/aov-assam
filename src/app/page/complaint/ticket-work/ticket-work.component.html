@@ -47,12 +47,12 @@
                 <ion-item>
                   <ion-label position="floating">Status <ion-text color="danger">*</ion-text> </ion-label>
                   <ion-select interface="action-sheet" formControlName="status" (ionChange)="changeStatus($event)" mode="ios">
-                    <ion-select-option *ngFor="let dat of ticketStages" [value]="dat.stage_id">{{dat.stage_desc}}</ion-select-option>
+                    <ion-select-option *ngFor="let dat of ticketStages" [value]="dat.stage_id">{{dat.stage_id}}{{dat.stage_desc}}</ion-select-option>
                     <ion-select-option value="assign">Assign</ion-select-option>
                   </ion-select>
                 </ion-item>
               </ion-col>
-              <ion-col size="6" *ngIf="workSpace.value.status === 4 || workSpace.value.status === 9">
+              <ion-col size="6" *ngIf="workSpace.value.status === 4 || workSpace.value.status === 9 || workSpace.value.status === 11">
                 <ion-item>
                   <ion-label position="floating">Scope of Work <ion-text color="danger">*</ion-text> </ion-label>
                   <ion-select interface="action-sheet" mode="ios" formControlName="scope_of_work">
@@ -85,7 +85,31 @@
                 </ion-col>
               </ion-row>
             </div>
-            <div *ngIf="workSpace.value.status === 4 || workSpace.value.status === 9">
+            <div *ngIf="workSpace.value.status === 4 || workSpace.value.status === 9 || workSpace.value.status === 11">
+              <ion-item *ngIf="workSpace.value.status === 11">
+                <ion-label position="floating">Equipment ID</ion-label>
+                <ion-input type="number" formControlName="standby_equipment" placeholder="Enter Barcode No" (ionChange)="changeBarcode()"></ion-input>
+                <ion-button (click)="verifyAsset()" slot="end" [disabled]="!workSpace.value.standby_equipment">Verify</ion-button>
+              </ion-item>
+              <ion-grid style="border:1px solid black" *ngIf="verifyObjStatus.ext_asset_id">
+                <ion-row>
+                  <ion-col size="4">Ext Asset ID</ion-col>
+                  <ion-col>{{verifyObjStatus.ext_asset_id}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4">Model</ion-col>
+                  <ion-col>{{verifyObjStatus.model_id}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4">Sub Group </ion-col>
+                  <ion-col>{{verifyObjStatus.subgrp_desc}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4">Status </ion-col>
+                  <ion-col>{{verifyObjStatus.status_name}}</ion-col>
+                </ion-row>
+              </ion-grid>
+
               <ion-item>
                 <ion-label position="floating">Problem Reported By Customer <ion-text color="danger">*</ion-text></ion-label>
                 <ion-textarea type="text" rows="3" formControlName="problem_reported"></ion-textarea>

@@ -52,6 +52,7 @@ export class TicketWorkComponent  implements OnInit {
   isPtwMandatory!: boolean;
   arr: any = [];
   scopeOfWorkArr: any = [];
+  verifyObjStatus: any = {};
   constructor(
     public activeRoute: ActivatedRoute,
     public formbuilder: FormBuilder,
@@ -87,8 +88,13 @@ export class TicketWorkComponent  implements OnInit {
       scope_of_work: [''],
       phone_no: [''],
       otp: [''],
+      standby_equipment: [''],
     });
 
+  }
+
+  changeBarcode() {
+    this.verifyObjStatus = {};
   }
 
   testOtp() {
@@ -177,6 +183,30 @@ export class TicketWorkComponent  implements OnInit {
       }]
     });
     await confirm.present();
+  }
+
+  verifyAsset() {
+    this.verifyObjStatus = {};
+    console.log(this.workSpace.value.standby_equipment);
+    this.presentLoading().then(preLoad => {
+      this.httpComplaint.getAssetStatus(this.workSpace.value.standby_equipment).subscribe({
+        next:(data) => {
+          if (data.status) {
+            this.httpCommon.presentToast(data.msg, 'success');
+            this.verifyObjStatus = data.data;
+          } else {
+            this.httpCommon.presentToast(data.msg, 'warning');
+          }
+        },
+        error:() => {
+          this.dismissLoading();
+          this.httpCommon.presentToast(environment.errMsg, 'danger');
+        },
+        complete:() => {
+          this.dismissLoading();
+        }
+      });
+    })
   }
 
   changePriority(ev: any) {
@@ -279,11 +309,17 @@ export class TicketWorkComponent  implements OnInit {
       this.formData.delete(key);
       this.formData.append(key, this.workSpace.value[key]);
     }
-    if (this.workSpace.value.status == 4 || this.workSpace.value.status == 9) {
+    if (this.workSpace.value.status == 4 || this.workSpace.value.status == 9 || this.workSpace.value.status === 11) {
       // if (this.arr.tkts_issue_id == 1 && !this.isVerifyOtp) {
       //   this.httpCommon.presentToast('OTP is Mandatory for Asset Ticket', 'warning');
       //   return;
       // }
+
+      if (this.workSpace.value.status === 11 && !this.verifyObjStatus.ext_asset_id) {
+        this.httpCommon.presentToast('Please Verify Equipment ID', 'warning');
+        return;
+      }
+
       if (!this.fileName && !this.isVerifyOtp) {
         this.httpCommon.presentToast('Please Add Attachment to resolve Ticket', 'warning');
         return
@@ -310,7 +346,6 @@ export class TicketWorkComponent  implements OnInit {
       alert('Please Add Attachment');
       return;
     }
-
     this.presentLoading().then(preLoad => {
       this.httpComplaint.submitTicketTransaction(this.formData).subscribe({
         next:(data) => {
@@ -355,7 +390,7 @@ export class TicketWorkComponent  implements OnInit {
       this.assignTicket();
       return;
     }
-    if ((ev.target.value === 4 || ev.target.value === 9) && this.scopeOfWorkArr.length == 0) {
+    if ((ev.target.value === 4 || ev.target.value === 9 || ev.target.value === 11) && this.scopeOfWorkArr.length == 0) {
       this.getScopeOfWork();
     }
     this.workSpace.get('remark')?.setValue('');

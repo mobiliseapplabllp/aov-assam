@@ -111,6 +111,9 @@
         <ion-col class="ion-text-center"  *ngIf="(data.stage_id === 4 || data.stage_id === 6) && !data.canWork ">
           <ion-button style="width:80%;font-size:xx-small;" color="success" (click)="openDoc(data.ticket_file)">SR</ion-button>
         </ion-col>
+        <ion-col class="ion-text-center" *ngIf="data.is_standby_engaged">
+          <ion-button style="width:80%;font-size:xx-small;" (click)="openStandBy(data.tkts_id)">Release</ion-button>
+        </ion-col>
       </ion-row>
     </ion-grid>
 </ion-card>

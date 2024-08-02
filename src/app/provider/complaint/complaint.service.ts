@@ -19,6 +19,18 @@ export class ComplaintService {
     return this.assignTickets;
   }
 
+  getAssetStatus(barcode: any): Observable<any> {
+    return this.https.get(environment.url + 'complaints/get_asset_status/' + barcode);
+  }
+
+  getTicketRemark(id: string): Observable<any> {
+    return this.https.get(environment.url + 'complaints/get_ticket_remark/' + id);
+  }
+
+  standByActionRelease(formData: any): Observable<any> {
+    return this.https.post(environment.url + 'complaints/released_standby_asset', formData);
+  }
+
   reOpenTicket(obj: any): Observable<any> {
     return this.https.post(environment.url + 'complaints/reopen_tkt', obj);
   }

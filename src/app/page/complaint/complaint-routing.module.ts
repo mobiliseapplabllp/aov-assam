@@ -12,6 +12,7 @@ import { TicketTypeComponent } from './ticket-type/ticket-type.component';
 import { TicketWorkComponent } from './ticket-work/ticket-work.component';
 import { AssignTicketComponent } from './assign-ticket/assign-ticket.component';
 import { InstructionModalComponent } from './instruction-modal/instruction-modal.component';
+import { StandByReleaseComponent } from './stand-by-release/stand-by-release.component';
 
 const routes: Routes = [
   {
@@ -57,6 +58,10 @@ const routes: Routes = [
   {
     path: 'inst-modal',
     component: InstructionModalComponent
+  },
+  {
+    path: 'stand-by',
+    component: StandByReleaseComponent
   }
 ];
 

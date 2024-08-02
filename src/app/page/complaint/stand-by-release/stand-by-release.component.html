@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Stand By Release</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close(null, false)">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <form [formGroup]="forms">
+    <!-- <ion-item>
+      <ion-label position="floating">Ticket Remark <ion-text color="danger">*</ion-text> </ion-label>
+      <ion-select interface="action-sheet" mode="ios" formControlName="ticket_remark">
+        <ion-select-option *ngFor="let dat of ticketRemarkArr" [value]="dat.remark_id">{{dat.remark}}</ion-select-option>
+      </ion-select>
+    </ion-item> -->
+    <ion-item>
+      <ion-label position="floating">Problem Reporting <ion-text color="danger">*</ion-text></ion-label>
+      <ion-textarea rows="2" formControlName="problem_reported"></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Action Taken By Engineer <ion-text color="danger">*</ion-text></ion-label>
+      <ion-textarea rows="2" formControlName="action_taken"></ion-textarea>
+    </ion-item>
+    <ion-row>
+      <ion-col>
+        <ion-button size="small" (click)="openCamera()" [color]="isImgUpload ? 'success' : 'danger' ">Attachment <ion-icon [name]="isImgUpload ? 'checkmark-circle-outline': 'attach-outline' "></ion-icon> </ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button expand="block" (click)="submitAction()" [disabled]="forms.invalid">Submit <ion-icon name="save-outline" slot="end"></ion-icon></ion-button>
+      </ion-col>
+    </ion-row>
+  </form>
+</ion-content>

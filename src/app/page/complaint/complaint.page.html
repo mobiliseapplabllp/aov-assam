@@ -19,6 +19,9 @@
     <ion-segment-button value="resolved">
       <ion-label>Resolved </ion-label>
     </ion-segment-button>
+    <ion-segment-button value="stand_by">
+      <ion-label>Stand By </ion-label>
+    </ion-segment-button>
   </ion-segment>
   <div [ngSwitch]='status'>
     <div *ngSwitchCase= "'not_resolved'">
@@ -65,6 +68,11 @@
     </div>
     <div *ngSwitchCase= "'resolved'">
       <div *ngFor="let dat of resolveTicket; let i = index">
+        <app-complaint-cards [data]="dat" [ticketType]="dat.status"  (greetEvent)="myCustom($event)"></app-complaint-cards>
+      </div>
+    </div>
+    <div *ngSwitchCase= "'stand_by'">
+      <div *ngFor="let dat of standArr; let i = index">
         <app-complaint-cards [data]="dat" [ticketType]="dat.status"  (greetEvent)="myCustom($event)"></app-complaint-cards>
       </div>
     </div>

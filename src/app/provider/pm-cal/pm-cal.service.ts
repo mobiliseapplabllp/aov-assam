@@ -91,6 +91,10 @@ export class PmCalService {
     return this.https.post(environment.url + 'pmscal/uploadPTW', formdata);
   }
 
+  getPmsStage(): Observable<any> {
+    return this.https.get(environment.url + 'pmscal/get_pms_stages');
+  }
+
   resolvePmCal(remarks: any, ticketInfo: any, empID: any, img: any, completionDate: any) {
     return new Promise(resolve => {
       const url = environment.url + 'update_pm_callibration_status.php';

@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { IonDatetime, LoadingController, ModalController } from '@ionic/angular';
+import * as moment from 'moment';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { PmCalService } from 'src/app/provider/pm-cal/pm-cal.service';
 import { environment } from 'src/environments/environment';
@@ -19,6 +20,14 @@ export class ClosePmsComponent  implements OnInit {
   imageName!: string;
   date: any;
   type: any;
+  optionArr: any = [{
+    label: 'Not Accessible'
+  },{
+    label: 'RBER'
+  },{
+    label: 'Successfully Completed'
+  }];
+  tkt_closed_remark: any;
   constructor(
     private loadingController: LoadingController,
     private common: CommonService,
@@ -26,24 +35,60 @@ export class ClosePmsComponent  implements OnInit {
     private modalCtrl: ModalController
   ) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    // this.getPmsStages();
+  }
+
+  // getPmsStages() {
+  //   this.presentLoading().then(preLoad => {
+  //     this.httpPms.getPmsStage().subscribe({
+  //       next:(data: any) => {
+  //         console.log(data);
+  //         if (data.status) {
+  //           this.optionArr = data.data;
+  //         } else {
+  //           this.common.presentToast(data.msg, 'warning');
+  //         }
+  //       },
+  //       error:() => {
+  //         this.common.presentToast(environment.source, 'warning');
+  //         this.dismissLoading();
+  //       },
+  //       complete:() => {
+  //         this.dismissLoading();
+  //       }
+  //     })
+  //   })
+
+  // }
 
   submit() {
-    if (!this.remark) {
-      this.common.presentToast('Remark is Compulsory', 'warning');
+    if (!this.tkt_closed_remark) {
+      this.common.presentToast('Closure Remark is Compulsory', 'warning');
       return;
     }
     if (!this.date) {
       this.common.presentToast('Please Select Date', 'warning');
       return;
     }
-    this.formData.delete('tkt_closed_remark');
-    this.formData.delete('source');
+    let date = moment(this.date).format('YYYY-MM-DD');
     this.formData.delete('id');
+    this.formData.delete('tkt_closed_remark');
+    this.formData.delete('tkt_closed_date');
+    this.formData.delete('source');
 
-    this.formData.append('tkt_closed_remark', this.remark);
-    this.formData.append('source', environment.source);
     this.formData.append('id', this.data.id);
+    this.formData.append('tkt_closed_remark', this.tkt_closed_remark);
+    this.formData.append('tkt_closed_date', date);
+    this.formData.append('source', environment.source);
+
+    // this.formData.delete('tkt_closed_remark');
+    // this.formData.delete('source');
+    // this.formData.delete('id');
+
+    // this.formData.append('tkt_closed_remark', this.remark);
+    // this.formData.append('source', environment.source);
+    // this.formData.append('id', this.data.id);
     this.presentLoading().then(preLoad => {
       this.httpPms.closeAction(this.formData, this.type).subscribe({
         next:(dat) => {
