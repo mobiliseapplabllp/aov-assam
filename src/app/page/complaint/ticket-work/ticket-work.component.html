@@ -47,7 +47,7 @@
                 <ion-item>
                   <ion-label position="floating">Status <ion-text color="danger">*</ion-text> </ion-label>
                   <ion-select interface="action-sheet" formControlName="status" (ionChange)="changeStatus($event)" mode="ios">
-                    <ion-select-option *ngFor="let dat of ticketStages" [value]="dat.stage_id">{{dat.stage_id}}{{dat.stage_desc}}</ion-select-option>
+                    <ion-select-option *ngFor="let dat of ticketStages" [value]="dat.stage_id">{{dat.stage_desc}}</ion-select-option>
                     <ion-select-option value="assign">Assign</ion-select-option>
                   </ion-select>
                 </ion-item>

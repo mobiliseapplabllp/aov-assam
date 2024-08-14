@@ -26,6 +26,8 @@ export class ClosePmsComponent  implements OnInit {
     label: 'RBER'
   },{
     label: 'Successfully Completed'
+  },{
+    label: 'Under Warranty'
   }];
   tkt_closed_remark: any;
   constructor(
