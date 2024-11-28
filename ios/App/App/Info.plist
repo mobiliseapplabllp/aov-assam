@@ -5,21 +5,9 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-        <string>ifms-sodexo</string>
+        <string>AOV Assam DH/PHC</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
-  <key>NSCameraUsageDescription</key>
-	<string>Need Camera Access to Resolve Ticket, Upload Attandance and Scan QR Code</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Need Location Permission to Submit User Attandance</string>
-  <key>NSPhotoLibraryUsageDescription</key>
-	<string>Need Library Access Permission</string>
-  <key>NSPhotoLibraryAddUsageDescription</key>
-  <string>Need Photo Library Access Permission</string>
-  <key>NSSpeechRecognitionUsageDescription</key>
-  <string>Need allow Speaker to speak checklist question or PMS question</string>
-  <key>NSMicrophoneUsageDescription</key>
-  <string>Need allow Mic to Listen checklist question or PMS question</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -28,10 +16,22 @@
 	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Access to your camera allows you to click the photos and upload them, while creating Ticket or Close Ticket Pms Etc</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Access to your camera allows you to click the photos and upload them, while creating Ticket or Close Ticket Pms Etc</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Access to your camera allows you to click the photos and upload them, while creating Ticket or Close Ticket Pms Etc</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+  	<string>Access to you Location allow you to Submit Your Location when punchin and punchout the Attandance</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>This app uses speech recognition to convert spoken words into text for quick and easy note-taking</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Access to your Microphone allow to convert speech to texts</string>
 	<key>CFBundleShortVersionString</key>
-	<string>$(MARKETING_VERSION)</string>
+	<string>0.0.1</string>
 	<key>CFBundleVersion</key>
-	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<string>001</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
