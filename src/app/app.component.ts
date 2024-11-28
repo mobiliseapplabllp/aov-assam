@@ -127,7 +127,6 @@ export class AppComponent {
     this.userIdle.startWatching();
     this.userIdle.onTimerStart().subscribe();
     this.userIdle.onTimeout().subscribe(() => {
-      console.log('time up');
       this.stop();
       this.stopWatching();
       this.presentAlertConfirm();
@@ -216,7 +215,13 @@ export class AppComponent {
 
   reset() {
     localStorage.clear();
-    App.exitApp();
+    if (this.platform.is('android')) {
+      App.exitApp();
+    } else {
+      this.common.presentToast('Please Restart Your Application', 'warning');
+      this.router.navigateByUrl('/login', {replaceUrl: true});
+    }
+
   }
 
   openPage(data: any) {

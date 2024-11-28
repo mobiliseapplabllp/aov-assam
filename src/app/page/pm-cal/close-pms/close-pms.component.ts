@@ -5,7 +5,6 @@ import * as moment from 'moment';
 import { CommonService } from 'src/app/provider/common/common.service';
 import { PmCalService } from 'src/app/provider/pm-cal/pm-cal.service';
 import { environment } from 'src/environments/environment';
-
 @Component({
   selector: 'app-close-pms',
   templateUrl: './close-pms.component.html',

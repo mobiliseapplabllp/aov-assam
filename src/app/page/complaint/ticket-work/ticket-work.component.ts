@@ -53,18 +53,19 @@ export class TicketWorkComponent  implements OnInit {
   arr: any = [];
   scopeOfWorkArr: any = [];
   verifyObjStatus: any = {};
+  ticketRemarkArr: any = [];
   constructor(
-    public activeRoute: ActivatedRoute,
-    public formbuilder: FormBuilder,
-    public httpComplaint: ComplaintService,
-    public httpCommon: CommonService,
-    public alertCtrl: AlertController,
-    public navCtrl: NavController,
-    public modalCtrl: ModalController,
-    public actionSheetController: ActionSheetController,
-    public router: Router,
-    public loadingController: LoadingController,
-    public platform: Platform
+    private activeRoute: ActivatedRoute,
+    private formbuilder: FormBuilder,
+    private httpComplaint: ComplaintService,
+    private httpCommon: CommonService,
+    private alertCtrl: AlertController,
+    private navCtrl: NavController,
+    private modalCtrl: ModalController,
+    private actionSheetController: ActionSheetController,
+    private router: Router,
+    private loadingController: LoadingController,
+    private platform: Platform
   ) { }
 
   ngOnInit() {
@@ -89,6 +90,7 @@ export class TicketWorkComponent  implements OnInit {
       phone_no: [''],
       otp: [''],
       standby_equipment: [''],
+      ticket_remark: ['']
     });
 
   }
@@ -288,6 +290,25 @@ export class TicketWorkComponent  implements OnInit {
     }
   }
 
+  getTicketRemark(id: any) {
+
+    this.httpComplaint.getTicketRemark(id).subscribe({
+      next:(data) => {
+        if (data.status) {
+          this.ticketRemarkArr = data.data;
+        } else {
+          this.httpCommon.presentToast(data.msg, 'warning');
+        }
+      },
+      error:() => {
+        this.httpCommon.presentToast(environment.errMsg, 'danger');
+      },
+      complete:() => {
+
+      }
+    });
+  }
+
   async openInstructionModal() {
     const modal = await this.modalCtrl.create({
       component: InstructionModalComponent,
@@ -305,11 +326,15 @@ export class TicketWorkComponent  implements OnInit {
   }
 
   submitTicket() {
+    if (!this.workSpace.value.ticket_remark) {
+      this.httpCommon.presentToast('Please Select Ticket Remark', 'warning');
+      return;
+    }
     for(let key in this.workSpace.value) {
       this.formData.delete(key);
       this.formData.append(key, this.workSpace.value[key]);
     }
-    if (this.workSpace.value.status == 4 || this.workSpace.value.status == 9 || this.workSpace.value.status === 11) {
+    if (this.workSpace.value.status == 4 || this.workSpace.value.status == 9 || this.workSpace.value.status === 11 || this.workSpace.value.status === 10) {
       // if (this.arr.tkts_issue_id == 1 && !this.isVerifyOtp) {
       //   this.httpCommon.presentToast('OTP is Mandatory for Asset Ticket', 'warning');
       //   return;
@@ -390,7 +415,7 @@ export class TicketWorkComponent  implements OnInit {
       this.assignTicket();
       return;
     }
-    if ((ev.target.value === 4 || ev.target.value === 9 || ev.target.value === 11) && this.scopeOfWorkArr.length == 0) {
+    if ((ev.target.value === 4 || ev.target.value === 9 || ev.target.value === 11 || ev.target.value === 10)) {
       this.getScopeOfWork();
     }
     this.workSpace.get('remark')?.setValue('');
@@ -398,6 +423,7 @@ export class TicketWorkComponent  implements OnInit {
     this.workSpace.get('action_taken')?.setValue('');
     this.workSpace.get('phone_no')?.setValue('');
     this.workSpace.get('otp')?.setValue('');
+    this.getTicketRemark(ev.target.value);
   }
 
   getScopeOfWork() {
@@ -454,6 +480,7 @@ export class TicketWorkComponent  implements OnInit {
     this.loading = await this.loadingController.create({
       cssClass: 'my-custom-class',
       message: 'Please wait...',
+
     });
     await this.loading.present();
   }
