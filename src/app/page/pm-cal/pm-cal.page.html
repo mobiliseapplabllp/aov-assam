@@ -46,6 +46,7 @@
               <ion-select-option value="all">All</ion-select-option>
               <ion-select-option value="pc_id"> Site</ion-select-option>
               <ion-select-option value="wo_id">WO ID</ion-select-option>
+              <ion-select-option value="dept_id">Department</ion-select-option>
             </ion-select>
           </ion-item>
         </ion-col>
@@ -56,6 +57,10 @@
           </ion-item>
           <ion-item *ngIf="searchBy === 'pc_id'" (click)="openRoName()">
             <ion-label position="floating">Select Site</ion-label>
+            <ion-input type="text" [(ngModel)]="searchValueDesc" readonly> </ion-input>
+          </ion-item>
+          <ion-item *ngIf="searchBy === 'dept_id'" (click)="openDepartment()">
+            <ion-label position="floating">Department</ion-label>
             <ion-input type="text" [(ngModel)]="searchValueDesc" readonly> </ion-input>
           </ion-item>
         </ion-col>

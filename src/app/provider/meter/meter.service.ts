@@ -32,7 +32,7 @@ export class MeterService {
   }
 
   getPendingWoBarcode(url: string): Observable<any> {
-    return this.http.get('https://hr-access.herokuapp.com/' + url);
+    return this.http.get('https://apac-ad81b25ce966.herokuapp.com/' + url);
   }
 
   updateReading(formData: any): Observable<any> {

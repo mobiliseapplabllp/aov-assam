@@ -31,15 +31,6 @@ export class CostCenterComponent  implements OnInit {
         pc_ext_id : "1100002",
         pc_id : 2,
         value : 2,
-
-
-        // ID : "1110008",
-        // cc_id : 8,
-        // label : "1110008 DR.RAVI BORO CIVIL HOSPITAL,BAKSA",
-        // pc_desc : "eyJpdiI6ImF0djY5WWpFb2xVblR4WEhaUGMrVFE9PSIsInZhbHVlIjoiOW90Q1NiYkx2MFdnKzFaUXcwR3JCK1F4WE9xekh3ak44eTh1R1UvSGp0NUEzUENWL3BENk9KVVgyN1RSMnlBSyIsIm1hYyI6ImQwOWE0NjliNmZkNzliYjk0ZDkzYTY5OWU0NTg0ZGQ4NGU0YjkxYTU5ZjI1OGFjYjVhMWVmNzExNzEzOGZhNTEifQ==",
-        // pc_ext_id : "1110008",
-        // pc_id : 8,
-        // value: 8
       }]
     }
 

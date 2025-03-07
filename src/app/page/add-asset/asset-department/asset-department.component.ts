@@ -10,7 +10,6 @@ import { MyAssetGetService } from 'src/app/provider/my-asset-get/my-asset-get.se
 })
 export class AssetDepartmentComponent  implements OnInit {
   myDepartment: any = [];
-  // myDepartmentCopy: any = [];
   loading: any;
   constructor(
     private modalCtrl: ModalController,
@@ -21,7 +20,6 @@ export class AssetDepartmentComponent  implements OnInit {
   ) { }
 
   ngOnInit() {
-    // this.getDepartment();
     if (this.platform.is('capacitor')) {
       this.getDepartmentFromSqlite();
     } else {

@@ -10,6 +10,7 @@ import { Camera, CameraResultType } from '@capacitor/camera';
 import { PtwUploadComponent } from './ptw-upload/ptw-upload.component';
 import { DigitalChecklistService } from 'src/app/provider/digital-checklist/digital-checklist.service';
 import { ClosePmsComponent } from './close-pms/close-pms.component';
+import { AssetDepartmentComponent } from '../add-asset/asset-department/asset-department.component';
 @Component({
   selector: 'app-pm-cal',
   templateUrl: './pm-cal.page.html',
@@ -50,6 +51,7 @@ export class PmCalPage implements OnInit {
    fileName1!: string;
    selectedBarcode: any;
    type: any;
+   isModalOpen = false;
   constructor(
     private loadingController: LoadingController,
     private httpPms: PmCalService,
@@ -155,6 +157,14 @@ export class PmCalPage implements OnInit {
   }
 
   async closedPms(data: any) {
+    if (this.isModalOpen) {
+      console.log('already open');
+      return;
+    }
+    this.isModalOpen = true;
+    setTimeout(() => {
+      this.isModalOpen = false;
+    }, 500);
     const modal = await this.modalCtrl.create({
       component: ClosePmsComponent,
       cssClass: 'my-modal2',
@@ -188,6 +198,14 @@ export class PmCalPage implements OnInit {
   }
 
   async pmAssign(dat: any) {
+    if (this.isModalOpen) {
+      console.log('already open');
+      return;
+    }
+    this.isModalOpen = true;
+    setTimeout(() => {
+      this.isModalOpen = false;
+    }, 500);
     const modal = await this.modalCtrl.create({
       component: PmAssignComponent,
       cssClass: 'my-modal',
@@ -242,6 +260,14 @@ export class PmCalPage implements OnInit {
   }
 
   async openRoName() {
+    if (this.isModalOpen) {
+      console.log('already open');
+      return;
+    }
+    this.isModalOpen = true;
+    setTimeout(() => {
+      this.isModalOpen = false;
+    }, 500);
     const modal = await this.modalCtrl.create({
       component: CostCenterComponent,
       cssClass: 'my-modal',
@@ -257,7 +283,39 @@ export class PmCalPage implements OnInit {
     return await modal.present();
   }
 
+  async openDepartment() {
+      if (this.isModalOpen) {
+        console.log('already open');
+        return;
+      }
+      this.isModalOpen = true;
+      setTimeout(() => {
+        this.isModalOpen = false;
+      }, 500);
+      const modal = await this.modalCtrl.create({
+        component: AssetDepartmentComponent,
+        cssClass: 'my-modal',
+        componentProps : { }
+      });
+      modal.onWillDismiss().then(disModal => {
+        console.log(disModal);
+        if (disModal.role) {
+          this.searchValueDesc = disModal.data.dept_desc;
+          this.searchValue = disModal.data.dept_id;
+        }
+      });
+      return await modal.present();
+    }
+
   async uploadPtw(dat: any) {
+    if (this.isModalOpen) {
+      console.log('already open');
+      return;
+    }
+    this.isModalOpen = true;
+    setTimeout(() => {
+      this.isModalOpen = false;
+    }, 500);
     const modal = await this.modalCtrl.create({
       component: PtwUploadComponent,
       cssClass: 'my-modal2',
