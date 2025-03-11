@@ -58,8 +58,14 @@ export class ComplaintService {
     return this.https.get(environment.url + 'complaints/get_assign_ticket_master?' + url);
   }
 
-  getResolvedTicket(): Observable<any> {
-    return this.https.get(environment.url + 'complaints/get_assign_ticket_master?limit=40&page=1&status=4')
+  getResolvedTicket(stus: any): Observable<any> {
+    let url: any;
+    if(stus === 'resolved') {
+      url = environment.url + 'complaints/get_assign_ticket_master?limit=40&page=1&status=4';
+    } else {
+      url = environment.url + 'complaints/get_assign_ticket_master?limit=40&page=1&status=4&ticket_type=stand_by';
+    }
+    return this.https.get(url);
   }
 
   searchTicketFromServer(key: any, value: any): Observable<any> {

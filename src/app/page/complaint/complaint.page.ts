@@ -162,7 +162,7 @@ export class ComplaintPage implements OnInit {
       this.resolveTicket = [];
       this.standArr = [];
       this.presentLoading().then(preLoad => {
-        this.httpCompalint.getResolvedTicket().subscribe({
+        this.httpCompalint.getResolvedTicket(this.status).subscribe({
           next:(data) => {
             if (data.status) {
               const tempdata = data.data.data;

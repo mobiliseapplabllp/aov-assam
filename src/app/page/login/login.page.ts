@@ -64,6 +64,7 @@ export class LoginPage implements OnInit {
   // }
 
   ionViewDidEnter() {
+    console.log('login');
     if (this.platform.is('android')) {
       this.isAndroid = true;
     }
