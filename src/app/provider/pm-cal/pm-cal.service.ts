@@ -34,7 +34,7 @@ export class PmCalService {
 
   searchTicketFromServer(key: any, value: any): Observable<any> {
     let url;
-    url = 'limit=40&page=1&' + key + '=' + value + '&shource_from=app';
+    url = 'limit=100&page=1&' + key + '=' + value + '&shource_from=app';
     return this.https.get(environment.url + 'pmscal/get_work_order?' + url);
   }
 

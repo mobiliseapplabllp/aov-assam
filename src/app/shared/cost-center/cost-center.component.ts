@@ -31,6 +31,20 @@ export class CostCenterComponent  implements OnInit {
         pc_ext_id : "1100002",
         pc_id : 2,
         value : 2,
+      },{
+        pc_ext_id: "1131006",
+        pc_desc: "1131006 RNB CIVIL HOSPITAL,KOKRAJHAR",
+        value: 783,
+        barcode_prefix: "1131006",
+        label: "1131006 RNB CIVIL HOSPITAL,KOKRAJHAR",
+        pc_id: 783
+      },{
+        pc_ext_id: "1131041",
+        pc_desc: "1131041 RNB SDCH,GOSSAIGAON",
+        value: 818,
+        barcode_prefix: "1131041",
+        label: "1131041 RNB SDCH,GOSSAIGAON",
+        pc_id: 818
       }]
     }
 

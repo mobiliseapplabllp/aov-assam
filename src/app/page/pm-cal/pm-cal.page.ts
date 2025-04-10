@@ -52,6 +52,7 @@ export class PmCalPage implements OnInit {
    selectedBarcode: any;
    type: any;
    isModalOpen = false;
+   isSearch!: boolean;
   constructor(
     private loadingController: LoadingController,
     private httpPms: PmCalService,
@@ -140,6 +141,7 @@ export class PmCalPage implements OnInit {
           this.common.presentToast(environment.errMsg, 'warning');
         },
         complete:() => {
+          this.isSearch = false;
           this.dismissloading();
         }
       });
@@ -345,6 +347,7 @@ export class PmCalPage implements OnInit {
         this.dismissloading();
         this.refreshField();
         if (dat.status) {
+          this.isSearch = true;
           this.pmCal = dat.data.data;
           this.lastPage = dat.data.last_page;
           this.currentPage = this.currentPage + 1;
