@@ -45,6 +45,13 @@ export class CostCenterComponent  implements OnInit {
         barcode_prefix: "1131041",
         label: "1131041 RNB SDCH,GOSSAIGAON",
         pc_id: 818
+      }, {
+        pc_ext_id: "1131041",
+        pc_desc: "1131041 RNB SDCH,GOSSAIGAON",
+        value: 818,
+        barcode_prefix: "1131041",
+        label: "1131041 RNB SDCH,GOSSAIGAON",
+        pc_id: 818
       }]
     }
 

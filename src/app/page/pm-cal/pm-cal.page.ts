@@ -185,17 +185,13 @@ export class PmCalPage implements OnInit {
   }
 
   multiAssign() {
-    console.log(this.openPm);
     const obj =this.openPm.filter((val: any) => val.isSelect == true);
-    console.log(obj);
     this.pmAssign(obj);
   }
 
   changeCheckbox(val: any) {
-    console.log(val);
     setTimeout(() => {
       this.selectedPms = this.openPm.filter((val: any) => val.isSelect == true);
-      console.log(this.selectedPms);
     }, 500);
   }
 
@@ -359,15 +355,16 @@ export class PmCalPage implements OnInit {
             this.actionPmCopy = this.pmCal.filter((val: any) => val.stage_id === 2);
           } else if (stage_id == 3) {
             this.closePm = this.pmCal.filter((val: any) => val.stage_id == 3)
-            this.closePmCopy = this.pmCal.filter((val: any) => val.stage_id == 3)
+            this.closePmCopy = this.pmCal.filter((val: any) => val.stage_id == 3);
           }
         } else {
           this.pmCal = [];
         }
       });
-
     });
   }
+
+
 
   async presentLoading() {
     this.loading = await this.loadingController.create({
