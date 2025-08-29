@@ -67,6 +67,18 @@ export class IndentsService {
     return this.https.post(environment.url + 'purchase/mtrl_request/add_mtrl_request', formData);
   }
 
+  getFaultyFormDetails(id: any): Observable<any> {
+    return this.https.get(environment.url + 'purchase/faulty/get_faulty_form_details/' + id);
+  }
+
+  submitFaultyItem(formData: any): Observable<any> {
+    return this.https.post(environment.url + 'purchase/faulty/submit_faulty_form', formData);
+  }
+
+  returnToWh(rqst_id: any): Observable<any> {
+    return this.https.get(environment.url + 'purchase/dispatch/eng_return_to_wh/' + rqst_id);
+  }
+
   getEmpSearch(emp_id: any): Observable<any> {
     const obj = {
       key: emp_id

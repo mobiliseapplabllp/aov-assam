@@ -6,6 +6,7 @@ import { AssetPlantComponent } from './asset-plant/asset-plant.component';
 import { AssetDepartmentComponent } from './asset-department/asset-department.component';
 import { AssetDevicenameComponent } from './asset-devicename/asset-devicename.component';
 import { AssetManufacturerComponent } from './asset-manufacturer/asset-manufacturer.component';
+import { SubCenterComponent } from './sub-center/sub-center.component';
 
 const routes: Routes = [
   {
@@ -23,6 +24,9 @@ const routes: Routes = [
   }, {
     path: 'asset-manufacturer',
     component: AssetManufacturerComponent
+  }, {
+    path: 'sub-center',
+    component: SubCenterComponent
   }
 ];
 

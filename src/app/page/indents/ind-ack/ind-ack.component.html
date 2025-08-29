@@ -1,0 +1,68 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Faulty Item</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close(null, 'false')">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-card>
+    <ion-item>
+      <ion-label position="floating">Is Faulty Item Return</ion-label>
+      <ion-select interface="action-sheet" [(ngModel)]="formObj.faulty_received">
+        <ion-select-option value="Yes">Yes</ion-select-option>
+        <ion-select-option value="No">No</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="disabled" color="none">
+      <ion-label position="floating">Barcode</ion-label>
+      <ion-input type="text" [(ngModel)]="formObj.ext_asset_id" readonly></ion-input>
+    </ion-item>
+    <ion-item class="disabled" color="none">
+      <ion-label position="floating">Item Code</ion-label>
+      <ion-input type="text" [(ngModel)]="formObj.item_code" readonly></ion-input>
+    </ion-item>
+    <ion-item class="disabled" color="none">
+      <ion-label position="floating">Item Name</ion-label>
+      <ion-input type="text" [(ngModel)]="formObj.mtrl_desc" readonly></ion-input>
+    </ion-item>
+    <ion-item class="disabled" color="none">
+      <ion-label position="floating">Qty</ion-label>
+      <ion-input type="text" [(ngModel)]="formObj.fau_qty" readonly></ion-input>
+    </ion-item>
+    <ion-item id="ind-ack-date">
+      <ion-label color="primary" position="floating">Date</ion-label>
+      <ion-input type="text" [value]="formObj.fau_date | date" placeholder="Select Date" readonly></ion-input>
+    </ion-item>
+    <ion-popover trigger="ind-ack-date">
+      <ng-template>
+        <ion-datetime #popoverDatetime max="2099" presentation="date" size="cover" [(ngModel)]="formObj.fau_date" (ionChange)="changeDate()"></ion-datetime>
+      </ng-template>
+    </ion-popover>
+    <ion-item class="disabled" color="none">
+      <ion-label position="floating">Indent No</ion-label>
+      <ion-input type="text" [(ngModel)]="formObj.rqst_no" readonly></ion-input>
+    </ion-item>
+    <ion-item class="disabled" color="none">
+      <ion-label position="floating">Facility Name</ion-label>
+      <ion-input type="text" [(ngModel)]="formObj.pc_desc" readonly></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Remark</ion-label>
+      <ion-input type="text" [(ngModel)]="formObj.fau_remark"></ion-input>
+    </ion-item>
+    <ion-row>
+      <ion-col class="ion-padding-start">
+        <ion-button size="small" (click)="openCamera()" [color]="isImageUpload ? 'success': 'primary' ">Attachment</ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button expand="block" (click)="submit()">Submit</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-card>
+</ion-content>

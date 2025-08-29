@@ -6,6 +6,7 @@ import { IndentCardComponent } from './indent-card/indent-card.component';
 import { CrIndentComponent } from './cr-indent/cr-indent.component';
 import { MaterialComponent } from './material/material.component';
 import { UomComponent } from './uom/uom.component';
+import { IndAckComponent } from './ind-ack/ind-ack.component';
 
 const routes: Routes = [
   {
@@ -23,6 +24,9 @@ const routes: Routes = [
   }, {
     path: 'uom',
     component: UomComponent
+  }, {
+    path: 'indent-ack',
+    component: IndAckComponent
   }
 ];
 

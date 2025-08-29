@@ -11,6 +11,7 @@ import { AssetDepartmentComponent } from './asset-department/asset-department.co
 import { AssetDevicenameComponent } from './asset-devicename/asset-devicename.component';
 import { AssetManufacturerComponent } from './asset-manufacturer/asset-manufacturer.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { SubCenterComponent } from './sub-center/sub-center.component';
 
 @NgModule({
   imports: [
@@ -25,7 +26,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
     AddAssetPage,
     AssetDepartmentComponent,
     AssetDevicenameComponent,
-    AssetManufacturerComponent
+    AssetManufacturerComponent,
+    SubCenterComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

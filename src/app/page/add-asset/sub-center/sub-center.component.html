@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Sub Center</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModal(null, false)">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-searchbar debounce="1000"></ion-searchbar>
+  <ion-virtual-scroll [items]="subCenter" approxItemHeight="320px">
+    <ion-item *virtualItem="let item; let itemBounds = bounds;" (click)="closeModal(item, true)">
+      {{item.sub_centre_desc}}
+    </ion-item>
+  </ion-virtual-scroll>
+</ion-content>

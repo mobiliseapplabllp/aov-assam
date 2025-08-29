@@ -26,17 +26,16 @@ export class MyAssetGetService {
   //   });
   // }
 
-  getAssetMasterData(lastdatetime: any): Observable<any> {
-    // return this.https.get('assets/data/asset_master.json')
+  getAssetMasterData(lastdatetime: any): Observable<any> {    
     return this.https.get(environment.url + 'shared/get-user-pc-offline')
   }
 
-  insertAssetAction(data: any) {
-    console.log('insert action');
-    console.log(data);
+  insertAssetAction(data: any) {    
     return new Promise(resolve => {
       let siteDetail: any = [], blocks: any = [], building: any = [], floor: any = [], location: any = [], department: any = [], sub_department: any = [],device_group: any = [],
-      device_name: any = [], device_sub_group: any = [], manufacturer: any = [],ownership: any = [],equip_status: any = [],technology_status: any = [],warranty: any = [];
+      device_name: any = [], device_sub_group: any = [], manufacturer: any = [],ownership: any = [],equip_status: any = [],technology_status: any = [],warranty: any = [],
+      sub_centre_data: any = [];
+
       if (data.site_detail) {
         siteDetail = data.site_detail;
       }
@@ -83,6 +82,10 @@ export class MyAssetGetService {
         warranty = data.warranty;
       }
 
+      if (data.sub_centre_data) {
+        sub_centre_data = data.sub_centre_data;
+      }
+
       this.assetSqlite.insertIntoSiteDetail(siteDetail).then(res => {
         this.assetSqlite.insertIntoBlock(blocks).then(res => {
           this.assetSqlite.insertIntoBuilding(building).then(res => {
@@ -98,8 +101,9 @@ export class MyAssetGetService {
                               this.assetSqlite.insertIntoEquipStatus(equip_status).then(res => {
                                 this.assetSqlite.insertIntoTechnologyStatus(technology_status).then(res => {
                                   this.assetSqlite.insertIntoWarranty(warranty).then(res => {
-                                    console.log('all saved');
-                                    resolve(true);
+                                    this.assetSqlite.insertIntoSubCentre(sub_centre_data).then(res => {
+                                      resolve(true);
+                                    });                                    
                                   });
                                 });
                               });

@@ -43,5 +43,8 @@
   },
   {
     "table":"create table IF NOT EXISTS warranty(id,status,warranty)"
+  },
+  {
+    "table":"create table IF NOT EXISTS sub_centre_data(pc_id, sub_centre_desc, sub_centre_id)"
   }
 ]

@@ -42,14 +42,13 @@
                 <ion-col size="4"><b>City</b></ion-col>
                 <ion-col>{{city}}</ion-col>
               </ion-row>
-
-            </ion-card>
-            <!-- <ion-item>
-              <ion-label>
-                <h3>Segment Type : {{segmentType}}</h3>
-                <h3>City: {{city}}</h3>
-              </ion-label>
-            </ion-item> -->
+            </ion-card>            
+          </ion-col>
+          <ion-col size="12">
+            <ion-item (click)="openSubCenterModal()">
+              <ion-label color="primary" position="floating">Sub Center </ion-label>
+              <ion-input type="text" formControlName="sub_centre_id_desc" readonly></ion-input>
+            </ion-item>
           </ion-col>
           <ion-col size="12">
             <ion-item >

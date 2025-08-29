@@ -19,6 +19,7 @@ import { AssetSqliteService } from 'src/app/provider/asset-sqlite/asset-sqlite.s
 import { db } from '../../provider/local-db/local-db.service';
 import { liveQuery } from 'dexie';
 import { CameraComponent } from 'src/app/shared/camera/camera.component';
+import { SubCenterComponent } from './sub-center/sub-center.component';
 @Component({
   selector: 'app-add-asset',
   templateUrl: './add-asset.page.html',
@@ -94,6 +95,8 @@ export class AddAssetPage implements OnInit {
       faciity_type: [''],
       site_id_description:[''],
       site_id: ['', Validators.required],
+      sub_centre_id_desc: [''],
+      sub_centre_id: [''],
       block_id: [''],
       bldg_id: [''],
       floor_id: [''],
@@ -635,7 +638,27 @@ export class AddAssetPage implements OnInit {
       }
     });
     return await modal.present();
-  }
+  }  
+
+   async openSubCenterModal() {
+    if (!this.addAsset.value.site_id) {
+      this.httpCommon.presentToast('Please Select Site', 'warning');
+      return;
+    }
+    const modal = await this.modalController.create({
+      component: SubCenterComponent,
+      cssClass: 'my-modal',
+      componentProps : { pc_id: this.addAsset.value.site_id}
+    });
+    modal.onWillDismiss().then(disModal => {
+      console.log(disModal);
+      if (disModal.data) {
+        this.addAsset.get('sub_centre_id_desc')?.setValue(disModal.data.sub_centre_desc);        
+        this.addAsset.get('sub_centre_id')?.setValue(disModal.data.sub_centre_id);        
+      }
+    });
+    return await modal.present();
+  }  
 
   getBlockFromSqlite(pc_id: any){
     if (this.platform.is('capacitor')) {
@@ -1237,8 +1260,7 @@ export class AddAssetPage implements OnInit {
     })
   }
 
-  async addAssetOffline(assetData: any) {
-    console.log(assetData);
+  async addAssetOffline(assetData: any) {    
     await db.asset.add(assetData)
   }
 

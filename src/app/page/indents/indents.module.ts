@@ -12,6 +12,7 @@ import { CrIndentComponent } from './cr-indent/cr-indent.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MaterialComponent } from './material/material.component';
 import { UomComponent } from './uom/uom.component';
+import { IndAckComponent } from './ind-ack/ind-ack.component';
 
 @NgModule({
   imports: [
@@ -27,6 +28,8 @@ import { UomComponent } from './uom/uom.component';
     IndentCardComponent,
     CrIndentComponent,
     MaterialComponent,
-    UomComponent]
+    UomComponent,
+    IndAckComponent
+  ]
 })
 export class IndentsPageModule {}

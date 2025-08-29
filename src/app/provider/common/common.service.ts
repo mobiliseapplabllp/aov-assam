@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ToastController } from '@ionic/angular';
+import { LoadingController, ToastController } from '@ionic/angular';
 import { Network } from '@capacitor/network';
 import { HttpClient } from '@angular/common/http';
 import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
@@ -12,10 +12,12 @@ export class CommonService {
   public barcode!: string;
   db = environment.db;
   dbLocation = environment.db_location;
+  loading: any;
   constructor(
     private toastController: ToastController,
     public http: HttpClient,
-    private sqlite: SQLite
+    private sqlite: SQLite,
+    private loadingController: LoadingController
   ) { }
 
   setBarcode(barcode: string) {
@@ -105,5 +107,19 @@ export class CommonService {
         alert('Sqlite:-' + JSON.stringify(err));
       });
     });
+  }
+
+  async presentLoading() {
+    this.loading = await this.loadingController.create({
+      cssClass: 'my-custom-class',
+      message: 'Please wait...'
+    });
+    await this.loading.present();
+  }
+
+  async dismissloading() {
+    if (this.loading) {
+      this.loading.dismiss();
+    }
   }
 }

@@ -390,6 +390,31 @@ export class AssetSqliteService {
     });
   }
 
+  insertIntoSubCentre(d: any) {
+    return new Promise(resolve => {
+      if (d.length === 0) {
+        resolve(true);
+      } else {
+        this.sqlite.create({name: this.db, location: this.dbLocation}).then((db: SQLiteObject) => {
+          this.insDataTemp = [];
+          for (let i = 0 ; i < d.length ; i++) {
+            this.insDataTemp.push([
+              'insert into sub_centre_data(pc_id, sub_centre_desc, sub_centre_id) values(?,?,?)',
+              [d[i].pc_id, d[i].sub_centre_desc, d[i].sub_centre_id]
+            ]);
+          }
+          db.sqlBatch(this.insDataTemp).then(res => {
+            resolve(true);
+          } , err => {
+            alert(JSON.stringify(err) + 'Err:- SubCentre');
+          });
+        } , err => {
+          alert(JSON.stringify(err));
+        });
+      }
+    });
+  }
+
   getSiteDetailFromSqlite() {
     return new Promise(resolve => {
       this.sqlite.create({name: this.db, location: this.dbLocation}).then((db: SQLiteObject) => {
@@ -419,6 +444,23 @@ export class AssetSqliteService {
           resolve(this.tempVar);
         } , err => {
           alert(JSON.stringify(err) + 'Err Site');
+        });
+      });
+    });
+  }
+
+  getSubCenterFromSqlite(pc_id: any) {
+    return new Promise(resolve => {
+      this.sqlite.create({name: this.db, location: this.dbLocation}).then((db: SQLiteObject) => {
+        db.executeSql('select * from sub_centre_data where pc_id = ?', [pc_id]).then(res => {
+          this.tempVar = [];
+          for (let i = 0; i < res.rows.length; i++) {
+            this.data = res.rows;
+            this.tempVar.push(this.data.item(i));
+          }
+          resolve(this.tempVar);
+        } , err => {
+          alert(JSON.stringify(err) + 'Err Sub Center');
         });
       });
     });
