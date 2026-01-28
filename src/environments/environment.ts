@@ -1,11 +1,11 @@
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
-
+// https://apac-ad81b25ce966.herokuapp.com
 export const environment = {
   production: false,
-  url: 'https://apac-ad81b25ce966.herokuapp.com/https://bemmpassam.mobilisepro.com/backend/api/',
-  url1: 'https://apac-ad81b25ce966.herokuapp.com/https://bemmpassam.mobilisepro.com/',
+  url: 'https://bemmpassam.mobilisepro.com/backend/api/',
+  url1: 'https://bemmpassam.mobilisepro.com/',
   url2: 'https://bemmpassam.mobilisepro.com/',
   // url: 'https://apac-ad81b25ce966.herokuapp.com/https://bemmpassamuat.mobilisepro.com/backend/api/',
   // url1: 'https://apac-ad81b25ce966.herokuapp.com/https://bemmpassamuat.mobilisepro.com/',

@@ -37,7 +37,7 @@
     "@capacitor/status-bar": "4.1.1",
     "@ionic/angular": "^6.1.9",
     "angular-user-idle": "^4.0.0",
-    "angular2-signaturepad": "^2.11.0",
+    "angular2-signaturepad": "^4.0.2",
     "cordova-sqlite-storage": "^6.1.0",
     "dexie": "^3.2.4",
     "ionicons": "^6.0.3",
