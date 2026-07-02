@@ -29,9 +29,9 @@
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Access to your Microphone allow to convert speech to texts</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.0</string>
+	<string>1.0.3</string>
 	<key>CFBundleVersion</key>
-	<string>100</string>
+	<string>103</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
